@@ -1,0 +1,24 @@
+<div class="login-container">
+
+    <div class="card p-4 shadow">
+  
+      <h3 class="text-center mb-3">🍽 Register Restaurant</h3>
+  
+      <!-- OWNER DETAILS -->
+      <input [(ngModel)]="name" placeholder="Owner Name" class="form-control mb-2">
+      <input [(ngModel)]="email" placeholder="Email" class="form-control mb-2">
+      <input [(ngModel)]="password" type="password" placeholder="Password" class="form-control mb-3">
+  
+      <hr>
+  
+      <!-- RESTAURANT DETAILS -->
+      <input [(ngModel)]="restaurantName" placeholder="Restaurant Name" class="form-control mb-2">
+      <input [(ngModel)]="cuisines" placeholder="Cuisines (comma separated)" class="form-control mb-3">
+  
+      <button class="btn btn-success w-100" (click)="register()">
+        Register & Start 🚀
+      </button>
+  
+    </div>
+  
+  </div>

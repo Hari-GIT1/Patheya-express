@@ -1,0 +1,40 @@
+.hero {
+    height: 280px;
+    background: linear-gradient(to right, #ff4d4d, #ff9966);
+    color: white;
+  
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  
+    text-align: center;
+  }
+  
+  .hero h1 {
+    font-size: 42px;
+    font-weight: bold;
+  }
+  
+  .search-bar {
+    width: 400px;
+    margin-top: 15px;
+    border-radius: 30px;
+    padding: 10px 20px;
+  }
+  
+  .restaurant-card {
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .restaurant-card:hover {
+    transform: scale(1.04);
+  }
+  
+  .card-img-top {
+    height: 200px;
+    object-fit: cover;
+  }

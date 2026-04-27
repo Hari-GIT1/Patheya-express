@@ -1,0 +1,29 @@
+<div class="container d-flex justify-content-center mt-5">
+    <mat-card style="width: 400px;">
+      <h2 class="text-center">Register</h2>
+  
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+  
+        <mat-form-field class="w-100">
+          <input matInput placeholder="Name" formControlName="name">
+        </mat-form-field>
+  
+        <mat-form-field class="w-100">
+          <input matInput placeholder="Email" formControlName="email">
+        </mat-form-field>
+  
+        <mat-form-field class="w-100">
+          <input matInput placeholder="Phone" formControlName="phone">
+        </mat-form-field>
+  
+        <mat-form-field class="w-100">
+          <input matInput type="password" placeholder="Password" formControlName="password">
+        </mat-form-field>
+  
+        <button mat-raised-button color="primary" class="w-100">
+          Register
+        </button>
+  
+      </form>
+    </mat-card>
+  </div>

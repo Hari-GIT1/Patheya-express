@@ -1,0 +1,52 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+
+  <!-- LOGO -->
+  <a class="navbar-brand fw-bold" routerLink="/">
+    🍔 PatheyaExpress
+  </a>
+
+  <div class="ms-auto d-flex align-items-center gap-3">
+
+    <!-- 🧑 CUSTOMER NAV -->
+    <ng-container *ngIf="isCustomer()">
+
+      <a routerLink="/" class="nav-link text-white">Home</a>
+      <a routerLink="/orders" class="nav-link text-white">My Orders</a>
+      <a routerLink="/cart" class="nav-link text-white">Cart 🛒</a>
+
+    </ng-container>
+
+    <!-- 🏪 OWNER NAV -->
+    <ng-container *ngIf="isOwner()">
+
+      <a routerLink="/restaurant/dashboard" class="nav-link text-white">Dashboard</a>
+      <a routerLink="/restaurant/menu" class="nav-link text-white">Menu</a>
+      <a routerLink="/restaurant/orders" class="nav-link text-white">Orders</a>
+
+    </ng-container>
+
+    <!-- 🔐 NOT LOGGED IN -->
+    <ng-container *ngIf="!isLoggedIn()">
+
+      <a routerLink="/auth/login" class="nav-link text-white">Login</a>
+      <a routerLink="/auth/register" class="nav-link text-white">Register</a>
+
+    </ng-container>
+
+    <!-- 🔓 LOGGED IN -->
+    <ng-container *ngIf="isLoggedIn()">
+
+      <span class="text-white small">
+        👤 {{ user?.email }}
+      </span>
+
+      <button class="btn btn-outline-light btn-sm"
+              (click)="logout()">
+        Logout
+      </button>
+
+    </ng-container>
+
+  </div>
+
+</nav>
