@@ -30,4 +30,7 @@ export class OrderService {
   getUserOrders(userId: string) {
     return this.http.get<any[]>(`/api/orders/user/${userId}`);
   }
+  submitReview(orderId: string, data: any) {
+    return this.http.put(`/api/orders/${orderId}/review`, data);
+  }
 }

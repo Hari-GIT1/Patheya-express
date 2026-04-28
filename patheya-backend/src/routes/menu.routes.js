@@ -3,6 +3,8 @@ const router = express.Router();
 const MenuItem = require('../models/MenuItem');
 const auth = require('../middleware/auth.middleware');
 const multer = require('multer');
+const Order = require('../models/Order');
+const mongoose = require('mongoose');
 
 const storage = multer.diskStorage({
   destination: 'uploads/',
@@ -120,6 +122,53 @@ router.put('/reorder', auth, async (req, res) => {
 
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+router.get('/top/:restaurantId', async (req, res) => {
+  try {
+    const { restaurantId } = req.params;
+
+    const topItems = await Order.aggregate([
+      { $match: { restaurantId } },
+      { $unwind: "$items" },
+    
+      {
+        $group: {
+          _id: "$items._id",
+          count: { $sum: "$items.quantity" }
+        }
+      },
+    
+      {
+        $lookup: {
+          from: "menuitems",   // collection name
+          localField: "_id",
+          foreignField: "_id",
+          as: "itemDetails"
+        }
+      },
+    
+      { $unwind: "$itemDetails" },
+    
+      {
+        $project: {
+          _id: 1,
+          count: 1,
+          name: "$itemDetails.name",
+          price: "$itemDetails.price",
+          image: "$itemDetails.image"
+        }
+      },
+    
+      { $sort: { count: -1 } },
+      { $limit: 5 }
+    ]);
+
+    res.json(topItems);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch top items' });
   }
 });
 module.exports = router;

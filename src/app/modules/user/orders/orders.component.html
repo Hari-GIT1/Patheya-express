@@ -1,30 +1,168 @@
 <div class="container mt-4">
 
-  <h3 class="fw-bold mb-3">My Orders 📦</h3>
+  <!-- 🔝 HEADER -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold">My Orders 🧾</h3>
 
-  <div *ngIf="orders.length === 0" class="text-muted">
-    No orders yet
+    <!-- FILTERS -->
+    <div class="d-flex gap-2">
+      <button class="btn btn-sm"
+              [ngClass]="selectedFilter === 'all' ? 'btn-dark' : 'btn-outline-dark'"
+              (click)="selectedFilter = 'all'">
+        All
+      </button>
+
+      <button class="btn btn-sm"
+              [ngClass]="selectedFilter === 'placed' ? 'btn-warning' : 'btn-outline-warning'"
+              (click)="selectedFilter = 'placed'">
+        Active
+      </button>
+
+      <button class="btn btn-sm"
+              [ngClass]="selectedFilter === 'delivered' ? 'btn-success' : 'btn-outline-success'"
+              (click)="selectedFilter = 'delivered'">
+        Delivered
+      </button>
+
+      <button class="btn btn-sm"
+              [ngClass]="selectedFilter === 'cancelled' ? 'btn-danger' : 'btn-outline-danger'"
+              (click)="selectedFilter = 'cancelled'">
+        Cancelled
+      </button>
+    </div>
   </div>
 
-  <div *ngFor="let order of orders" class="card mb-3 shadow-sm">
+  <!-- 📦 EMPTY STATE -->
+  <div *ngIf="filteredOrders.length === 0"
+       class="text-center text-muted mt-5">
+    <h5>No orders found 😔</h5>
+    <p>Start ordering your favorite food!</p>
+  </div>
 
-    <div class="card-body d-flex justify-content-between align-items-center">
+  <!-- 🧾 ORDER LIST -->
+  <div *ngFor="let order of filteredOrders" class="card mb-4 shadow-sm order-card">
+
+    <!-- 🧠 HEADER -->
+    <div class="card-header d-flex justify-content-between align-items-center">
 
       <div>
-        <strong>Order #{{ order._id.slice(-6) }}</strong><br>
-        <small class="text-muted">
-          {{ order.createdAt | date:'short' }}
-        </small>
-        <div>Status: {{ order.status }}</div>
+        <strong>Order #{{ order._id.slice(-6) }}</strong>
+        <div class="text-muted small">
+          {{ order.createdAt | date:'medium' }}
+        </div>
       </div>
 
-      <button class="btn btn-primary"
-              (click)="trackOrder(order._id)">
-        Track →
-      </button>
+      <!-- STATUS -->
+      <span class="badge text-capitalize px-3 py-2"
+            [ngClass]="{
+              'bg-warning': order.status === 'placed' || order.status === 'preparing',
+              'bg-info': order.status === 'out_for_delivery',
+              'bg-success': order.status === 'delivered',
+              'bg-danger': order.status === 'cancelled'
+            }">
+        {{ order.status.replace('_', ' ') }}
+      </span>
+
+    </div>
+
+    <!-- 🍱 ITEMS -->
+    <div class="card-body">
+
+      <div *ngFor="let item of order.items"
+           class="d-flex justify-content-between mb-2">
+
+        <div>
+          <strong>{{ item.name }}</strong>
+          <span class="text-muted"> × {{ item.quantity }}</span>
+        </div>
+
+        <div>₹ {{ item.price * item.quantity }}</div>
+
+      </div>
+
+      <hr>
+
+      <!-- 💰 TOTAL -->
+      <div class="d-flex justify-content-between fw-bold">
+        <span>Total</span>
+        <span>₹ {{ order.total }}</span>
+      </div>
+
+    </div>
+
+    <!-- ⚡ ACTIONS -->
+    <div class="card-footer d-flex justify-content-between align-items-center">
+
+      <!-- LEFT -->
+      <div class="d-flex gap-2">
+
+        <button class="btn btn-outline-primary btn-sm"
+                (click)="trackOrder(order._id)">
+          Track 📍
+        </button>
+
+        <button class="btn btn-outline-secondary btn-sm"
+                (click)="reorder(order)">
+          Reorder 🔁
+        </button>
+
+      </div>
+
+      <!-- RIGHT -->
+      <div>
+
+        <!-- ⭐ REVIEW -->
+        <button *ngIf="order.status === 'delivered' && !order.rating"
+                class="btn btn-outline-warning btn-sm"
+                (click)="openReview(order)">
+          Rate ⭐
+        </button>
+
+        <!-- ⭐ SHOW RATING -->
+        <span *ngIf="order.rating"
+              class="text-warning">
+          {{ order.rating }} ⭐
+        </span>
+
+      </div>
 
     </div>
 
   </div>
+  <!-- ⭐ REVIEW MODAL -->
+<div *ngIf="showReviewModal" class="modal-overlay">
+
+  <div class="modal-box">
+
+    <h5>Rate your order ⭐</h5>
+
+    <div class="emoji-rating d-flex gap-3 mb-3">
+
+      <span (click)="setRating(5)">😍</span>
+      <span (click)="setRating(3)">😐</span>
+      <span (click)="setRating(1)">😡</span>
+    
+    </div>
+
+    <textarea [(ngModel)]="review"
+              class="form-control mb-3"
+              placeholder="Write review...">
+    </textarea>
+
+    <div class="d-flex justify-content-end gap-2">
+      <button class="btn btn-secondary"
+              (click)="showReviewModal=false">
+        Cancel
+      </button>
+
+      <button class="btn btn-warning"
+              (click)="submitReview()">
+        Submit ⭐
+      </button>
+    </div>
+
+  </div>
+
+</div>
 
 </div>

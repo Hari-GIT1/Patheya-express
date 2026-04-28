@@ -89,4 +89,15 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+router.put('/:id/review', async (req, res) => {
+  const { rating, review } = req.body;
+
+  const order = await Order.findByIdAndUpdate(
+    req.params.id,
+    { rating, review },
+    { new: true }
+  );
+
+  res.json(order);
+});
 module.exports = router;

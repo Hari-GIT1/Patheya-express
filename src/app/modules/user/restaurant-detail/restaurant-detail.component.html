@@ -1,41 +1,121 @@
 <div class="container-fluid mt-3">
+
   <div class="row">
+    
+    <!-- 🍽️ LEFT SIDE (MENU + TOP ITEMS) -->
+    <div class="col-lg-8" *ngIf="!loading">
 
-    <!-- MENU -->
-    <div class="col-lg-8">
+      <!-- 🔥 TOP ITEMS -->
+      <div class="top-items-scroll">
 
-      <h3 class="fw-bold mb-3">Menu 🍽️</h3>
+        <div *ngFor="let item of topItems" class="top-card">
+      
+          <div class="image-box">
+            <img 
+              [src]="'http://localhost:3000/uploads/' + item.image"
+              alt="food">
+      
+            <div class="rating-badge">
+              ⭐ {{ item.avgRating | number:'1.1-1' }}
+            </div>
+      
+            <div class="tag">🔥 Popular</div>
+          </div>
+      
+          <div class="p-2">
+      
+            <div class="fw-semibold">
+              {{ item.name }}
+            </div>
+      
+            <div class="text-muted small">
+              {{ item.totalOrders }} orders
+            </div>
+      
+            <div class="fw-bold">
+              ₹ {{ item.price }}
+            </div>
+      
+            <button class="btn btn-sm btn-success w-100 mt-2"
+                    (click)="addFullItemToCart(item)">
+              ADD +
+            </button>
+      
+          </div>
+      
+        </div>
+      
+      </div>
+                <!-- 🔥 SHIMMER LOADING -->
+                <div *ngIf="loading">
 
-      <div *ngFor="let item of menu" class="card mb-3 shadow-sm menu-card">
+                  <!-- TOP ITEMS SHIMMER -->
+                  <div class="top-items-scroll mb-4">
+          
+                    <div *ngFor="let i of [1,2,3,4]" class="top-card shimmer-card">
+                      <div class="shimmer-img shimmer"></div>
+                      <div class="p-2">
+                        <div class="shimmer-line shimmer mb-2"></div>
+                        <div class="shimmer-line small shimmer"></div>
+                      </div>
+                    </div>
+          
+                  </div>
+          
+                  <!-- MENU SHIMMER -->
+                  <div *ngFor="let i of [1,2,3,4,5]" class="card mb-3 p-3 shimmer-card">
+          
+                    <div class="d-flex justify-content-between">
+          
+                      <div>
+                        <div class="shimmer-line shimmer mb-2"></div>
+                        <div class="shimmer-line small shimmer"></div>
+                      </div>
+          
+                      <div class="shimmer-btn shimmer"></div>
+          
+                    </div>
+          
+                  </div>
+          
+                </div>
+      <!-- 🍱 MENU -->
+      <h4 class="fw-bold mb-3">Menu 🍽️</h4>
+
+      <div *ngFor="let item of menu" class="menu-card card mb-3 shadow-sm">
 
         <div class="card-body d-flex justify-content-between">
 
+          <!-- LEFT -->
           <div>
-            <h5>{{ item.name }}</h5>
-            <p class="text-muted">₹ {{ item.price }}</p>
 
-            <span class="badge"
-              [ngClass]="item.category === 'veg' ? 'bg-success' : 'bg-danger'">
+            <h5>{{ item.name }}</h5>
+
+            <p class="text-muted mb-1">₹ {{ item.price }}</p>
+
+            <span class="badge" [ngClass]="item.category === 'veg' ? 'bg-success' : 'bg-danger'">
               {{ item.category }}
             </span>
+
           </div>
 
-          <!-- ADD / QTY -->
+          <!-- RIGHT -->
           <div class="d-flex align-items-center">
 
             <div *ngIf="!item.quantity">
-              <button class="btn btn-outline-primary"
-                      (click)="addToCart(item)">
+              <button class="btn btn-outline-primary" (click)="addToCart(item)">
                 ADD +
               </button>
             </div>
 
-            <div *ngIf="item.quantity" class="d-flex gap-2 align-items-center">
-              <button class="btn btn-sm btn-light"
-                      (click)="decrease(item)">-</button>
+            <div *ngIf="item.quantity" class="qty-box d-flex align-items-center gap-2">
+
+              <button (click)="decrease(item)">-</button>
+
               <span>{{ item.quantity }}</span>
-              <button class="btn btn-sm btn-light"
-                      (click)="increase(item)">+</button>
+
+              <button (click)="increase(item)">+</button>
+
             </div>
 
           </div>
@@ -46,14 +126,14 @@
 
     </div>
 
-    <!-- CART -->
+    <!-- 🛒 CART -->
     <div class="col-lg-4">
 
-      <div class="card p-3 sticky-top cart-box">
+      <div class="cart-box card p-3 sticky-top">
 
-        <h5>Your Cart 🛒</h5>
+        <h5 class="fw-bold mb-3">Your Cart 🛒</h5>
 
-        <div *ngIf="cartItems.length === 0" class="text-muted text-center">
+        <div *ngIf="cartItems.length === 0" class="text-center text-muted">
           Cart is empty
         </div>
 
@@ -62,11 +142,11 @@
           <div class="d-flex justify-content-between">
 
             <div>
-              {{ item.name }}<br>
+              {{ item.name }} <br>
               ₹ {{ item.price }}
             </div>
 
-            <div class="d-flex gap-2 align-items-center">
+            <div class="d-flex align-items-center gap-2">
               <button (click)="decrease(item)">-</button>
               {{ item.quantity }}
               <button (click)="increase(item)">+</button>
@@ -80,8 +160,7 @@
 
         <h5>Total: ₹ {{ total }}</h5>
 
-        <button class="btn btn-success w-100"
-                routerLink="/checkout">
+        <button class="btn btn-success w-100" routerLink="/checkout">
           Checkout →
         </button>
 
@@ -90,4 +169,5 @@
     </div>
 
   </div>
+
 </div>

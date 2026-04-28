@@ -1,0 +1,147 @@
+/* 🔥 TOP ITEMS */
+
+.top-items-scroll {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+  }
+  
+  .top-items-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .top-card {
+    min-width: 180px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: 0.2s ease;
+  }
+  
+  .top-card:hover {
+    transform: translateY(-4px);
+  }
+  
+  .image-box {
+    position: relative;
+  }
+  
+  .image-box img {
+    width: 100%;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 12px 12px 0 0;
+  }
+  
+  /* ⭐ Rating Badge */
+  .rating-badge {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    background: #000;
+    color: #fff;
+    font-size: 12px;
+    padding: 3px 6px;
+    border-radius: 6px;
+  }
+  
+  /* 🔥 Tag */
+  .tag {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: #ff4d4f;
+    color: #fff;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+  
+  /* 🍱 MENU CARD */
+  
+  .menu-card {
+    border-radius: 10px;
+    transition: 0.2s ease;
+  }
+  
+  .menu-card:hover {
+    transform: scale(1.01);
+  }
+  
+  /* ➕ QTY BOX */
+  
+  .qty-box button {
+    border: none;
+    background: #f1f1f1;
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+  
+  /* 🛒 CART */
+  
+  .cart-box {
+    top: 80px;
+    border-radius: 12px;
+  }
+  
+  .cart-box button {
+    border-radius: 6px;
+  }
+  
+  /* 🧠 RESPONSIVE */
+  
+  @media (max-width: 768px) {
+    .top-card {
+      min-width: 140px;
+    }
+  }
+  /* 🔥 SHIMMER BASE */
+.shimmer {
+    background: linear-gradient(
+      90deg,
+      #eeeeee 25%,
+      #dddddd 50%,
+      #eeeeee 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.2s infinite;
+  }
+  
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+  
+  /* 🔲 SHIMMER CARDS */
+  .shimmer-card {
+    border-radius: 12px;
+  }
+  
+  /* 🖼 IMAGE */
+  .shimmer-img {
+    height: 130px;
+    border-radius: 12px 12px 0 0;
+  }
+  
+  /* 📄 TEXT */
+  .shimmer-line {
+    height: 14px;
+    width: 120px;
+    border-radius: 6px;
+  }
+  
+  .shimmer-line.small {
+    width: 80px;
+  }
+  
+  /* 🔘 BUTTON */
+  .shimmer-btn {
+    height: 35px;
+    width: 60px;
+    border-radius: 8px;
+  }

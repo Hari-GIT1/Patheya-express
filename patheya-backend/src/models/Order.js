@@ -3,12 +3,15 @@ const mongoose = require('mongoose');
 const orderSchema = new mongoose.Schema({
   userId: { type: String, required: true },
   restaurantId: { type: String, required: true },
+  rating: Number,
+  review: String,
 
   items: [
     {
       name: String,
       price: Number,
-      quantity: Number
+      quantity: Number,
+      _id: mongoose.Schema.Types.ObjectId
     }
   ],
 

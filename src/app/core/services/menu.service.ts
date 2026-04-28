@@ -30,4 +30,7 @@ export class MenuService {
   reorderMenu(items: any[]) {
     return this.http.put('/api/menu/reorder', { items });
   }
+  getTopItems(restaurantId: string) {
+    return this.http.get<any[]>(`/api/menu/top/${restaurantId}`);
+  }
 }
