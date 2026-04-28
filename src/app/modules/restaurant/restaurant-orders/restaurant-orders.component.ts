@@ -74,7 +74,6 @@ export class RestaurantOrdersComponent implements OnInit, OnDestroy {
   loadOrders(restaurantId: string) {
     this.orderService.getRestaurantOrders(restaurantId)
       .subscribe((res: any[]) => {
-        console.log('ORDERS FROM API:', res); // 🔥 MUST SHOW DATA
         this.orders = res;
       });
   }

@@ -19,6 +19,7 @@ const io = new Server(server, {
   cors: { origin: '*' }
 });
 
+
 app.set('io', io);
 connectDB();
 
@@ -31,11 +32,15 @@ app.use('/uploads', express.static('uploads'));
 
 // ✅ socket connection
 io.on('connection', (socket) => {
-  console.log('User connected:', socket.id);
-
   socket.on('joinOrderRoom', (orderId) => {
     socket.join(orderId);
   });
+});
+io.on('connection', (socket) => {
+  socket.on('joinRestaurant', (restaurantId) => {
+    socket.join(restaurantId);
+  });
+
 });
 
 // ❗ IMPORTANT: use server.listen, NOT app.listen

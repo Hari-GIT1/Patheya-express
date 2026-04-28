@@ -25,4 +25,9 @@ export class MenuService {
   deleteMenuItem(id: string) {
     return this.http.delete(`/api/menu/${id}`);
   }
+
+  // REORDER ITEMS
+  reorderMenu(items: any[]) {
+    return this.http.put('/api/menu/reorder', { items });
+  }
 }

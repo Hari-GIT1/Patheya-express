@@ -19,7 +19,7 @@ router.get('/:restaurantId', async (req, res) => {
 
     const items = await MenuItem.find({
       restaurantId: req.params.restaurantId
-    });
+    }).sort({ position: 1 });
 
     res.json(items);
 
@@ -53,23 +53,37 @@ router.post('/', auth, upload.single('image'), async (req, res) => {
 router.put('/:id', auth, upload.single('image'), async (req, res) => {
   try {
 
-    console.log('USER:', req.user);
-    console.log('BODY:', req.body);
-    console.log('FILE:', req.file);
-
     const item = await MenuItem.findById(req.params.id);
 
     if (!item) {
       return res.status(404).json({ error: 'Item not found' });
     }
 
-    // TEMP: skip ownership check
+    // 🔐 OPTIONAL: ownership check (recommended)
+    if (item.restaurantId !== req.user.restaurantId) {
+      return res.status(403).json({ error: 'Unauthorized' });
+    }
+
+    // 🧠 SAFE UPDATE OBJECT
+    const updateData = {
+      name: req.body.name,
+      price: req.body.price,
+      category: req.body.category
+    };
+
+    // 🧠 HANDLE POSITION (IMPORTANT FOR DRAG)
+    if (req.body.position !== undefined) {
+      updateData.position = Number(req.body.position);
+    }
+
+    // 🖼️ IMAGE
+    if (req.file) {
+      updateData.image = req.file.filename;
+    }
+
     const updatedItem = await MenuItem.findByIdAndUpdate(
       req.params.id,
-      {
-        ...req.body,
-        image: req.file?.filename || item.image
-      },
+      updateData,
       { new: true }
     );
 
@@ -89,5 +103,23 @@ router.delete('/:id', auth, async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+router.put('/reorder', auth, async (req, res) => {
+  try {
 
+    const { items } = req.body;
+
+    const updates = items.map(item =>
+      MenuItem.findByIdAndUpdate(item._id, {
+        position: item.position
+      })
+    );
+
+    await Promise.all(updates);
+
+    res.json({ message: 'Reordered successfully' });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 module.exports = router;

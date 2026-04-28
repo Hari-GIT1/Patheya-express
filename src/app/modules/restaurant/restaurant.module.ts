@@ -7,6 +7,7 @@ import { RestaurantOrdersComponent } from './restaurant-orders/restaurant-orders
 import { RestaurantDashboardComponent } from './restaurant-dashboard/restaurant-dashboard.component';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     CommonModule,
     RestaurantRoutingModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    DragDropModule
   ]
 })
 export class RestaurantModule { }

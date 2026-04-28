@@ -1,0 +1,16 @@
+.drag-handle {
+    cursor: grab;
+    font-weight: bold;
+    padding: 5px;
+    background: #f1f1f1;
+    border-radius: 5px;
+    margin-bottom: 5px;
+  }
+  
+  .menu-card {
+    transition: 0.2s;
+  }
+  
+  .menu-card:hover {
+    transform: scale(1.02);
+  }

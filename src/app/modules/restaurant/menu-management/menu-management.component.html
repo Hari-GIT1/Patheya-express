@@ -1,85 +1,54 @@
 <div class="container mt-4">
 
-  <!-- 🧾 ADD / EDIT FORM -->
+  <!-- FORM -->
   <div class="card p-3 mb-4">
-
-    <h5 class="mb-3">
-      {{ editingItemId ? 'Edit Item ✏️' : 'Add New Item 🍽️' }}
-    </h5>
+    <h5>{{ editingItemId ? 'Edit Item' : 'Add Item' }}</h5>
 
     <form [formGroup]="form">
 
-      <!-- NAME -->
       <input class="form-control mb-2"
              placeholder="Item name"
              formControlName="name">
 
-      <!-- PRICE -->
       <input class="form-control mb-2"
              type="number"
              placeholder="Price"
              formControlName="price">
 
-      <!-- CATEGORY -->
       <select class="form-control mb-2"
               formControlName="category">
         <option value="veg">Veg</option>
         <option value="non-veg">Non Veg</option>
       </select>
 
-      <!-- IMAGE -->
       <input type="file"
              class="form-control mb-2"
              (change)="onFileSelect($event)">
 
-      <!-- BUTTON -->
       <button class="btn btn-primary w-100"
-              (click)="addItem()"
-              [disabled]="form.invalid">
-
-        {{ editingItemId ? 'Update Item' : 'Add Item' }}
+              (click)="addItem()">
+        {{ editingItemId ? 'Update' : 'Add' }}
       </button>
 
     </form>
   </div>
 
-  <!-- 🔍 SEARCH -->
-  <input 
-    type="text"
-    class="form-control mb-3"
-    placeholder="Search items..."
-    [(ngModel)]="searchText">
+  <!-- 🔥 DRAG CONTAINER -->
+  <div cdkDropList
+       (cdkDropListDropped)="drop($event)"
+       class="row">
 
-  <!-- 🍱 FILTER -->
-  <div class="mb-3 d-flex gap-2">
-    <button class="btn"
-            [ngClass]="selectedCategory === 'all' ? 'btn-dark' : 'btn-outline-dark'"
-            (click)="selectedCategory = 'all'">All</button>
-
-    <button class="btn"
-            [ngClass]="selectedCategory === 'veg' ? 'btn-success' : 'btn-outline-success'"
-            (click)="selectedCategory = 'veg'">Veg</button>
-
-    <button class="btn"
-            [ngClass]="selectedCategory === 'non-veg' ? 'btn-danger' : 'btn-outline-danger'"
-            (click)="selectedCategory = 'non-veg'">Non-Veg</button>
-  </div>
-
-  <!-- 🔽 SORT -->
-  <select class="form-select mb-4" [(ngModel)]="sortOption">
-    <option value="">Sort</option>
-    <option value="priceLow">Price ↑</option>
-    <option value="priceHigh">Price ↓</option>
-    <option value="name">Name</option>
-  </select>
-
-  <!-- 🍔 MENU -->
-  <div class="row">
-
+    <!-- MENU ITEMS -->
     <div class="col-md-4 mb-4"
-         *ngFor="let item of filteredMenuItems">
+         *ngFor="let item of menuItems"
+         cdkDrag>
 
       <div class="card shadow-sm h-100 menu-card">
+
+        <!-- DRAG HANDLE -->
+        <div class="drag-handle" cdkDragHandle>
+          ☰ Drag
+        </div>
 
         <!-- IMAGE -->
         <img *ngIf="item.image"
@@ -115,6 +84,7 @@
           </div>
 
         </div>
+
       </div>
 
     </div>

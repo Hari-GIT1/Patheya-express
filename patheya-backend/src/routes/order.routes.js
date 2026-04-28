@@ -18,6 +18,11 @@ router.post('/', async (req, res) => {
       total,
       status: 'placed'
     });
+    const io = req.app.get('io');
+
+    io.to(restaurantId.toString()).emit('restaurantOrderUpdate', order);
+
+    console.log('🚀 ORDER EMITTED TO RESTAURANT:', restaurantId);
 
     res.json(order);
 

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MenuService } from '../../../core/services/menu.service';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-menu-management',
@@ -130,5 +131,17 @@ export class MenuManagementComponent implements OnInit {
     }
 
     return items;
+  }
+  drop(event: CdkDragDrop<any[]>) {
+
+    moveItemInArray(this.menuItems, event.previousIndex, event.currentIndex);
+  
+    // 🔥 Update positions
+    const updated = this.menuItems.map((item, index) => ({
+      _id: item._id,
+      position: index
+    }));
+  
+    this.menuService.reorderMenu(updated).subscribe();
   }
 }

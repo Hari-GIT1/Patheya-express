@@ -11,6 +11,8 @@ import { FormsModule } from '@angular/forms';
 import { CoreModule } from './core/core.module';
 import { AppRoutingModule } from './app-routing.module';
 import { GoogleMapsModule } from '@angular/google-maps';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { OrderPopupComponent } from './shared/components/order-popup/order-popup.component';
 
 
 @NgModule({
@@ -25,7 +27,8 @@ import { GoogleMapsModule } from '@angular/google-maps';
     CoreModule,
     SharedModule,
     AppRoutingModule,
-    GoogleMapsModule
+    GoogleMapsModule,
+    DragDropModule
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true } ],
   bootstrap: [AppComponent]

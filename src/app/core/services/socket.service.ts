@@ -16,6 +16,9 @@ export class SocketService {
     this.socket.emit('joinOrderRoom', orderId);
   }
 
+  joinRestaurant(restaurantId: string) {
+    this.socket.emit('joinRestaurant', restaurantId);
+  }
   onOrderStatusUpdate(callback: (data: any) => void) {
     this.socket.on('orderStatusUpdated', callback);
   }

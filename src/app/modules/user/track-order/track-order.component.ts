@@ -27,15 +27,12 @@ zoom = 14;
     this.drawRoute();
     const orderId = this.route.snapshot.paramMap.get('id');
 
-    console.log('TRACK ID:', orderId);
-
     if (!orderId) return;
 
     this.socketService.joinOrder(orderId);
 
     this.orderService.getOrder(orderId).subscribe({
       next: (res: any) => {
-        console.log('ORDER DATA:', res);
         this.order = res;
       },
       error: (err) => console.error(err)
