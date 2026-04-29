@@ -13,6 +13,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { OrderPopupComponent } from './shared/components/order-popup/order-popup.component';
+import { IonicModule } from '@ionic/angular';
 
 
 @NgModule({
@@ -28,7 +29,8 @@ import { OrderPopupComponent } from './shared/components/order-popup/order-popup
     SharedModule,
     AppRoutingModule,
     GoogleMapsModule,
-    DragDropModule
+    DragDropModule,
+    IonicModule.forRoot({})
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true } ],
   bootstrap: [AppComponent]

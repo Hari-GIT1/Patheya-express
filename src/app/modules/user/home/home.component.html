@@ -1,100 +1,90 @@
-<!-- HERO -->
-<div class="hero">
-  <h1>Hungry? 🍔</h1>
-  <p>Order from your favorite restaurants</p>
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Hungry? 🍔</ion-title>
+  </ion-toolbar>
+</ion-header>
 
-  <!-- 🔍 SEARCH -->
-  <input
-    type="text"
-    class="form-control search-bar"
-    placeholder="Search restaurants..."
-    [(ngModel)]="searchTerm">
-</div>
+<ion-content>
 
-<!-- FILTERS -->
-<div class="container mt-4">
+  <!-- 🔍 HERO + SEARCH -->
+  <div class="ion-padding ion-text-center">
+    <h2>Order from your favorite restaurants</h2>
 
-  <div class="d-flex justify-content-between align-items-center mb-3">
-
-    <!-- 🍱 CATEGORY -->
-    <div class="d-flex gap-2">
-      <button class="btn"
-              [ngClass]="selectedCategory === 'all' ? 'btn-dark' : 'btn-outline-dark'"
-              (click)="selectedCategory = 'all'">
-        All
-      </button>
-
-      <button class="btn"
-              [ngClass]="selectedCategory === 'veg' ? 'btn-success' : 'btn-outline-success'"
-              (click)="selectedCategory = 'veg'">
-        Veg
-      </button>
-
-      <button class="btn"
-              [ngClass]="selectedCategory === 'non-veg' ? 'btn-danger' : 'btn-outline-danger'"
-              (click)="selectedCategory = 'non-veg'">
-        Non-Veg
-      </button>
-    </div>
-
-    <!-- 🔽 SORT -->
-    <select class="form-select w-auto"
-            [(ngModel)]="sortOption">
-      <option value="">Sort</option>
-      <option value="rating">Rating</option>
-      <option value="delivery">Delivery Time</option>
-    </select>
-
+    <ion-searchbar
+      placeholder="Search restaurants..."
+      [(ngModel)]="searchTerm">
+    </ion-searchbar>
   </div>
 
-  <!-- LOADING -->
-  <div *ngIf="restaurants.length === 0" class="text-center mt-5">
-    Loading restaurants...
+  <!-- 🍱 CATEGORY FILTER -->
+  <ion-segment [(ngModel)]="selectedCategory" class="ion-padding-horizontal">
+
+    <ion-segment-button value="all">
+      <ion-label>All</ion-label>
+    </ion-segment-button>
+
+    <ion-segment-button value="veg">
+      <ion-label color="success">Veg</ion-label>
+    </ion-segment-button>
+
+    <ion-segment-button value="non-veg">
+      <ion-label color="danger">Non-Veg</ion-label>
+    </ion-segment-button>
+
+  </ion-segment>
+
+  <!-- 🔽 SORT -->
+  <ion-item>
+    <ion-label>Sort</ion-label>
+    <ion-select [(ngModel)]="sortOption">
+      <ion-select-option value="">None</ion-select-option>
+      <ion-select-option value="rating">Rating</ion-select-option>
+      <ion-select-option value="delivery">Delivery Time</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <!-- ⏳ LOADING -->
+  <div *ngIf="restaurants.length === 0" class="ion-text-center ion-padding">
+    <ion-spinner></ion-spinner>
+    <p>Loading restaurants...</p>
   </div>
 
-  <!-- RESTAURANTS -->
-  <div class="row">
+  <!-- 🍽 RESTAURANTS -->
+  <ion-list>
 
-    <div class="col-md-4 mb-4"
-         *ngFor="let r of filteredRestaurants">
+    <ion-card *ngFor="let r of getFilteredRestaurants()"
+              (click)="openRestaurant(r._id)">
 
-      <div class="card restaurant-card"
-           (click)="openRestaurant(r._id)">
+      <img src="https://source.unsplash.com/400x300/?food,restaurant" />
 
-        <img src="https://source.unsplash.com/400x300/?food,restaurant"
-             class="card-img-top">
+      <ion-card-header>
+        <ion-card-title>{{ r.name }}</ion-card-title>
+        <ion-card-subtitle>{{ r.cuisine }}</ion-card-subtitle>
+      </ion-card-header>
 
-        <div class="card-body">
+      <ion-card-content>
 
-          <h5 class="fw-bold">{{ r.name }}</h5>
+        <div class="ion-flex ion-justify-content-between ion-align-items-center">
 
-          <p class="text-muted mb-1">
-            {{ r.cuisine }}
-          </p>
-
-          <div class="d-flex justify-content-between align-items-center">
-
-            <!-- ⭐ Rating -->
-            <div class="rating-box" *ngIf="r.avgRating > 0">
-              ⭐ {{ r.avgRating | number:'1.1-1' }}
-              <span class="text-muted small">
-                ({{ r.totalRatings }})
-              </span>
-            </div>
-
-            <!-- ⏱ Delivery -->
-            <small class="text-muted">
-              {{ r.deliveryTime || 30 }} mins
+          <!-- ⭐ Rating -->
+          <div *ngIf="r.avgRating > 0">
+            ⭐ {{ r.avgRating | number:'1.1-1' }}
+            <small>
+              ({{ r.totalRatings }})
             </small>
-
           </div>
+
+          <!-- ⏱ Delivery -->
+          <small>
+            {{ r.deliveryTime || 30 }} mins
+          </small>
 
         </div>
 
-      </div>
+      </ion-card-content>
 
-    </div>
+    </ion-card>
 
-  </div>
+  </ion-list>
 
-</div>
+</ion-content>

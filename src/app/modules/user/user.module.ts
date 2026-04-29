@@ -11,6 +11,7 @@ import { CheckoutComponent } from './checkout/checkout.component';
 import { FormsModule } from '@angular/forms';
 import { TrackOrderComponent } from './track-order/track-order.component';
 import { GoogleMapsModule } from '@angular/google-maps';
+import { IonicModule } from '@ionic/angular'; 
 
 
 @NgModule({
@@ -27,7 +28,8 @@ import { GoogleMapsModule } from '@angular/google-maps';
     CommonModule,
     UserRoutingModule,
     FormsModule,
-    GoogleMapsModule
+    GoogleMapsModule,
+    IonicModule
   ]
 })
 export class UserModule { }

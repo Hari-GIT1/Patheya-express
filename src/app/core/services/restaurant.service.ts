@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Restaurant } from '../../models/restaurant.model';
 import { MenuItem } from '../../models/menu.model';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '@env/environment';
 
 @Injectable({ providedIn: 'root' })
 export class RestaurantService {
@@ -22,7 +23,7 @@ export class RestaurantService {
   getMenu(restaurantId: string) {
     return this.api.get(`restaurants/${restaurantId}/menu`);
   }
-  getAll(): Observable<any[]> {
-    return this.http.get<any[]>('/api/restaurants');
+  getAll() {
+    return this.http.get(`${environment.apiUrl}/restaurants`);
   }
 }

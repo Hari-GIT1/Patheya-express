@@ -8,7 +8,11 @@ require('dotenv').config();
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: '*', // allow mobile + web
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
 app.use(express.json());
 
 // ✅ create HTTP server
@@ -32,11 +36,11 @@ app.use('/uploads', express.static('uploads'));
 
 // ✅ socket connection
 io.on('connection', (socket) => {
+
   socket.on('joinOrderRoom', (orderId) => {
     socket.join(orderId);
   });
-});
-io.on('connection', (socket) => {
+
   socket.on('joinRestaurant', (restaurantId) => {
     socket.join(restaurantId);
   });
@@ -44,6 +48,6 @@ io.on('connection', (socket) => {
 });
 
 // ❗ IMPORTANT: use server.listen, NOT app.listen
-server.listen(3000, () => {
+server.listen(3000,'0.0.0.0', () => {
   console.log('Server running on port 3000');
 });
