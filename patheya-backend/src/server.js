@@ -29,6 +29,7 @@ app.use('/api/menu', require('./routes/menu.routes'));
 app.use('/api/orders', require('./routes/order.routes'));
 app.use('/api/restaurants', require('./routes/restaurant.routes'));
 app.use('/uploads', express.static('uploads'));
+app.use('/api/payment', require('./routes/payment.routes'));
 
 // ✅ socket connection
 io.on('connection', (socket) => {

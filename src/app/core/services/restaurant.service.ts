@@ -23,6 +23,6 @@ export class RestaurantService {
     return this.api.get(`restaurants/${restaurantId}/menu`);
   }
   getAll(): Observable<any[]> {
-    return this.http.get<any[]>('http://192.168.10.232:3000/api/restaurants');
+    return this.http.get<any[]>('https://patheya-express.onrender.com/api/restaurants');
   }
 }
