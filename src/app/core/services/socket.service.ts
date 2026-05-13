@@ -9,7 +9,7 @@ export class SocketService {
   private socket: Socket;
 
   constructor() {
-    this.socket = io('http://192.168.10.232:3000');
+    this.socket = io('https://patheya-express.onrender.com');
   }
 
   joinOrder(orderId: string) {

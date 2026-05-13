@@ -1,6 +1,6 @@
 {
     "/api": {
-      "target": "http://192.168.10.232:3000",
+      "target": "https://patheya-express.onrender.com",
       "secure": false,
       "changeOrigin": true,
       "logLevel": "debug"
