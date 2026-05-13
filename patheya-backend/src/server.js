@@ -3,6 +3,7 @@ const cors = require('cors');
 const http = require('http'); // ✅ FIX
 const { Server } = require('socket.io');
 const connectDB = require('./config/db');
+const PORT = process.env.PORT || 3000;
 
 require('dotenv').config();
 
@@ -37,8 +38,10 @@ io.on('connection', (socket) => {
     socket.join(orderId);
   });
 });
+app.get('/', (req, res) => {
+  res.send('Patheya Express Backend Running');
+});
 
-// ❗ IMPORTANT: use server.listen, NOT app.listen
-server.listen(3000, () => {
-  console.log('Server running on port 3000');
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
 });

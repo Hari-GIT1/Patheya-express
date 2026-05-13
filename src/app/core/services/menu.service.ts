@@ -8,21 +8,21 @@ export class MenuService {
 
   // 📥 GET MENU
   getMenu(restaurantId: string) {
-    return this.http.get<any[]>(`/api/menu/${restaurantId}`);
+    return this.http.get<any[]>(`http://192.168.10.232:3000/api/menu/${restaurantId}`);
   }
 
   // ➕ ADD ITEM
   addItem(data: FormData) {
-    return this.http.post('/api/menu', data);
+    return this.http.post('http://192.168.10.232:3000/api/menu', data);
   }
 
   // ✏️ UPDATE ITEM
   updateItem(id: string, data: FormData) {
-    return this.http.put(`/api/menu/${id}`, data);
+    return this.http.put(`http://192.168.10.232:3000/api/menu/${id}`, data);
   }
 
   // ❌ DELETE ITEM
   deleteMenuItem(id: string) {
-    return this.http.delete(`/api/menu/${id}`);
+    return this.http.delete(`http://192.168.10.232:3000/api/menu/${id}`);
   }
 }

@@ -9,7 +9,7 @@ export class SocketService {
   private socket: Socket;
 
   constructor() {
-    this.socket = io('http://localhost:3000');
+    this.socket = io('http://192.168.10.232:3000');
   }
 
   joinOrder(orderId: string) {

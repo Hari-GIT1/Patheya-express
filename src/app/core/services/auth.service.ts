@@ -18,12 +18,15 @@ export class AuthService {
 
   // ✅ LOGIN API
   login(data: any): Observable<any> {
-    return this.http.post('/api/auth/login', data);
+    return this.http.post(
+      'http://192.168.10.232:3000/api/auth/login',
+      data
+    );
   }
 
   // ✅ REGISTER API
   register(data: any): Observable<any> {
-    return this.http.post('/api/auth/register', data);
+    return this.http.post('http://192.168.10.232:3000/api/auth/register', data);
   }
 
   // ✅ SAVE USER (AFTER LOGIN)
