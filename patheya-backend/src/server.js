@@ -3,8 +3,11 @@ const cors = require('cors');
 const http = require('http'); // ✅ FIX
 const { Server } = require('socket.io');
 const connectDB = require('./config/db');
+const PORT = process.env.PORT || 3000;
 
-require('dotenv').config();
+require('dotenv-flow').config();
+console.log('ENV:', process.env.NODE_ENV);
+console.log('DB:', process.env.MONGO_URI);
 
 const app = express();
 
@@ -28,6 +31,7 @@ app.use('/api/menu', require('./routes/menu.routes'));
 app.use('/api/orders', require('./routes/order.routes'));
 app.use('/api/restaurants', require('./routes/restaurant.routes'));
 app.use('/uploads', express.static('uploads'));
+app.use('/api/payment', require('./routes/payment.routes'));
 
 // ✅ socket connection
 io.on('connection', (socket) => {
@@ -37,8 +41,10 @@ io.on('connection', (socket) => {
     socket.join(orderId);
   });
 });
+app.get('/', (req, res) => {
+  res.send('Patheya Express Backend Running');
+});
 
-// ❗ IMPORTANT: use server.listen, NOT app.listen
-server.listen(3000, () => {
-  console.log('Server running on port 3000');
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
 });
