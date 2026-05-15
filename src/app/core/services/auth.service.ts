@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -9,6 +10,7 @@ export class AuthService {
   private userSubject = new BehaviorSubject<any>(
     JSON.parse(localStorage.getItem('user') || 'null')
   );
+  private baseUrl = environment.api.baseUrl;
 
   user$ = this.userSubject.asObservable();
 
@@ -19,14 +21,14 @@ export class AuthService {
   // ✅ LOGIN API
   login(data: any): Observable<any> {
     return this.http.post(
-      'https://patheya-express.onrender.com/api/auth/login',
+      `${this.baseUrl}/auth/login`,
       data
     );
   }
 
   // ✅ REGISTER API
   register(data: any): Observable<any> {
-    return this.http.post('https://patheya-express.onrender.com/api/auth/register', data);
+    return this.http.post(`${this.baseUrl}/auth/register`, data);
   }
 
   // ✅ SAVE USER (AFTER LOGIN)
