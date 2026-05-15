@@ -5,7 +5,9 @@ const { Server } = require('socket.io');
 const connectDB = require('./config/db');
 const PORT = process.env.PORT || 3000;
 
-require('dotenv').config();
+require('dotenv-flow').config();
+console.log('ENV:', process.env.NODE_ENV);
+console.log('DB:', process.env.MONGO_URI);
 
 const app = express();
 
