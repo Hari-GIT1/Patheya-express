@@ -4,11 +4,10 @@ const http = require('http'); // ✅ FIX
 const { Server } = require('socket.io');
 const connectDB = require('./config/db');
 const PORT = process.env.PORT || 3000;
-const allowedOrigins = [
-  'https://app.patheyaexpress.in',
-  'https://patheya-express.vercel.app'
-];
-
+const allowedOrigins = process.env.NODE_ENV === 'production'
+  ? ['https://app.patheyaexpress.in']
+  : ['http://localhost:4200'];
+  
 require('dotenv-flow').config();
 console.log('ENV:', process.env.NODE_ENV);
 console.log('DB:', process.env.MONGO_URI);
