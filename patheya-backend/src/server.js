@@ -11,15 +11,28 @@ console.log('DB:', process.env.MONGO_URI);
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    'https://app.patheyaexpress.in'
+  ],
+  credentials: true
+}));
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok'
+  });
+});
 app.use(express.json());
 
 // ✅ create HTTP server
 const server = http.createServer(app);
 
 // ✅ socket setup
-const io = new Server(server, {
-  cors: { origin: '*' }
+const io = require('socket.io')(server, {
+  cors: {
+    origin: 'https://patheya-express.vercel.app',
+    methods: ['GET', 'POST']
+  }
 });
 
 app.set('io', io);
