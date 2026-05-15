@@ -3,6 +3,6 @@ export const environment = {
     envName: 'prod',
   
     api: {
-      baseUrl: 'https://api.patheyaexpress.in'
+      baseUrl: 'https://api.patheyaexpress.in/api'
     }
   };
