@@ -5,8 +5,14 @@ const { Server } = require('socket.io');
 const connectDB = require('./config/db');
 const PORT = process.env.PORT || 3000;
 const allowedOrigins = process.env.NODE_ENV === 'production'
-  ? ['https://app.patheyaexpress.in']
-  : ['http://localhost:4200'];
+  ? [
+      'https://app.patheyaexpress.in',
+      'https://partner.patheyaexpress.in'
+    ]
+  : [
+      'http://localhost:4200',
+      'http://localhost:4201'
+    ];
   
 require('dotenv-flow').config();
 console.log('ENV:', process.env.NODE_ENV);
@@ -15,7 +21,15 @@ console.log('DB:', process.env.MONGO_URI);
 const app = express();
 
 app.use(cors({
-  origin: allowedOrigins,
+  origin: function(origin, callback) {
+
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  
+  },
   credentials: true
 }));
 app.get('/health', (req, res) => {
