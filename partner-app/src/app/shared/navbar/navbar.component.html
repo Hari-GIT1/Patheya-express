@@ -1,0 +1,45 @@
+<nav class="top-navbar">
+
+  <!-- LEFT -->
+  <div class="left-section">
+
+    <!-- HAMBURGER -->
+    <button
+      class="menu-btn"
+      (click)="onToggleSidebar()">
+
+      ☰
+
+    </button>
+
+    <!-- LOGO -->
+    <h3 class="logo">
+
+      Patheya Partner
+
+    </h3>
+
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right-section">
+
+    <!-- RESTAURANT -->
+    <div class="restaurant-badge">
+
+      🍽 {{ restaurantName }}
+
+    </div>
+
+    <!-- LOGOUT -->
+    <button
+      class="logout-btn"
+      (click)="logout()">
+
+      Logout
+
+    </button>
+
+  </div>
+
+</nav>

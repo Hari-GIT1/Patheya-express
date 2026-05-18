@@ -25,13 +25,26 @@
 
     </ng-container>
 
-    <!-- 🔐 NOT LOGGED IN -->
-    <ng-container *ngIf="!isLoggedIn()">
+<!-- 🔐 NOT LOGGED IN -->
+<ng-container *ngIf="!isLoggedIn()">
 
-      <a routerLink="/auth/login" class="nav-link text-white">Login</a>
-      <a routerLink="/auth/register" class="nav-link text-white">Register</a>
+  <!-- Customer Login -->
+  <a
+    routerLink="/auth/login"
+    class="nav-link text-white"
+  >
+    Login
+  </a>
 
-    </ng-container>
+  <!-- Restaurant Partner -->
+  <a
+    routerLink="/auth/owner-register"
+    class="btn btn-warning btn-sm fw-bold px-3"
+  >
+    Partner With Us
+  </a>
+
+</ng-container>
 
     <!-- 🔓 LOGGED IN -->
     <ng-container *ngIf="isLoggedIn()">

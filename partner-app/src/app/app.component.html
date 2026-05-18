@@ -1,0 +1,35 @@
+<app-navbar
+  (toggleSidebar)="toggleSidebar()">
+
+</app-navbar>
+
+<!-- AUTH -->
+<div *ngIf="!showSidebar()"
+     class="auth-layout">
+
+  <router-outlet></router-outlet>
+
+</div>
+
+<!-- DASHBOARD -->
+<div
+  *ngIf="showSidebar()"
+  class="dashboard-layout"
+  [style.marginLeft]="sidebarOpen ? '260px' : '0px'">
+
+  <!-- SIDEBAR -->
+  <app-sidebar
+  [isOpen]="sidebarOpen">
+
+  </app-sidebar>
+
+  <!-- CONTENT -->
+  <div
+    class="dashboard-content"
+    [class.full-width]="!sidebarOpen">
+
+    <router-outlet></router-outlet>
+
+  </div>
+
+</div>

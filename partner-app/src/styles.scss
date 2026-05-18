@@ -1,0 +1,82 @@
+:root {
+
+  --primary-orange: #f97316;
+
+  --primary-orange-dark: #ea580c;
+
+  --sidebar-bg: #0f172a;
+
+  --sidebar-surface: #111827;
+
+  --page-bg: #f8fafc;
+
+  --card-bg: #ffffff;
+
+  --text-dark: #1e293b;
+
+  --text-light: #64748b;
+
+  --border-color: #e2e8f0;
+
+}
+
+body {
+
+  margin: 0;
+
+  font-family: 'Inter', sans-serif;
+
+  background: var(--page-bg);
+
+  color: var(--text-dark);
+
+  overflow-x: hidden;
+
+}
+
+* {
+  box-sizing: border-box;
+}
+.btn-orange {
+
+  background: linear-gradient(
+    90deg,
+    #f97316,
+    #ea580c
+  );
+
+  color: white;
+
+  border: none;
+
+  padding: 12px 20px;
+
+  border-radius: 14px;
+
+  font-weight: 600;
+
+  transition: 0.3s;
+}
+
+.btn-orange:hover {
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 10px 20px rgba(249,115,22,0.25);
+}
+  
+  .app-layout {
+    display: flex;
+  }
+  
+  .content-area {
+    margin-left: 260px;
+    width: calc(100% - 260px);
+    padding: 30px;
+  }
+  
+  .page-title {
+    font-size: 32px;
+    font-weight: 700;
+  }

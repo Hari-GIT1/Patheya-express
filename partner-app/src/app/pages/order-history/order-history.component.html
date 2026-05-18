@@ -1,0 +1,71 @@
+<div class="history-page container-fluid py-4">
+    <div class="history-card">
+  
+      <div class="table-header">
+  
+        <h4>
+          Recent Orders
+        </h4>
+  
+      </div>
+  
+      <div class="table-responsive">
+  
+        <table class="table align-middle">
+  
+          <thead>
+  
+            <tr>
+              <th>Order ID</th>
+              <th>Items</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+  
+          </thead>
+  
+          <tbody>
+  
+            <tr *ngFor="let order of completedOrders">
+  
+              <td>
+                #{{ order._id.slice(-5) }}
+              </td>
+  
+              <td>
+                {{ order.items.length }} Items
+              </td>
+  
+              <td>
+                ₹{{ order.total }}
+              </td>
+  
+              <td>
+                <span
+                  class="status-badge"
+                  [ngClass]="{
+                    'completed-badge': order.status === 'Delivered',
+                    'cancelled-badge': order.status === 'Cancelled'
+                  }">
+  
+                  {{ order.status }}
+  
+                </span>
+              </td>
+  
+              <td>
+                {{ order.createdAt | date:'medium' }}
+              </td>
+  
+            </tr>
+  
+          </tbody>
+  
+        </table>
+  
+      </div>
+  
+    </div>
+  
+  </div>

@@ -51,7 +51,8 @@ exports.login = async (req, res) => {
         _id: user._id,
         email: user.email,
         role: user.role,
-        restaurantId
+        restaurantId,
+        restaurantName: restaurant?.name || ''
       }
     });
 
@@ -99,7 +100,8 @@ exports.registerOwner = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        restaurantId: restaurant._id
+        restaurantId: restaurant._id,
+        restaurantName: restaurant?.name || ''
       },
       restaurant
     });
