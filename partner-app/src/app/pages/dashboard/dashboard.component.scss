@@ -345,3 +345,156 @@
     font-size: 28px;
   }
 }
+/* =================================
+   NEW ORDER POPUP
+================================= */
+
+:host ::ng-deep .order-popup-overlay {
+
+  position: fixed !important;
+
+  inset: 0 !important;
+
+  width: 100vw !important;
+
+  height: 100vh !important;
+
+  background: rgba(0, 0, 0, 0.55) !important;
+
+  display: flex !important;
+
+  align-items: center !important;
+
+  justify-content: center !important;
+
+  z-index: 9999999 !important;
+
+  backdrop-filter: blur(5px);
+
+}
+
+:host ::ng-deep .order-popup {
+
+  width: 360px;
+
+  max-width: 92%;
+
+  background: #fff;
+
+  border-radius: 26px;
+
+  padding: 30px;
+
+  text-align: center;
+
+  box-shadow:
+    0 25px 70px rgba(0,0,0,0.28);
+
+  animation:
+    popupFade 0.25s ease;
+
+}
+
+:host ::ng-deep .order-popup h3 {
+
+  font-size: 24px;
+
+  font-weight: 800;
+
+  margin-bottom: 14px;
+
+  color: #111827;
+
+}
+
+:host ::ng-deep .order-popup p {
+
+  margin: 10px 0;
+
+  color: #64748b;
+
+  font-size: 16px;
+
+}
+
+:host ::ng-deep .popup-actions {
+
+  display: flex;
+
+  gap: 14px;
+
+  margin-top: 24px;
+
+}
+
+:host ::ng-deep .accept-btn,
+:host ::ng-deep .reject-btn {
+
+  flex: 1;
+
+  border: none;
+
+  padding: 14px;
+
+  border-radius: 14px;
+
+  font-weight: 700;
+
+  font-size: 15px;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+
+}
+
+:host ::ng-deep .accept-btn {
+
+  background: linear-gradient(
+    135deg,
+    #22c55e,
+    #16a34a
+  );
+
+  color: white;
+
+}
+
+:host ::ng-deep .reject-btn {
+
+  background: linear-gradient(
+    135deg,
+    #ef4444,
+    #dc2626
+  );
+
+  color: white;
+
+}
+
+:host ::ng-deep .accept-btn:hover,
+:host ::ng-deep .reject-btn:hover {
+
+  transform: translateY(-2px);
+
+}
+
+@keyframes popupFade {
+
+  from {
+
+    opacity: 0;
+
+    transform: scale(0.82);
+
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform: scale(1);
+
+  }
+
+}

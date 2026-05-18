@@ -1,29 +1,30 @@
-const express = require('express');
-const router = express.Router();
-
 const bcrypt = require('bcryptjs');
+
 const jwt = require('jsonwebtoken');
 
-const auth = require('../middleware/auth.middleware');
+const User = require('../../models/User');
 
-const User = require('../models/User');
-const MenuItem = require('../models/MenuItem');
-const Order = require('../models/Order');
-const Restaurant = require('../models/Restaurant');
+const MenuItem = require('../../models/MenuItem');
 
-// =============================
-// owner REGISTER
-// =============================
+const Order = require('../../models/Order');
 
-router.post('/register', async (req, res) => {
+const Restaurant = require('../../models/Restaurant');
+
+const {createToken} = require('../../utils/jwt');
+
+
+// OWNER REGISTER
+exports.registerOwner = async (req, res) => {
+
   try {
+
     const {
       name,
       email,
       password,
       restaurantName
     } = req.body;
-    // CHECK EXISTING USER
+
     const existingUser =
       await User.findOne({ email });
 
@@ -34,36 +35,43 @@ router.post('/register', async (req, res) => {
       });
 
     }
-    // HASH PASSWORD
+
     const hashedPassword =
       await bcrypt.hash(password, 10);
-    // CREATE OWNER USER FIRST
-    const user = await User.create({
-      name,
-      email,
-      password: hashedPassword,
-      role: 'owner'
-    });
 
-    // CREATE RESTAURANT
+    const user = await User.create({
+
+      name,
+
+      email,
+
+      password: hashedPassword,
+
+      role: 'owner'
+
+    });
 
     const restaurant =
       await Restaurant.create({
+
         name: restaurantName,
+
         ownerId: user._id
+
       });
 
-    // UPDATE USER WITH RESTAURANT ID
-
-    user.restaurantId = restaurant._id;
+    user.restaurantId =
+      restaurant._id;
 
     await user.save();
 
     res.json({
 
-      message: 'Owner registered successfully',
+      message:
+        'Owner registered successfully',
 
       user,
+
       restaurant
 
     });
@@ -78,23 +86,24 @@ router.post('/register', async (req, res) => {
 
   }
 
-});
+};
 
 
-// =============================
-// owner LOGIN
-// =============================
-
-router.post('/login', async (req, res) => {
+// OWNER LOGIN
+exports.loginOwner = async (req, res) => {
 
   try {
 
     const { email, password } = req.body;
 
-    const user = await User.findOne({
-      email,
-      role: 'owner'
-    });
+    const user =
+      await User.findOne({
+
+        email,
+
+        role: 'owner'
+
+      });
 
     if (!user) {
 
@@ -105,7 +114,10 @@ router.post('/login', async (req, res) => {
     }
 
     const isMatch =
-      await bcrypt.compare(password, user.password);
+      await bcrypt.compare(
+        password,
+        user.password
+      );
 
     if (!isMatch) {
 
@@ -115,30 +127,25 @@ router.post('/login', async (req, res) => {
 
     }
 
-    const token = jwt.sign({
-
-      userId: user._id,
-      role: user.role,
-      restaurantId: user.restaurantId
-
-    },
-
-    process.env.JWT_SECRET,
-
-    {
-      expiresIn: '7d'
-    });
+    const token = createToken(user);
 
     res.json({
 
       token,
 
       user: {
+
         id: user._id,
+
         name: user.name,
+
         email: user.email,
+
         role: user.role,
-        restaurantId: user.restaurantId
+
+        restaurantId:
+          user.restaurantId
+
       }
 
     });
@@ -153,20 +160,21 @@ router.post('/login', async (req, res) => {
 
   }
 
-});
+};
 
 
-// =============================
-// GET owner MENU
-// =============================
-
-router.get('/menu', auth, async (req, res) => {
+// GET OWNER MENU
+exports.getOwnerMenu = async (req, res) => {
 
   try {
 
-    const items = await MenuItem.find({
-      restaurantId: req.user.restaurantId
-    });
+    const items =
+      await MenuItem.find({
+
+        restaurantId:
+          req.user.restaurantId
+
+      });
 
     res.json(items);
 
@@ -178,24 +186,23 @@ router.get('/menu', auth, async (req, res) => {
 
   }
 
-});
+};
 
 
-// =============================
 // ADD MENU ITEM
-// =============================
-
-router.post('/menu', auth, async (req, res) => {
+exports.addOwnerMenuItem = async (req, res) => {
 
   try {
 
-    const item = await MenuItem.create({
+    const item =
+      await MenuItem.create({
 
-      ...req.body,
+        ...req.body,
 
-      restaurantId: req.user.restaurantId
+        restaurantId:
+          req.user.restaurantId
 
-    });
+      });
 
     res.json(item);
 
@@ -207,14 +214,11 @@ router.post('/menu', auth, async (req, res) => {
 
   }
 
-});
+};
 
 
-// =============================
 // DELETE MENU ITEM
-// =============================
-
-router.delete('/menu/:id', auth, async (req, res) => {
+exports.deleteOwnerMenuItem = async (req, res) => {
 
   try {
 
@@ -234,20 +238,23 @@ router.delete('/menu/:id', auth, async (req, res) => {
 
   }
 
-});
+};
 
 
-// =============================
-// GET owner ORDERS
-// =============================
-
-router.get('/orders', auth, async (req, res) => {
+// GET OWNER ORDERS
+exports.getOwnerOrders = async (req, res) => {
 
   try {
 
-    const orders = await Order.find({
-      restaurantId: req.user.restaurantId
-    }).sort({ createdAt: -1 });
+    const orders =
+      await Order.find({
+
+        restaurantId:
+          req.user.restaurantId
+
+      }).sort({
+        createdAt: -1
+      });
 
     res.json(orders);
 
@@ -259,13 +266,11 @@ router.get('/orders', auth, async (req, res) => {
 
   }
 
-});
+};
 
-// =============================
-// GET OWNER SETTINGS
-// =============================
 
-router.get('/settings', auth, async (req, res) => {
+// GET SETTINGS
+exports.getOwnerSettings = async (req, res) => {
 
   try {
 
@@ -307,14 +312,11 @@ router.get('/settings', auth, async (req, res) => {
 
   }
 
-});
+};
 
 
-// =============================
-// UPDATE OWNER SETTINGS
-// =============================
-
-router.put('/settings', auth, async (req, res) => {
+// UPDATE SETTINGS
+exports.updateOwnerSettings = async (req, res) => {
 
   try {
 
@@ -325,20 +327,26 @@ router.put('/settings', auth, async (req, res) => {
 
         {
 
-          name: req.body.restaurantName,
+          name:
+            req.body.restaurantName,
 
-          phone: req.body.phone,
+          phone:
+            req.body.phone,
 
-          email: req.body.email,
+          email:
+            req.body.email,
 
-          address: req.body.address,
+          address:
+            req.body.address,
 
           deliveryTime:
             req.body.deliveryTime,
 
-          logo: req.body.logo,
+          logo:
+            req.body.logo,
 
-          isOpen: req.body.isOpen
+          isOpen:
+            req.body.isOpen
 
         },
 
@@ -358,5 +366,4 @@ router.put('/settings', auth, async (req, res) => {
 
   }
 
-});
-module.exports = router;
+};

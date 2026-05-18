@@ -28,7 +28,7 @@ const routes: Routes = [
     path: 'cart',
     component: CartComponent,
     canActivate: [RoleGuard],
-    data: { role: 'user' }
+    data: { role: 'customer' }
   },
 
   // 💳 CHECKOUT
@@ -36,7 +36,7 @@ const routes: Routes = [
     path: 'checkout',
     component: CheckoutComponent,
     canActivate: [RoleGuard],
-    data: { role: 'user' }
+    data: { role: 'customer' }
   },
 
   // 📦 MY ORDERS
@@ -44,7 +44,7 @@ const routes: Routes = [
     path: 'orders',
     component: OrdersComponent,
     canActivate: [RoleGuard],
-    data: { role: 'user' }
+    data: { role: 'customer' }
   },
 
   // 📍 TRACK ORDER
@@ -52,7 +52,7 @@ const routes: Routes = [
     path: 'track-order/:id',
     component: TrackOrderComponent,
     canActivate: [RoleGuard],
-    data: { role: 'user' }
+    data: { role: 'customer' }
   }
 ];
 

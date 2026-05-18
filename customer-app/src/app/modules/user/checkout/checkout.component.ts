@@ -33,42 +33,81 @@ export class CheckoutComponent implements OnInit {
   }
 
   placeOrder() {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-    if (!user._id) {
+    const user =
+      JSON.parse(
+        localStorage.getItem('user') || '{}'
+      );
+  
+    if (!user.id) {
+  
       alert('Login required');
+  
       return;
+  
     }
-
+  
     if (this.cartItems.length === 0) {
+  
       alert('Cart empty');
+  
       return;
+  
     }
-
+  
     const order = {
-      userId: user._id,
-      restaurantId: this.cartItems[0]?.restaurantId,
+  
+      restaurantId:
+        this.cartItems[0]?.restaurantId,
+  
       items: this.cartItems,
+  
       total: this.total,
+  
       status: 'placed'
+  
     };
-
+  
     console.log('ORDER:', order);
-
-    this.orderService.placeOrder(order).subscribe({
-      next: (res: any) => {
-        console.log('ORDER CREATED:', res);
-
-        this.cartService.clearCart();
-
-        // 🔥 Redirect to tracking page
-        this.router.navigate(['/track-order', res._id]);
-      },
-      error: (err: any) => {
-        console.error(err);
-        alert(err.error?.message || 'Order failed');
-      }
-    });
+  
+    this.orderService
+      .placeOrder(order)
+  
+      .subscribe({
+  
+        next: (res: any) => {
+  
+          console.log(
+            'ORDER CREATED:',
+            res
+          );
+  
+          this.cartService.clearCart();
+  
+          // REDIRECT
+          this.router.navigate([
+            '/track-order',
+            res._id
+          ]);
+  
+        },
+  
+        error: (err: any) => {
+  
+          console.error(err);
+  
+          alert(
+  
+            err.error?.message ||
+  
+            'Order failed'
+  
+          );
+  
+        }
+  
+      });
+  
   }
 
   payNow() {
