@@ -1,0 +1,62 @@
+
+
+<div class="sidebar"
+[class.closed]="!isOpen">
+
+  <!-- LOGO -->
+  <div class="logo">
+
+    <h4>Patheya</h4>
+
+    <p>{{restaurantName}}</p>
+
+  </div>
+
+  <!-- MENU -->
+  <ul>
+
+    <li routerLink="/dashboard" routerLinkActive="active">
+
+      <i class="bi bi-grid"></i>
+      Dashboard
+
+    </li>
+
+    <li routerLink="/menu" routerLinkActive="active">
+
+      <i class="bi bi-menu-button"></i>
+      Menu
+
+    </li>
+
+    <li routerLink="/orders" routerLinkActive="active">
+
+      <i class="bi bi-bag"></i>
+      Orders
+
+    </li>
+
+    <li routerLink="/analytics" routerLinkActive="active">
+
+      <i class="bi bi-bar-chart"></i>
+      Analytics
+
+    </li>
+
+  </ul>
+  <!-- SETTINGS -->
+
+<a
+routerLink="/settings"
+routerLinkActive="active-link"
+class="sidebar-link">
+
+<i class="bi bi-gear-fill"></i>
+
+<span>
+  Settings
+</span>
+
+</a>
+
+</div>

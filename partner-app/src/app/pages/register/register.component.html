@@ -1,0 +1,102 @@
+<div class="auth-container">
+
+  <div class="container-fluid">
+
+    <div class="row min-vh-100 align-items-center">
+
+      <!-- LEFT SECTION -->
+      <div class="col-lg-6 d-none d-lg-flex flex-column justify-content-center px-5">
+
+        <h1 class="display-4 fw-bold mb-4">
+          Join Patheya Restaurant Network
+        </h1>
+
+        <p class="lead text-muted">
+          Reach thousands of customers and grow your food business online.
+        </p>
+
+      </div>
+
+      <!-- REGISTER CARD -->
+      <div class="col-lg-6 d-flex justify-content-center">
+
+        <div class="auth-card shadow-lg">
+
+          <h2 class="fw-bold mb-4 text-center">
+            Restaurant Registration
+          </h2>
+
+          <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+
+            <div class="mb-3">
+          
+              <input
+                type="text"
+                class="form-control form-control-lg"
+                formControlName="restaurantName"
+                placeholder="Restaurant Name">
+          
+            </div>
+          
+            <div class="mb-3">
+          
+              <input
+                type="email"
+                class="form-control form-control-lg"
+                formControlName="email"
+                placeholder="Email">
+          
+            </div>
+          
+            <div class="mb-3">
+          
+              <input
+                type="text"
+                class="form-control form-control-lg"
+                formControlName="phone"
+                placeholder="Phone Number">
+          
+            </div>
+          
+            <div class="mb-4">
+          
+              <input
+                type="password"
+                class="form-control form-control-lg"
+                formControlName="password"
+                placeholder="Password">
+          
+            </div>
+          
+            <button
+              class="btn btn-danger w-100 btn-lg rounded-pill"
+              [disabled]="loading">
+          
+              {{ loading ? 'Creating Account...' : 'Register Restaurant' }}
+          
+            </button>
+          
+          </form>
+
+          <p class="text-center mt-4">
+
+            Already have an account?
+
+            <a
+              routerLink="/login"
+              class="text-danger fw-semibold text-decoration-none">
+
+              Login
+            </a>
+
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
