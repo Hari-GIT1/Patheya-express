@@ -27,15 +27,17 @@ export class NavbarComponent {
     this.router.navigate(['/auth/login']);
   }
 
-  isCustomer() {
-    return this.user?.role === 'user';
+  isCustomer(): boolean {
+    return localStorage.getItem('role') === 'CUSTOMER';
+  }
+  
+
+  isOwner(): boolean {
+    return localStorage.getItem('role') === 'OWNER';
   }
 
-  isOwner() {
-    return this.user?.role === 'owner';
-  }
-
-  isLoggedIn() {
-    return !!this.user;
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('token')
+        || !!localStorage.getItem('ownerToken');
   }
 }

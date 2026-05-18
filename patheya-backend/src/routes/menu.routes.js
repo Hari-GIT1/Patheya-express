@@ -13,6 +13,26 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+router.get('/', auth, async (req, res) => {
+
+  try {
+
+    const items = await MenuItem.find({
+      restaurantId: req.user.restaurantId
+    });
+
+    res.json(items);
+
+  } catch (err) {
+
+    res.status(500).json({
+      error: err.message
+    });
+
+  }
+
+});
+
 // GET menu
 router.get('/:restaurantId', async (req, res) => {
   try {
@@ -88,6 +108,43 @@ router.delete('/:id', auth, async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
+});
+router.patch('/:id/availability', async (req, res) => {
+
+  try {
+
+    console.log('PARAMS ID:', req.params.id);
+
+    console.log('BODY:', req.body);
+
+    const updatedItem = await MenuItem.findByIdAndUpdate(
+
+      req.params.id,
+
+      {
+        isAvailable: req.body.isAvailable
+      },
+
+      {
+        new: true
+      }
+
+    );
+
+    console.log('UPDATED ITEM:', updatedItem);
+
+    res.json(updatedItem);
+
+  } catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+      message: err.message
+    });
+
+  }
+
 });
 
 module.exports = router;
