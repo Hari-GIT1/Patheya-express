@@ -40,3 +40,19 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Capacitor / Android
+/android/.gradle
+/android/build
+/android/app/build
+/android/local.properties
+/android/captures
+
+# APK / AAB files
+*.apk
+*.aab
+
+# Environment files
+.env
+.env.local
+.env.production
