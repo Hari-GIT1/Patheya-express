@@ -18,6 +18,8 @@ const connectDB =
 const config =
   require('./config');
 
+const { initSocket } = 
+  require('./sockets');
 // PORT
 const PORT =
   config.port || 3000;
@@ -43,16 +45,18 @@ const io =
 
               'https://app.patheyaexpress.in',
 
-              'https://partner.patheyaexpress.in'
+              'https://partner.patheyaexpress.in',
+
+              'https://admin.patheyaexpress.in'
+              
 
             ]
 
           : [
 
-              'http://localhost:4200',
-
-              'http://localhost:4201'
-
+            config.urls.customer,
+            config.urls.partner,
+            config.urls.admin
             ],
 
       methods: [
@@ -135,6 +139,19 @@ io.on(
 
       }
 
+    );
+    //JOIN ADMIN ROOM
+    socket.on(
+      'joinAdminRoom',
+      () => {
+    
+        socket.join('admins');
+    
+        console.log(
+          'ADMIN JOINED'
+        );
+    
+      }
     );
 
     // DISCONNECT

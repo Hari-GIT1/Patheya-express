@@ -7,7 +7,9 @@ exports.getRestaurants = async (req, res) => {
   try {
 
     const restaurants =
-      await Restaurant.find();
+      await Restaurant.find({
+        approvalStatus: 'approved'
+      })
 
     res.json(restaurants);
 

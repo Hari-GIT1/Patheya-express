@@ -46,8 +46,14 @@ asyncHandler(async (
   const io =
     req.app.get('io');
 
-  io.to(order.restaurantId)
+    io.to(order.restaurantId.toString())
     .emit('newOrder', order);
+  
+  io.to('admins')
+    .emit('adminNewOrder', {
+      type: 'NEW_ORDER',
+      order
+    });
 
   successResponse(
 
@@ -251,14 +257,30 @@ asyncHandler(async (
   const io =
     req.app.get('io');
 
-  io.to(order.restaurantId)
+    io.to(order.restaurantId.toString())
     .emit(
-
       'orderStatusUpdated',
-
       order
-
     );
+
+  io.to('admins')
+  .emit(
+    'adminOrderUpdated',
+    {
+      type: 'ORDER_UPDATED',
+      orderId: order._id,
+      status: order.status,
+      order
+    }
+  );
+  io.to('admins')
+  .emit(
+    'adminNewOrder',
+    {
+      type: 'NEW_ORDER',
+      order
+    }
+  );
 
   io.to(order._id.toString())
     .emit(

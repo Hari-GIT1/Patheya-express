@@ -13,7 +13,78 @@ const rateLimit =
 const morgan =
   require('morgan');
 
+const mongoSanitize =
+  require(
+    'express-mongo-sanitize'
+  );
+
+const hpp =
+  require('hpp');
+
+const compression =
+  require('compression');
+
 const app = express();
+app.set(
+  'trust proxy',
+  1
+);
+// ==============================
+// SECURITY
+// ==============================
+
+// SECURE HEADERS
+app.use(
+  helmet({
+
+    crossOriginResourcePolicy:
+      false
+  
+  })
+);
+
+// SANITIZE MONGO
+app.use(
+  mongoSanitize()
+);
+
+// HPP
+app.use(
+  hpp()
+);
+
+// COMPRESSION
+app.use(
+  compression()
+);
+// ==============================
+// RATE LIMITER
+// ==============================
+
+const limiter =
+  rateLimit({
+
+    windowMs:
+      15 * 60 * 1000,
+
+    max: 300,
+
+    message: {
+
+      success: false,
+
+      message:
+        'Too many requests'
+
+    }
+
+  });
+
+app.use(
+  '/api',
+  limiter
+);
+const config = require('./config');
 
 // ==============================
 // ALLOWED ORIGINS
@@ -26,16 +97,19 @@ const allowedOrigins =
 
         'https://app.patheyaexpress.in',
 
-        'https://partner.patheyaexpress.in'
+        'https://partner.patheyaexpress.in',
+
+        'https://admin.patheyaexpress.in'
 
       ]
 
     : [
 
-        'http://localhost:4200',
+        config.urls.customer,
 
-        'http://localhost:4201'
+        config.urls.partner,
 
+        config.urls.admin
       ];
 
 console.log(
@@ -51,23 +125,8 @@ console.log(
 // ==============================
 // SECURITY MIDDLEWARE
 // ==============================
-app.use(helmet());
 
-app.use(
 
-  rateLimit({
-
-    windowMs:
-      15 * 60 * 1000,
-
-    max: 300,
-
-    message:
-      'Too many requests'
-
-  })
-
-);
 
 // ==============================
 // LOGGER
@@ -118,8 +177,13 @@ app.use(cors({
 // ==============================
 // BODY PARSER
 // ==============================
-app.use(express.json());
+app.use(
+  express.json({
 
+    limit: '10kb'
+
+  })
+);
 
 // ==============================
 // ROUTES
@@ -145,6 +209,19 @@ const ownerRoutes =
 const discountRoutes =
   require('./routes/customer/discount.routes');
 
+const adminAuthRoutes = 
+ require('./modules/admin/routes/adminAuthRoutes');
+ 
+const adminDashboardRoutes = 
+ require('./modules/admin/routes/adminDashboardRoutes');
+
+const adminRestaurantRoutes = 
+ require('./modules/admin/routes/adminRestaurantRoutes');
+
+const adminUserRoutes = 
+ require('./modules/admin/routes/adminUserRoutes');
+const adminOrderRoutes = 
+ require('./modules/admin/routes/adminOrderRoutes');
 // ==============================
 // API ROUTES
 // ==============================
@@ -181,6 +258,26 @@ app.use(
 app.use(
   '/api/discounts',
   discountRoutes
+);
+app.use(
+  '/api/admin/auth',
+ adminAuthRoutes
+);
+app.use(
+  '/api/admin/dashboard',
+  adminDashboardRoutes
+);
+app.use(
+  '/api/admin/restaurants',
+  adminRestaurantRoutes
+);
+app.use(
+  '/api/admin/users',
+  adminUserRoutes
+);
+app.use(
+  '/api/admin/orders',
+  adminOrderRoutes
 );
 
 // ==============================

@@ -1,21 +1,29 @@
-const requiredEnv = [
+const requiredEnvs = [
 
-    'MONGO_URI',
-  
-    'JWT_SECRET'
-  
-  ];
-  
-  requiredEnv.forEach((key) => {
-  
-    if (!process.env[key]) {
-  
-      throw new Error(
-  
-        `Missing env variable: ${key}`
-  
-      );
-  
-    }
-  
-  });
+  'PORT',
+
+  'MONGO_URI',
+
+  'JWT_SECRET',
+
+  'CLIENT_URL',
+
+  'PARTNER_URL',
+
+  'ADMIN_URL'
+
+];
+
+requiredEnvs.forEach((env) => {
+
+  if (!process.env[env]) {
+
+    throw new Error(
+
+      `Missing ENV variable: ${env}`
+
+    );
+
+  }
+
+});

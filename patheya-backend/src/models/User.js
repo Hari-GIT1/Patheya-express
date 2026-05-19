@@ -32,6 +32,11 @@ const userSchema = new mongoose.Schema({
 
     ref: 'Restaurant'
 
+  },
+  
+  isBlocked: {
+    type: Boolean,
+    default: false
   }
 
 });

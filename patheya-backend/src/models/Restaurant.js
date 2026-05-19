@@ -34,9 +34,28 @@ const restaurantSchema =
     isOpen: {
       type: Boolean,
       default: true
-    }
+    },
 
-  }, {
+    approvalStatus: {
+      type: String,
+      enum: [
+        'pending',
+        'approved',
+        'rejected',
+        'suspended'
+      ],
+      default: 'pending'
+    },
+    
+    approvedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Admin'
+    },
+    
+    approvedAt: {
+      type: Date
+    }
+  },{
     timestamps: true
   });
 
