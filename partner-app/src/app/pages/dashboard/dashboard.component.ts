@@ -129,42 +129,54 @@ implements OnInit, OnDestroy {
     this.orderService
       .getOrders()
       .subscribe((res: any) => {
-
+  
+        const orders =
+          res.data;
+  
         // TOTAL ORDERS
-        this.totalOrders = res.length;
-
+        this.totalOrders =
+          orders.length;
+  
         // RUNNING ORDERS
-        this.runningOrders = res.filter(
-
-          (order: any) =>
-
-            order.status !== 'Delivered'
-
-        );
-
-        // TOTAL REVENUE
-        this.totalRevenue = res
-
-          .filter(
-
+        this.runningOrders =
+          orders.filter(
+  
             (order: any) =>
-
-              order.status === 'Delivered'
-
-          )
-
-          .reduce(
-
-            (sum: number, order: any) =>
-
-              sum + order.total,
-
-            0
-
+  
+              order.status !==
+              'Delivered'
+  
           );
-
+  
+        // TOTAL REVENUE
+        this.totalRevenue =
+          orders
+  
+            .filter(
+  
+              (order: any) =>
+  
+                order.status ===
+                'Delivered'
+  
+            )
+  
+            .reduce(
+  
+              (
+                sum: number,
+  
+                order: any
+              ) =>
+  
+                sum + order.total,
+  
+              0
+  
+            );
+  
       });
-
+  
   }
 
   // ==============================
@@ -175,12 +187,12 @@ implements OnInit, OnDestroy {
     this.menuService
       .getMenu()
       .subscribe((res: any) => {
-
+  
         this.totalMenuItems =
-          res.length;
-
+          res.data.length;
+  
       });
-
+  
   }
 
   // ==============================
@@ -191,51 +203,56 @@ implements OnInit, OnDestroy {
     this.discountService
       .getDiscounts()
       .subscribe((res: any) => {
-
-        this.discounts = res;
-
+  
+        this.discounts =
+          res.data;
+  
       });
-
+  
   }
-
   // ==============================
   // CREATE DISCOUNT
   // ==============================
   createDiscount(): void {
 
     this.discountService
-      .createDiscount(this.discountForm)
+      .createDiscount(
+        this.discountForm
+      )
       .subscribe({
-
+  
         next: (res: any) => {
-
+  
           console.log(res);
-
+  
           // ADD TO UI
-          this.discounts.unshift(res);
-
+          this.discounts.unshift(
+            res.data
+          );
+  
           // CLOSE MODAL
-          this.showDiscountModal = false;
-
+          this.showDiscountModal =
+            false;
+  
           // RESET FORM
           this.discountForm = {
-
+  
             code: '',
-
+  
             percentage: ''
-
+  
           };
-
+  
         },
-
+  
         error: (err) => {
-
+  
           console.log(err);
-
+  
         }
-
+  
       });
-
+  
   }
 
   // ==============================

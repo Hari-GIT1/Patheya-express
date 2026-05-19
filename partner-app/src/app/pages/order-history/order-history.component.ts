@@ -1,11 +1,29 @@
-import { Component, OnInit } from '@angular/core';
-import { OrderService } from 'src/app/core/services/order.service';
+import {
+
+  Component,
+
+  OnInit
+
+} from '@angular/core';
+
+import {
+
+  OrderService
+
+} from 'src/app/core/services/order.service';
+
 @Component({
+
   selector: 'app-order-history',
+
   templateUrl: './order-history.component.html',
+
   styleUrls: ['./order-history.component.scss']
+
 })
-export class OrderHistoryComponent implements OnInit {
+
+export class OrderHistoryComponent
+implements OnInit {
 
   completedOrders: any[] = [];
 
@@ -14,7 +32,10 @@ export class OrderHistoryComponent implements OnInit {
   todayRevenue = 0;
 
   constructor(
-    private orderService: OrderService
+
+    private orderService:
+      OrderService
+
   ) {}
 
   ngOnInit(): void {
@@ -23,6 +44,9 @@ export class OrderHistoryComponent implements OnInit {
 
   }
 
+  // ==============================
+  // LOAD ORDERS
+  // ==============================
   loadOrders(): void {
 
     this.orderService
@@ -31,36 +55,101 @@ export class OrderHistoryComponent implements OnInit {
 
         next: (res: any) => {
 
-          this.completedOrders = res.filter(
-            (order: any) =>
-          
-              order.status?.toLowerCase() === 'delivered'
-          );
+          const orders =
+            res.data;
 
+          // ==============================
+          // COMPLETED ORDERS
+          // ==============================
+          this.completedOrders =
+
+            orders.filter(
+
+              (order: any) =>
+
+                order.status
+                  ?.toLowerCase() ===
+
+                'delivered'
+
+            );
+
+          // ==============================
           // TOTAL REVENUE
-          this.totalRevenue = res
-            .filter((o: any) => o.status === 'Delivered')
-            .reduce(
-              (sum: number, order: any) =>
-                sum + order.total,
-              0
-            );
+          // ==============================
+          this.totalRevenue =
 
-          // TODAY SALES
-          const today = new Date().toDateString();
+            orders
 
-          this.todayRevenue = res
-            .filter(
-              (o: any) =>
-                o.status === 'Delivered' &&
-                new Date(o.createdAt)
-                  .toDateString() === today
-            )
-            .reduce(
-              (sum: number, order: any) =>
-                sum + order.total,
-              0
-            );
+              .filter(
+
+                (o: any) =>
+
+                  o.status ===
+                  'Delivered'
+
+              )
+
+              .reduce(
+
+                (
+
+                  sum: number,
+
+                  order: any
+
+                ) =>
+
+                  sum + order.total,
+
+                0
+
+              );
+
+          // ==============================
+          // TODAY REVENUE
+          // ==============================
+          const today =
+
+            new Date()
+              .toDateString();
+
+          this.todayRevenue =
+
+            orders
+
+              .filter(
+
+                (o: any) =>
+
+                  o.status ===
+                    'Delivered'
+
+                  &&
+
+                  new Date(
+                    o.createdAt
+                  ).toDateString()
+
+                  === today
+
+              )
+
+              .reduce(
+
+                (
+
+                  sum: number,
+
+                  order: any
+
+                ) =>
+
+                  sum + order.total,
+
+                0
+
+              );
 
         },
 

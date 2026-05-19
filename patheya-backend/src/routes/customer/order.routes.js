@@ -10,6 +10,18 @@ const allowRoles =
 
 const {
 
+    placeOrderValidation
+  
+  } = require(
+    '../../validations/order.validation'
+  );
+const validate =
+  require(
+    '../../middleware/validate.middleware'
+  );
+
+const {
+
   placeOrder,
 
   getPartnerOrders,
@@ -35,10 +47,11 @@ router.post(
 
   auth,
 
-  allowRoles('customer'),
+  placeOrderValidation,
+
+  validate,
 
   placeOrder
-
 );
 
 

@@ -1,13 +1,29 @@
-import { Component, OnInit } from '@angular/core';
+import {
 
-import { AuthService } from 'src/app/core/services/auth.service';
+  Component,
+
+  OnInit
+
+} from '@angular/core';
+
+import {
+
+  AuthService
+
+} from 'src/app/core/services/auth.service';
 
 @Component({
+
   selector: 'app-settings',
+
   templateUrl: './settings.component.html',
+
   styleUrls: ['./settings.component.scss']
+
 })
-export class SettingsComponent implements OnInit {
+
+export class SettingsComponent
+implements OnInit {
 
   settings: any = {
 
@@ -35,23 +51,34 @@ export class SettingsComponent implements OnInit {
 
   };
 
-  constructor(private AuthService:AuthService
-    
+  selectedLogo: any = null;
+
+  constructor(
+
+    private authService:
+      AuthService
+
   ) {}
+
   ngOnInit(): void {
 
     this.loadSettings();
 
   }
+
+  // ==============================
+  // LOAD SETTINGS
+  // ==============================
   loadSettings(): void {
 
-    this.AuthService
+    this.authService
       .getOwnerSettings()
       .subscribe({
 
         next: (res: any) => {
 
-          this.settings = res;
+          this.settings =
+            res.data;
 
         },
 
@@ -64,15 +91,87 @@ export class SettingsComponent implements OnInit {
       });
 
   }
+
+  // ==============================
+  // SAVE SETTINGS
+  // ==============================
   saveSettings(): void {
 
-    this.AuthService
-      .updateOwnerSettings(this.settings)
+    const formData =
+      new FormData();
+
+    formData.append(
+
+      'restaurantName',
+
+      this.settings.restaurantName
+
+    );
+
+    formData.append(
+
+      'phone',
+
+      this.settings.phone
+
+    );
+
+    formData.append(
+
+      'email',
+
+      this.settings.email
+
+    );
+
+    formData.append(
+
+      'address',
+
+      this.settings.address
+
+    );
+
+    formData.append(
+
+      'deliveryTime',
+
+      this.settings.deliveryTime
+
+    );
+
+    formData.append(
+
+      'isOpen',
+
+      this.settings.isOpen
+
+    );
+
+    // LOGO
+    if (this.selectedLogo) {
+
+      formData.append(
+
+        'logo',
+
+        this.selectedLogo
+
+      );
+
+    }
+
+    this.authService
+      .updateOwnerSettings(
+        formData
+      )
       .subscribe({
 
         next: () => {
 
-          alert('Settings Updated');
+          alert(
+            'Settings Updated'
+          );
 
         },
 
@@ -85,23 +184,41 @@ export class SettingsComponent implements OnInit {
       });
 
   }
+
+  // ==============================
+  // CHANGE PASSWORD
+  // ==============================
   changePassword(): void {
 
-    console.log(this.passwordForm);
+    console.log(
+      this.passwordForm
+    );
 
   }
 
-  onLogoSelect(event: any): void {
+  // ==============================
+  // LOGO SELECT
+  // ==============================
+  onLogoSelect(
+    event: any
+  ): void {
 
-    const file = event.target.files[0];
+    const file =
+      event.target.files[0];
 
     if (!file) return;
 
-    const reader = new FileReader();
+    this.selectedLogo =
+      file;
+
+    // PREVIEW
+    const reader =
+      new FileReader();
 
     reader.onload = () => {
 
-      this.settings.logo = reader.result;
+      this.settings.logo =
+        reader.result;
 
     };
 

@@ -1,202 +1,220 @@
-const MenuItem = require('../../models/MenuItem');
+const asyncHandler =
+  require(
+    '../../utils/asyncHandler'
+  );
 
+const {
 
+  successResponse,
+
+  errorResponse
+
+} = require(
+  '../../utils/response'
+);
+
+const menuService =
+  require(
+    '../../services/menu.service'
+  );
+
+// ==============================
 // GET PARTNER MENU
-exports.getPartnerMenu = async (req, res) => {
+// ==============================
+exports.getPartnerMenu =
+asyncHandler(async (
 
-  try {
+  req,
 
-    const items = await MenuItem.find({
-      restaurantId: req.user.restaurantId
-    });
+  res
 
-    res.json(items);
+) => {
 
-  } catch (err) {
+  const items =
+    await menuService
+      .getPartnerMenu(
 
-    res.status(500).json({
-      error: err.message
-    });
+        req.user.restaurantId
 
-  }
-
-};
-
-
-// GET CUSTOMER MENU
-exports.getRestaurantMenu = async (req, res) => {
-
-  try {
-
-    const items = await MenuItem.find({
-      restaurantId: req.params.restaurantId
-    });
-
-    res.json(items);
-
-  } catch (err) {
-
-    res.status(500).json({
-      error: err.message
-    });
-
-  }
-
-};
-
-
-// ADD MENU ITEM
-exports.addMenuItem = async (req, res) => {
-
-  try {
-
-    const user = req.user;
-
-    const item = await MenuItem.create({
-
-      name: req.body.name,
-
-      price: req.body.price,
-
-      category: req.body.category,
-
-      restaurantId: user.restaurantId,
-
-      image: req.file?.filename
-
-    });
-
-    res.json(item);
-
-  } catch (err) {
-
-    console.error('POST ERROR:', err);
-
-    res.status(500).json({
-      error: err.message
-    });
-
-  }
-
-};
-
-
-// UPDATE MENU ITEM
-exports.updateMenuItem = async (req, res) => {
-
-  try {
-
-    console.log('USER:', req.user);
-
-    console.log('BODY:', req.body);
-
-    console.log('FILE:', req.file);
-
-    const item =
-      await MenuItem.findById(
-        req.params.id
       );
 
-    if (!item) {
+  successResponse(
 
-      return res.status(404).json({
-        error: 'Item not found'
-      });
+    res,
 
-    }
+    items,
 
-    const updatedItem =
-      await MenuItem.findByIdAndUpdate(
+    'Partner menu fetched'
+
+  );
+
+});
+
+// ==============================
+// GET CUSTOMER MENU
+// ==============================
+exports.getRestaurantMenu =
+asyncHandler(async (
+
+  req,
+
+  res
+
+) => {
+
+  const items =
+    await menuService
+      .getRestaurantMenu(
+
+        req.params.restaurantId
+
+      );
+
+  successResponse(
+
+    res,
+
+    items,
+
+    'Restaurant menu fetched'
+
+  );
+
+});
+
+// ==============================
+// ADD MENU ITEM
+// ==============================
+exports.addMenuItem =
+asyncHandler(async (
+
+  req,
+
+  res
+
+) => {
+
+  const item =
+    await menuService
+      .addMenuItem(
+
+        req.user,
+
+        req.body,
+
+        req.file
+
+      );
+
+  successResponse(
+
+    res,
+
+    item,
+
+    'Menu item added'
+
+  );
+
+});
+
+// ==============================
+// UPDATE MENU ITEM
+// ==============================
+exports.updateMenuItem =
+asyncHandler(async (
+
+  req,
+
+  res
+
+) => {
+
+  const item =
+    await menuService
+      .updateMenuItem(
 
         req.params.id,
 
-        {
-          ...req.body,
-          image:
-            req.file?.filename ||
-            item.image
-        },
+        req.body,
 
-        { new: true }
+        req.file
 
       );
 
-    res.json(updatedItem);
+  successResponse(
 
-  } catch (err) {
+    res,
 
-    console.error('PUT ERROR:', err);
+    item,
 
-    res.status(500).json({
-      error: err.message
-    });
+    'Menu item updated'
 
-  }
+  );
 
-};
+});
 
-
+// ==============================
 // DELETE MENU ITEM
-exports.deleteMenuItem = async (req, res) => {
+// ==============================
+exports.deleteMenuItem =
+asyncHandler(async (
 
-  try {
+  req,
 
-    await MenuItem.findByIdAndDelete(
+  res
+
+) => {
+
+  await menuService
+    .deleteMenuItem(
+
       req.params.id
+
     );
 
-    res.json({
-      message: 'Deleted'
-    });
+  successResponse(
 
-  } catch (err) {
+    res,
 
-    res.status(500).json({
-      message: err.message
-    });
+    null,
 
-  }
+    'Menu item deleted'
 
-};
+  );
 
+});
 
+// ==============================
 // UPDATE AVAILABILITY
-exports.updateAvailability = async (req, res) => {
+// ==============================
+exports.updateAvailability =
+asyncHandler(async (
 
-  try {
+  req,
 
-    console.log('PARAMS ID:', req.params.id);
+  res
 
-    console.log('BODY:', req.body);
+) => {
 
-    const updatedItem =
-      await MenuItem.findByIdAndUpdate(
+  const item =
+    await menuService
+      .updateAvailability(
 
         req.params.id,
 
-        {
-          isAvailable:
-            req.body.isAvailable
-        },
-
-        {
-          new: true
-        }
+        req.body.isAvailable
 
       );
 
-    console.log('UPDATED ITEM:', updatedItem);
+  successResponse(
 
-    res.json(updatedItem);
+    res,
 
-  } catch (err) {
+    item,
 
-    console.log(err);
+    'Availability updated'
 
-    res.status(500).json({
-      message: err.message
-    });
+  );
 
-  }
-
-};
+});

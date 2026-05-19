@@ -27,7 +27,7 @@ export class NavbarComponent {
     console.log(user);
 
     this.restaurantName =
-      user.restaurantName || 'Restaurant';
+      user?.restaurantName || 'Restaurant';
 
   }
 

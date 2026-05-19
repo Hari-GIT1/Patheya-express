@@ -1,44 +1,71 @@
 const Discount =
   require('../../models/discount');
 
+const asyncHandler =
+  require(
+    '../../utils/asyncHandler'
+  );
 
+const {
+
+  successResponse
+
+} = require(
+  '../../utils/response'
+);
+
+// ==============================
 // CREATE DISCOUNT
-exports.createDiscount = async (req, res) => {
+// ==============================
+exports.createDiscount =
+asyncHandler(async (
 
-  try {
+  req,
 
-    const discount =
-      await Discount.create(req.body);
+  res
 
-    res.json(discount);
+) => {
 
-  } catch (err) {
+  const discount =
+    await Discount.create(
+      req.body
+    );
 
-    res.status(500).json({
-      message: err.message
-    });
+  successResponse(
 
-  }
+    res,
 
-};
+    discount,
 
+    'Discount created'
 
+  );
+
+});
+
+// ==============================
 // GET DISCOUNTS
-exports.getDiscounts = async (req, res) => {
+// ==============================
+exports.getDiscounts =
+asyncHandler(async (
 
-  try {
+  req,
 
-    const discounts =
-      await Discount.find();
+  res
 
-    res.json(discounts);
+) => {
 
-  } catch (err) {
+  const discounts =
+    await Discount.find();
 
-    res.status(500).json({
-      message: err.message
-    });
+  successResponse(
 
-  }
+    res,
 
-};
+    discounts,
+
+    'Discounts fetched'
+
+  );
+
+});

@@ -2,7 +2,10 @@ const express = require('express');
 
 const router = express.Router();
 
-const multer = require('multer');
+const upload =
+  require(
+    '../../middleware/upload.middleware'
+  );
 
 const auth =
   require('../../middleware/auth.middleware');
@@ -25,30 +28,6 @@ const {
   updateAvailability
 
 } = require('../../controllers/partner/menu.controller');
-
-
-// MULTER STORAGE
-const storage = multer.diskStorage({
-
-  destination: 'uploads/',
-
-  filename: (req, file, cb) => {
-
-    cb(
-
-      null,
-
-      Date.now() +
-      '-' +
-      file.originalname
-
-    );
-
-  }
-
-});
-
-const upload = multer({ storage });
 
 
 // ==============================

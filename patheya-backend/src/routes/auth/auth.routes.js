@@ -4,6 +4,18 @@ const router = express.Router();
 
 const {
 
+  registerValidation,
+
+  loginValidation,
+
+  ownerRegisterValidation
+
+} = require(
+  '../../validations/auth.validation'
+);
+
+const {
+
   register,
 
   login,
@@ -11,6 +23,11 @@ const {
   registerOwner
 
 } = require('../../controllers/auth/auth.controller');
+
+const validate =
+  require(
+    '../../middleware/validate.middleware'
+  );
 
 
 // ==============================
@@ -20,6 +37,10 @@ const {
 router.post(
 
   '/register',
+
+  registerValidation,
+
+  validate,
 
   register
 
@@ -34,15 +55,9 @@ router.post(
 
   '/owner-register',
 
-  (req, res, next) => {
+  ownerRegisterValidation,
 
-    console.log(
-      'HIT OWNER REGISTER ROUTE ✅'
-    );
-
-    next();
-
-  },
+  validate,
 
   registerOwner
 
@@ -56,6 +71,10 @@ router.post(
 router.post(
 
   '/login',
+
+  loginValidation,
+
+  validate,
 
   login
 

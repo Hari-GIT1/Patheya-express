@@ -40,15 +40,19 @@ export class LoginComponent {
       .login(this.loginForm.value)
       .subscribe({
 
-        next: (res) => {
+        next: (res: any) => {
 
-          this.authService.saveToken(res.token);
-          this.authService.saveUser(res.user);
+          this.authService
+            .saveToken(res.data.token);
+        
+          this.authService
+            .saveUser(res.data.user);
+        
           this.router.navigate(['/dashboard']);
-
+        
           this.loading = false;
+        
         },
-
         error: (err) => {
 
           console.log(err);

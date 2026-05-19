@@ -1,369 +1,278 @@
-const bcrypt = require('bcryptjs');
+const asyncHandler =
+  require(
+    '../../utils/asyncHandler'
+  );
 
-const jwt = require('jsonwebtoken');
+const {
 
-const User = require('../../models/User');
+  successResponse
 
-const MenuItem = require('../../models/MenuItem');
+} = require(
+  '../../utils/response'
+);
 
-const Order = require('../../models/Order');
+const ownerService =
+  require(
+    '../../services/owner.service'
+  );
 
-const Restaurant = require('../../models/Restaurant');
+// ==============================
+// REGISTER OWNER
+// ==============================
+exports.registerOwner =
+asyncHandler(async (
 
-const {createToken} = require('../../utils/jwt');
+  req,
 
+  res
 
-// OWNER REGISTER
-exports.registerOwner = async (req, res) => {
+) => {
 
-  try {
+  const result =
+    await ownerService
+      .registerOwner(
 
-    const {
-      name,
-      email,
-      password,
-      restaurantName
-    } = req.body;
+        req.body
 
-    const existingUser =
-      await User.findOne({ email });
-
-    if (existingUser) {
-
-      return res.status(400).json({
-        message: 'Email already exists'
-      });
-
-    }
-
-    const hashedPassword =
-      await bcrypt.hash(password, 10);
-
-    const user = await User.create({
-
-      name,
-
-      email,
-
-      password: hashedPassword,
-
-      role: 'owner'
-
-    });
-
-    const restaurant =
-      await Restaurant.create({
-
-        name: restaurantName,
-
-        ownerId: user._id
-
-      });
-
-    user.restaurantId =
-      restaurant._id;
-
-    await user.save();
-
-    res.json({
-
-      message:
-        'Owner registered successfully',
-
-      user,
-
-      restaurant
-
-    });
-
-  } catch (err) {
-
-    console.error(err);
-
-    res.status(500).json({
-      message: err.message
-    });
-
-  }
-
-};
-
-
-// OWNER LOGIN
-exports.loginOwner = async (req, res) => {
-
-  try {
-
-    const { email, password } = req.body;
-
-    const user =
-      await User.findOne({
-
-        email,
-
-        role: 'owner'
-
-      });
-
-    if (!user) {
-
-      return res.status(400).json({
-        message: 'Invalid credentials'
-      });
-
-    }
-
-    const isMatch =
-      await bcrypt.compare(
-        password,
-        user.password
       );
 
-    if (!isMatch) {
+  successResponse(
 
-      return res.status(400).json({
-        message: 'Invalid credentials'
-      });
+    res,
 
-    }
+    result,
 
-    const token = createToken(user);
+    'Owner registered successfully'
 
-    res.json({
+  );
 
-      token,
+});
 
-      user: {
+// ==============================
+// OWNER LOGIN
+// ==============================
+exports.loginOwner =
+asyncHandler(async (
 
-        id: user._id,
+  req,
 
-        name: user.name,
+  res
 
-        email: user.email,
+) => {
 
-        role: user.role,
+  const result =
+    await ownerService
+      .loginOwner(
 
-        restaurantId:
-          user.restaurantId
+        req.body.email,
 
-      }
+        req.body.password
 
-    });
+      );
 
-  } catch (err) {
+  successResponse(
 
-    console.error(err);
+    res,
 
-    res.status(500).json({
-      message: err.message
-    });
+    result,
 
-  }
+    'Owner login successful'
 
-};
+  );
 
+});
 
+// ==============================
 // GET OWNER MENU
-exports.getOwnerMenu = async (req, res) => {
+// ==============================
+exports.getOwnerMenu =
+asyncHandler(async (
 
-  try {
+  req,
 
-    const items =
-      await MenuItem.find({
+  res
 
-        restaurantId:
-          req.user.restaurantId
+) => {
 
-      });
+  const items =
+    await ownerService
+      .getOwnerMenu(
 
-    res.json(items);
+        req.user.restaurantId
 
-  } catch (err) {
+      );
 
-    res.status(500).json({
-      message: err.message
-    });
+  successResponse(
 
-  }
+    res,
 
-};
+    items,
 
+    'Owner menu fetched'
 
+  );
+
+});
+
+// ==============================
 // ADD MENU ITEM
-exports.addOwnerMenuItem = async (req, res) => {
+// ==============================
+exports.addOwnerMenuItem =
+asyncHandler(async (
 
-  try {
+  req,
 
-    const item =
-      await MenuItem.create({
+  res
 
-        ...req.body,
+) => {
 
-        restaurantId:
-          req.user.restaurantId
+  const item =
+    await ownerService
+      .addOwnerMenuItem(
 
-      });
+        req.body,
 
-    res.json(item);
+        req.user.restaurantId
 
-  } catch (err) {
+      );
 
-    res.status(500).json({
-      message: err.message
-    });
+  successResponse(
 
-  }
+    res,
 
-};
+    item,
 
+    'Menu item added'
 
+  );
+
+});
+
+// ==============================
 // DELETE MENU ITEM
-exports.deleteOwnerMenuItem = async (req, res) => {
+// ==============================
+exports.deleteOwnerMenuItem =
+asyncHandler(async (
 
-  try {
+  req,
 
-    await MenuItem.findByIdAndDelete(
+  res
+
+) => {
+
+  await ownerService
+    .deleteOwnerMenuItem(
+
       req.params.id
+
     );
 
-    res.json({
-      message: 'Deleted successfully'
-    });
+  successResponse(
 
-  } catch (err) {
+    res,
 
-    res.status(500).json({
-      message: err.message
-    });
+    null,
 
-  }
+    'Menu item deleted'
 
-};
+  );
 
+});
 
+// ==============================
 // GET OWNER ORDERS
-exports.getOwnerOrders = async (req, res) => {
+// ==============================
+exports.getOwnerOrders =
+asyncHandler(async (
 
-  try {
+  req,
 
-    const orders =
-      await Order.find({
+  res
 
-        restaurantId:
-          req.user.restaurantId
+) => {
 
-      }).sort({
-        createdAt: -1
-      });
+  const orders =
+    await ownerService
+      .getOwnerOrders(
 
-    res.json(orders);
-
-  } catch (err) {
-
-    res.status(500).json({
-      message: err.message
-    });
-
-  }
-
-};
-
-
-// GET SETTINGS
-exports.getOwnerSettings = async (req, res) => {
-
-  try {
-
-    const restaurant =
-      await Restaurant.findById(
         req.user.restaurantId
+
       );
 
-    res.json({
+  successResponse(
 
-      restaurantName:
-        restaurant?.name || '',
+    res,
 
-      phone:
-        restaurant?.phone || '',
+    orders,
 
-      email:
-        restaurant?.email || '',
+    'Owner orders fetched'
 
-      address:
-        restaurant?.address || '',
+  );
 
-      deliveryTime:
-        restaurant?.deliveryTime || '',
+});
 
-      logo:
-        restaurant?.logo || '',
+// ==============================
+// GET SETTINGS
+// ==============================
+exports.getOwnerSettings =
+asyncHandler(async (
 
-      isOpen:
-        restaurant?.isOpen ?? true
+  req,
 
-    });
+  res
 
-  } catch (err) {
+) => {
 
-    res.status(500).json({
-      message: err.message
-    });
+  const settings =
+    await ownerService
+      .getOwnerSettings(
 
-  }
+        req.user.restaurantId
 
-};
+      );
 
+  successResponse(
 
+    res,
+
+    settings,
+
+    'Settings fetched'
+
+  );
+
+});
+
+// ==============================
 // UPDATE SETTINGS
-exports.updateOwnerSettings = async (req, res) => {
+// ==============================
+exports.updateOwnerSettings =
+asyncHandler(async (
 
-  try {
+  req,
 
-    const updatedRestaurant =
-      await Restaurant.findByIdAndUpdate(
+  res
+
+) => {
+
+  const updatedSettings =
+    await ownerService
+      .updateOwnerSettings(
 
         req.user.restaurantId,
 
-        {
-
-          name:
-            req.body.restaurantName,
-
-          phone:
-            req.body.phone,
-
-          email:
-            req.body.email,
-
-          address:
-            req.body.address,
-
-          deliveryTime:
-            req.body.deliveryTime,
-
-          logo:
-            req.body.logo,
-
-          isOpen:
-            req.body.isOpen
-
-        },
-
-        {
-          new: true
-        }
+        req.body
 
       );
 
-    res.json(updatedRestaurant);
+  successResponse(
 
-  } catch (err) {
+    res,
 
-    res.status(500).json({
-      message: err.message
-    });
+    updatedSettings,
 
-  }
+    'Settings updated'
 
-};
+  );
+
+});

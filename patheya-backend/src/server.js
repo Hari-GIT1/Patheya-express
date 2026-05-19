@@ -1,72 +1,180 @@
 require('dotenv-flow').config();
 
-const http = require('http');
-const app = require('./app');
-const connectDB = require('./config/db');
+// VALIDATE ENV
+require('./config/validateEnv');
 
-const PORT = process.env.PORT || 3000;
+const http =
+  require('http');
+
+const socketIO =
+  require('socket.io');
+
+const app =
+  require('./app');
+
+const connectDB =
+  require('./config/db');
+
+const config =
+  require('./config');
+
+// PORT
+const PORT =
+  config.port || 3000;
 
 // CONNECT DATABASE
 connectDB();
 
 // CREATE HTTP SERVER
-const server = http.createServer(app);
+const server =
+  http.createServer(app);
 
 // SOCKET.IO
-const io = require('socket.io')(server, {
-  cors: {
-    origin:
-      process.env.NODE_ENV === 'production'
-        ? [
-            'https://app.patheyaexpress.in',
-            'https://partner.patheyaexpress.in'
-          ]
-        : [
-            'http://localhost:4200',
-            'http://localhost:4201'
-          ],
-    methods: ['GET', 'POST'],
-    credentials: true
-  }
-});
+const io =
+  socketIO(server, {
 
-// MAKE IO AVAILABLE GLOBALLY
+    cors: {
+
+      origin:
+
+        config.nodeEnv === 'production'
+
+          ? [
+
+              'https://app.patheyaexpress.in',
+
+              'https://partner.patheyaexpress.in'
+
+            ]
+
+          : [
+
+              'http://localhost:4200',
+
+              'http://localhost:4201'
+
+            ],
+
+      methods: [
+
+        'GET',
+
+        'POST',
+
+        'PATCH',
+
+        'PUT',
+
+        'DELETE'
+
+      ],
+
+      credentials: true
+
+    }
+
+  });
+
+// MAKE IO AVAILABLE
 app.set('io', io);
 
+// ==============================
 // SOCKET CONNECTIONS
-io.on('connection', (socket) => {
+// ==============================
+io.on(
 
-  console.log('SOCKET CONNECTED');
+  'connection',
 
-  // JOIN RESTAURANT ROOM
-  socket.on('joinRestaurantRoom', (restaurantId) => {
+  (socket) => {
 
-    socket.join(restaurantId);
+    console.log(
 
-    console.log('JOINED RESTAURANT:', restaurantId);
+      'SOCKET CONNECTED:',
 
-  });
+      socket.id
 
-  // JOIN ORDER ROOM
-  socket.on('joinOrderRoom', (orderId) => {
+    );
 
-    socket.join(orderId);
+    // JOIN RESTAURANT ROOM
+    socket.on(
 
-    console.log('JOINED ORDER:', orderId);
+      'joinRestaurantRoom',
 
-  });
+      (restaurantId) => {
 
-  socket.on('disconnect', () => {
+        socket.join(restaurantId);
 
-    console.log('SOCKET DISCONNECTED');
+        console.log(
 
-  });
+          'JOINED RESTAURANT:',
 
-});
+          restaurantId
+
+        );
+
+      }
+
+    );
+
+    // JOIN ORDER ROOM
+    socket.on(
+
+      'joinOrderRoom',
+
+      (orderId) => {
+
+        socket.join(orderId);
+
+        console.log(
+
+          'JOINED ORDER:',
+
+          orderId
+
+        );
+
+      }
+
+    );
+
+    // DISCONNECT
+    socket.on(
+
+      'disconnect',
+
+      () => {
+
+        console.log(
+
+          'SOCKET DISCONNECTED:',
+
+          socket.id
+
+        );
+
+      }
+
+    );
+
+  }
+
+);
 
 // START SERVER
-server.listen(PORT, '0.0.0.0', () => {
+server.listen(
 
-  console.log(`Server running on port ${PORT}`);
+  PORT,
 
-});
+  '0.0.0.0',
+
+  () => {
+
+    console.log(
+
+      `🚀 Server running on port ${PORT}`
+
+    );
+
+  }
+
+);

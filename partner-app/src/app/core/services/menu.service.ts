@@ -1,81 +1,131 @@
 import { Injectable } from '@angular/core';
 
-import { HttpClient } from '@angular/common/http';
+import {
+  HttpClient
+} from '@angular/common/http';
 
-import { environment } from 'src/environments/environment';
+import {
+  Observable
+} from 'rxjs';
+
+import {
+  environment
+} from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class MenuService {
 
-  apiUrl = environment.apiUrl;
+  apiUrl =
+    environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient
+  ) {}
 
-  // GET MENU
-  getMenu() {
+  // ==============================
+  // GET PARTNER MENU
+  // ==============================
+  getMenu():
+  Observable<any> {
 
     return this.http.get(
+
       `${this.apiUrl}/menu`
+
     );
 
   }
 
-  // ADD MENU
-  addMenu(data: any) {
+  // ==============================
+  // GET RESTAURANT MENU
+  // ==============================
+  getRestaurantMenu(
+    restaurantId: string
+  ): Observable<any> {
+
+    return this.http.get(
+
+      `${this.apiUrl}/menu/${restaurantId}`
+
+    );
+
+  }
+
+  // ==============================
+  // ADD MENU ITEM
+  // ==============================
+  addMenu(
+    data: any
+  ): Observable<any> {
 
     return this.http.post(
+
       `${this.apiUrl}/menu`,
+
       data
+
     );
 
   }
 
-  // DELETE
-  deleteItem(id: string) {
+  // ==============================
+  // UPDATE MENU ITEM
+  // ==============================
+  updateMenu(
 
-    return this.http.delete(
-      `${this.apiUrl}/menu/${id}`
-    );
-
-  }
-
-  // TOGGLE
-  updateAvailability(
     id: string,
-    isAvailable: boolean
-  ) {
-  
-    return this.http.patch(
-  
-      `${environment.apiUrl}/menu/${id}/availability`,
-  
-      { isAvailable }
-  
-    );
-  
-  }
-  updateMenu(id: string, data: any) {
+
+    data: any
+
+  ): Observable<any> {
 
     return this.http.put(
-  
-      `${environment.apiUrl}/menu/${id}`,
-  
+
+      `${this.apiUrl}/menu/${id}`,
+
       data
-  
+
     );
-  
+
   }
-  
-  deleteMenu(id: string) {
-  
+
+  // ==============================
+  // DELETE MENU ITEM
+  // ==============================
+  deleteMenu(
+    id: string
+  ): Observable<any> {
+
     return this.http.delete(
-  
-      `${environment.apiUrl}/menu/${id}`
-  
+
+      `${this.apiUrl}/menu/${id}`
+
     );
-  
+
+  }
+
+  // ==============================
+  // UPDATE AVAILABILITY
+  // ==============================
+  updateAvailability(
+
+    id: string,
+
+    isAvailable: boolean
+
+  ): Observable<any> {
+
+    return this.http.patch(
+
+      `${this.apiUrl}/menu/${id}/availability`,
+
+      { isAvailable }
+
+    );
+
   }
 
 }

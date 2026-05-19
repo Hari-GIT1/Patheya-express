@@ -26,7 +26,13 @@ export class SocketService {
         ''
       );
 
-    this.socket = io(socketUrl);
+      this.socket = io(socketUrl, {
+
+        transports: ['websocket'],
+      
+        autoConnect: true
+      
+      });
 
     // CONNECTED
     this.socket.on('connect', () => {
@@ -85,31 +91,41 @@ export class SocketService {
   // ==============================
   // NEW ORDER LISTENER
   // ==============================
-  onNewOrder(): Observable<any> {
-
+  onNewOrder():
+  Observable<any> {
+  
     return new Observable(
       (subscriber) => {
-
-        this.socket.on(
-
-          'newOrder',
-
-          (data) => {
-
+  
+        const handler =
+          (data: any) => {
+  
             console.log(
               'NEW ORDER SOCKET:',
               data
             );
-
+  
             subscriber.next(data);
-
-          }
-
+  
+          };
+  
+        this.socket.on(
+          'newOrder',
+          handler
         );
-
+  
+        return () => {
+  
+          this.socket.off(
+            'newOrder',
+            handler
+          );
+  
+        };
+  
       }
     );
-
+  
   }
 
   // ==============================
@@ -117,30 +133,39 @@ export class SocketService {
   // ==============================
   onOrderStatusUpdate():
   Observable<any> {
-
+  
     return new Observable(
       (subscriber) => {
-
-        this.socket.on(
-
-          'orderStatusUpdated',
-
-          (data) => {
-
+  
+        const handler =
+          (data: any) => {
+  
             console.log(
               'STATUS UPDATED:',
               data
             );
-
+  
             subscriber.next(data);
-
-          }
-
+  
+          };
+  
+        this.socket.on(
+          'orderStatusUpdated',
+          handler
         );
-
+  
+        return () => {
+  
+          this.socket.off(
+            'orderStatusUpdated',
+            handler
+          );
+  
+        };
+  
       }
     );
-
+  
   }
 
   // ==============================

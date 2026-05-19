@@ -1,67 +1,122 @@
 import {
+
   Component,
+
   OnInit,
+
   OnDestroy
+
 } from '@angular/core';
 
-import { OrderService } from 'src/app/core/services/order.service';
-import { AuthService } from 'src/app/core/services/auth.service';
-import { SocketService } from 'src/app/core/services/socket.service';
+import {
+
+  OrderService
+
+} from 'src/app/core/services/order.service';
+
+import {
+
+  AuthService
+
+} from 'src/app/core/services/auth.service';
+
+import {
+
+  SocketService
+
+} from 'src/app/core/services/socket.service';
 
 @Component({
+
   selector: 'app-orders',
+
   templateUrl: './orders.component.html',
+
   styleUrls: ['./orders.component.scss']
+
 })
+
 export class OrdersComponent
-  implements OnInit, OnDestroy {
+implements OnInit, OnDestroy {
 
   orders: any[] = [];
 
   constructor(
-    private orderService: OrderService,
-    private authService: AuthService,
-    private socketService: SocketService
+
+    private orderService:
+      OrderService,
+
+    private authService:
+      AuthService,
+
+    private socketService:
+      SocketService
+
   ) {}
 
   ngOnInit(): void {
 
-    // ✅ LOAD EXISTING ORDERS
+    // ==============================
+    // LOAD EXISTING ORDERS
+    // ==============================
     this.getOrders();
 
-    // ✅ JOIN RESTAURANT ROOM
-    const user = this.authService.getUser();
+    // ==============================
+    // JOIN RESTAURANT ROOM
+    // ==============================
+    const user =
+      this.authService.getUser();
 
     if (user?.restaurantId) {
 
-      this.socketService.emit(
-        'joinRestaurantRoom',
-        user.restaurantId
-      );
+      this.socketService
+        .joinRestaurantRoom(
+
+          user.restaurantId
+
+        );
 
     }
 
-    // ✅ REALTIME NEW ORDER
-    this.socketService.listen('newOrder')
+    // ==============================
+    // REALTIME NEW ORDER
+    // ==============================
+    this.socketService
+      .onNewOrder()
       .subscribe((order: any) => {
 
-        console.log('NEW ORDER:', order);
+        console.log(
+          'NEW ORDER:',
+          order
+        );
 
-        this.orders.unshift(order);
+        this.orders.unshift(
+          order
+        );
 
       });
 
-    // ✅ REALTIME STATUS UPDATE
-    this.socketService.listen('orderStatusUpdated')
-      .subscribe((updatedOrder: any) => {
+    // ==============================
+    // REALTIME STATUS UPDATE
+    // ==============================
+    this.socketService
+      .onOrderStatusUpdate()
+      .subscribe((updated: any) => {
 
-        const index = this.orders.findIndex(
-          o => o._id === updatedOrder._id
-        );
+        const index =
+          this.orders.findIndex(
+
+            o =>
+
+              o._id ===
+              updated._id
+
+          );
 
         if (index !== -1) {
 
-          this.orders[index] = updatedOrder;
+          this.orders[index] =
+            updated;
 
         }
 
@@ -71,15 +126,21 @@ export class OrdersComponent
 
   ngOnDestroy(): void {
 
-    this.socketService.removeListener('newOrder');
+    this.socketService
+      .removeListener(
+        'newOrder'
+      );
 
-    this.socketService.removeListener(
-      'orderStatusUpdated'
-    );
+    this.socketService
+      .removeListener(
+        'orderStatusUpdated'
+      );
 
   }
 
-  // ✅ GET ORDERS
+  // ==============================
+  // GET ORDERS
+  // ==============================
   getOrders(): void {
 
     this.orderService
@@ -88,7 +149,8 @@ export class OrdersComponent
 
         next: (res: any) => {
 
-          this.orders = res;
+          this.orders =
+            res.data;
 
         },
 
@@ -102,19 +164,48 @@ export class OrdersComponent
 
   }
 
-  // ✅ UPDATE STATUS
+  // ==============================
+  // UPDATE STATUS
+  // ==============================
   updateStatus(
+
     id: string,
+
     status: string
+
   ): void {
 
     this.orderService
-      .updateStatus(id, status)
+      .updateStatus(
+
+        id,
+
+        status
+
+      )
       .subscribe({
 
-        next: () => {
+        next: (res: any) => {
 
-          this.getOrders();
+          const updated =
+            res.data;
+
+          const index =
+            this.orders.findIndex(
+
+              order =>
+
+                order._id ===
+                updated._id
+
+            );
+
+          if (index !== -1) {
+
+            this.orders[index] =
+              updated;
+
+          }
 
         },
 
@@ -128,25 +219,43 @@ export class OrdersComponent
 
   }
 
-  // ✅ FILTER BY STATUS
-  getOrdersByStatus(status: string) {
+  // ==============================
+  // FILTER ORDERS
+  // ==============================
+  getOrdersByStatus(
+    status: string
+  ) {
 
     return this.orders.filter(
-      order => order.status === status
+
+      order =>
+
+        order.status === status
+
     );
 
   }
 
-  // ✅ ORDER TIMER
-  getMinutes(order: any): number {
+  // ==============================
+  // ORDER TIMER
+  // ==============================
+  getMinutes(
+    order: any
+  ): number {
 
     const created =
-      new Date(order.createdAt).getTime();
 
-    const now = Date.now();
+      new Date(
+        order.createdAt
+      ).getTime();
+
+    const now =
+      Date.now();
 
     return Math.floor(
+
       (now - created) / 60000
+
     );
 
   }

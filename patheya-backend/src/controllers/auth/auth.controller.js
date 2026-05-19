@@ -1,213 +1,115 @@
-const bcrypt = require('bcryptjs');
+const asyncHandler =
+  require(
+    '../../utils/asyncHandler'
+  );
 
-const jwt = require('jsonwebtoken');
+const {
 
-const User = require('../../models/User');
+  successResponse
 
-const Restaurant = require('../../models/Restaurant');
+} = require(
+  '../../utils/response'
+);
 
-const {createToken} = require('../../utils/jwt');
+const authService =
+  require(
+    '../../services/auth.service'
+  );
 
-
+// ==============================
 // CUSTOMER REGISTER
-exports.register = async (req, res) => {
+// ==============================
+exports.register =
+asyncHandler(async (
 
-  try {
+  req,
 
-    const {
-      name,
-      email,
-      password
-    } = req.body;
+  res
 
-    const existingUser =
-      await User.findOne({ email });
+) => {
 
-    if (existingUser) {
+  const user =
+    await authService
+      .registerCustomer(
 
-      return res.status(400).json({
-        message: 'Email already exists'
-      });
+        req.body
 
-    }
-
-    const hashedPassword =
-      await bcrypt.hash(password, 10);
-
-    const user = await User.create({
-
-      name,
-
-      email,
-
-      password: hashedPassword,
-
-      role: 'customer'
-
-    });
-
-    res.json({
-      message: 'User registered',
-      user
-    });
-
-  } catch (err) {
-
-    console.error(err);
-
-    res.status(500).json({
-      message: err.message
-    });
-
-  }
-
-};
-
-
-// LOGIN
-exports.login = async (req, res) => {
-
-  try {
-
-    const { email, password } = req.body;
-
-    const user =
-      await User.findOne({ email });
-
-    if (!user) {
-
-      return res.status(400).json({
-        message: 'Invalid credentials'
-      });
-
-    }
-
-    const isMatch =
-      await bcrypt.compare(
-        password,
-        user.password
       );
 
-    if (!isMatch) {
+  successResponse(
 
-      return res.status(400).json({
-        message: 'Invalid credentials'
-      });
+    res,
 
-    }
+    user,
 
-    const token = createToken(user);
+    'User registered'
 
-    res.json({
+  );
 
-      token,
+});
 
-      user: {
+// ==============================
+// LOGIN
+// ==============================
+exports.login =
+asyncHandler(async (
 
-        id: user._id,
+  req,
 
-        name: user.name,
+  res
 
-        email: user.email,
+) => {
 
-        role: user.role,
+  const result =
+    await authService
+      .loginUser(
 
-        restaurantId:
-          user.restaurantId
+        req.body.email,
 
-      }
+        req.body.password
 
-    });
+      );
 
-  } catch (err) {
+  successResponse(
 
-    console.error(err);
+    res,
 
-    res.status(500).json({
-      message: err.message
-    });
+    result,
 
-  }
+    'Login successful'
 
-};
+  );
 
+});
 
+// ==============================
 // OWNER REGISTER
-exports.registerOwner = async (req, res) => {
+// ==============================
+exports.registerOwner =
+asyncHandler(async (
 
-  try {
+  req,
 
-    const {
+  res
 
-      name,
+) => {
 
-      email,
+  const result =
+    await authService
+      .registerOwner(
 
-      password,
+        req.body
 
-      restaurantName
+      );
 
-    } = req.body;
+  successResponse(
 
-    const existingUser =
-      await User.findOne({ email });
+    res,
 
-    if (existingUser) {
+    result,
 
-      return res.status(400).json({
-        message: 'Email already exists'
-      });
+    'Owner registered successfully'
 
-    }
+  );
 
-    const hashedPassword =
-      await bcrypt.hash(password, 10);
-
-    const user = await User.create({
-
-      name,
-
-      email,
-
-      password: hashedPassword,
-
-      role: 'owner'
-
-    });
-
-    const restaurant =
-      await Restaurant.create({
-
-        name: restaurantName,
-
-        ownerId: user._id
-
-      });
-
-    user.restaurantId =
-      restaurant._id;
-
-    await user.save();
-
-    res.json({
-
-      message:
-        'Owner registered successfully',
-
-      user,
-
-      restaurant
-
-    });
-
-  } catch (err) {
-
-    console.error(err);
-
-    res.status(500).json({
-      message: err.message
-    });
-
-  }
-
-};
+});

@@ -1,104 +1,101 @@
-const crypto = require('crypto');
+const asyncHandler =
+  require(
+    '../../utils/asyncHandler'
+  );
 
-const razorpay =
-  require('../../config/razorpay');
+const {
 
+  successResponse,
 
-// CREATE ORDER
-exports.createPaymentOrder = async (req, res) => {
+  errorResponse
 
-  try {
+} = require(
+  '../../utils/response'
+);
 
-    const { amount } = req.body;
+const paymentService =
+  require(
+    '../../services/payment.service'
+  );
 
-    const options = {
+// ==============================
+// CREATE PAYMENT ORDER
+// ==============================
+exports.createPaymentOrder =
+asyncHandler(async (
 
-      amount: amount * 100,
+  req,
 
-      currency: 'INR',
+  res
 
-      receipt:
-        `receipt_${Date.now()}`
+) => {
 
-    };
+  const order =
+    await paymentService
+      .createPaymentOrder(
 
-    const order =
-      await razorpay.orders.create(
-        options
+        req.body.amount
+
       );
 
-    res.json(order);
+  successResponse(
 
-  } catch (err) {
+    res,
 
-    console.error(err);
+    order,
 
-    res.status(500).json({
-      error: err.message
-    });
+    'Payment order created'
 
-  }
+  );
 
-};
+});
 
-
+// ==============================
 // VERIFY PAYMENT
-exports.verifyPayment = async (req, res) => {
+// ==============================
+exports.verifyPayment =
+asyncHandler(async (
 
-  try {
+  req,
 
-    const {
+  res
 
-      razorpay_order_id,
+) => {
 
-      razorpay_payment_id,
+  const isAuthentic =
+    await paymentService
+      .verifyPayment(
 
-      razorpay_signature
+        req.body
 
-    } = req.body;
+      );
 
-    const body =
-      razorpay_order_id +
-      "|" +
-      razorpay_payment_id;
+  if (!isAuthentic) {
 
-    const expectedSignature =
-      crypto
-        .createHmac(
+    return errorResponse(
 
-          'sha256',
+      res,
 
-          process.env
-            .RAZORPAY_KEY_SECRET
+      'Invalid payment signature',
 
-        )
+      400
 
-        .update(body.toString())
-
-        .digest('hex');
-
-    const isAuthentic =
-      expectedSignature ===
-      razorpay_signature;
-
-    if (isAuthentic) {
-
-      return res.json({
-        success: true
-      });
-
-    }
-
-    res.status(400).json({
-      success: false
-    });
-
-  } catch (err) {
-
-    res.status(500).json({
-      error: err.message
-    });
+    );
 
   }
 
-};
+  successResponse(
+
+    res,
+
+    {
+
+      verified: true
+
+    },
+
+    'Payment verified'
+
+  );
+
+});
