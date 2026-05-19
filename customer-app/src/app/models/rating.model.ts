@@ -1,10 +1,37 @@
 export interface Review {
-    id: string;
-    userId: string;
-    restaurantId: string;
-  
-    rating: number; // 1–5
-    comment?: string;
-  
-    createdAt: Date;
-  }
+
+  _id: string;
+
+  userId: string;
+
+  userName?: string;
+
+  userAvatar?: string;
+
+  restaurantId: string;
+
+  orderId?: string;
+
+  rating: number;
+
+  comment?: string;
+
+  images?: string[];
+
+  likes?: number;
+
+  isEdited?: boolean;
+
+  ownerReply?: {
+
+    message: string;
+
+    repliedAt: string;
+
+  };
+
+  createdAt?: string;
+
+  updatedAt?: string;
+
+}

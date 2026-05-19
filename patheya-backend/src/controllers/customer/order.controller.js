@@ -110,6 +110,8 @@ asyncHandler(async (
       req.user._id
 
     );
+    console.log(req.params.userId);
+    console.log(orders);
 
   successResponse(
 

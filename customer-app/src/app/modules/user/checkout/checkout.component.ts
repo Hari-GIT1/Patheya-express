@@ -1,166 +1,404 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { CartService } from '../../../core/services/cart.service';
-import { OrderService } from '../../../core/services/order.service';
-import { HttpClient } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
+import {
+
+  Component,
+
+  OnInit
+
+} from '@angular/core';
+
+import {
+
+  Router
+
+} from '@angular/router';
+
+import {
+
+  HttpClient
+
+} from '@angular/common/http';
+
+import {
+
+  CartService
+
+} from '../../../core/services/cart.service';
+
+import {
+
+  OrderService
+
+} from '../../../core/services/order.service';
+
+import {
+
+  environment
+
+} from 'src/environments/environment';
 
 @Component({
+
   selector: 'app-checkout',
-  templateUrl: './checkout.component.html',
-  styleUrls: ['./checkout.component.scss']
+
+  templateUrl:
+    './checkout.component.html',
+
+  styleUrls: [
+    './checkout.component.scss'
+  ]
+
 })
-export class CheckoutComponent implements OnInit {
+
+export class CheckoutComponent
+implements OnInit {
 
   cartItems: any[] = [];
-  orderType = 'delivery';
-  address: string = '';
 
-  private paymentBaseUrl = `${environment.api.baseUrl}/payment`;
+  loading = false;
+
+  orderType = 'delivery';
+
+  address = '';
+
+  deliveryFee = 40;
+
+  taxes = 25;
+
+  grandTotal = 0;
+
+  private paymentBaseUrl =
+
+    `${environment.api.baseUrl}/payment`;
+
   constructor(
-    private cartService: CartService,
-    private orderService: OrderService,
-    private router: Router,
-    private http: HttpClient
+
+    private cartService:
+      CartService,
+
+    private orderService:
+      OrderService,
+
+    private router:
+      Router,
+
+    private http:
+      HttpClient
+
   ) {}
 
+  // ==============================
+  // INIT
+  // ==============================
   ngOnInit(): void {
-    this.cartItems = this.cartService.getCart();
+
+    this.cartItems =
+      this.cartService
+        .getCart();
+
+    this.calculateTotal();
+
   }
 
-  get total() {
-    return this.cartService.getTotal();
+  // ==============================
+  // TOTAL
+  // ==============================
+  get total(): number {
+
+    return this.cartService
+      .getTotal();
+
   }
 
-  placeOrder() {
+  calculateTotal(): void {
 
-    const user =
-      JSON.parse(
-        localStorage.getItem('user') || '{}'
+    this.grandTotal =
+
+      this.total +
+
+      this.deliveryFee +
+
+      this.taxes;
+
+  }
+
+  // ==============================
+  // PAYMENT
+  // ==============================
+  payNow(): void {
+
+    const token = localStorage.getItem(
+      'token'
+    );
+  
+    const user = JSON.parse(
+  
+      localStorage.getItem(
+        'user'
+      ) || '{}'
+  
+    );
+  
+    // 🔐 LOGIN CHECK
+    if (!token) {
+  
+      this.router.navigate(
+  
+        ['/auth/login'],
+  
+        {
+  
+          queryParams: {
+  
+            redirect: '/checkout'
+  
+          }
+  
+        }
+  
       );
   
-    if (!user.id) {
+      return;
   
-      alert('Login required');
+    }
+  
+    // 📍 ADDRESS CHECK
+    if (
+  
+      this.orderType ===
+      'delivery'
+  
+      &&
+  
+      !this.address.trim()
+  
+    ) {
+  
+      alert(
+        'Please enter address'
+      );
   
       return;
   
     }
   
-    if (this.cartItems.length === 0) {
+    this.loading = true;
   
-      alert('Cart empty');
+    // ==============================
+    // CREATE RAZORPAY ORDER
+    // ==============================
+    this.http.post(
   
-      return;
+      `${this.paymentBaseUrl}/create-order`,
   
-    }
+      {
   
-    const order = {
+        amount:
+          this.grandTotal
   
-      restaurantId:
-        this.cartItems[0]?.restaurantId,
+      }
   
-      items: this.cartItems,
+    ).subscribe({
   
-      total: this.total,
+      next: (order: any) => {
+
+        const razorpayOrder =
+      
+          order.data || order;
+      
+        const options = {
+      
+          key:
+            environment
+              .razorpayKey,
+      
+          amount:
+            razorpayOrder.amount,
+      
+          currency:
+            razorpayOrder.currency,
+      
+          name:
+            'Patheya Express',
+      
+          description:
+            'Food Order Payment',
+      
+          order_id:
+            razorpayOrder.id,
+      
+          handler:
+            (response: any) => {
+      
+              this.verifyPayment(
+                response
+              );
+      
+            },
+      
+          prefill: {
+      
+            name:
+              user.name || '',
+      
+            email:
+              user.email || ''
+      
+          },
+      
+          theme: {
+      
+            color:
+              '#f43f5e'
+      
+          }
+      
+        };
+      
+        const razorpay =
+      
+          new (window as any)
+            .Razorpay(options);
+      
+        razorpay.open();
+      
+        this.loading = false;
+      
+      },
   
-      status: 'placed'
+      error: (err: any) => {
   
-    };
+        console.log(err);
   
-    console.log('ORDER:', order);
+        this.loading = false;
   
-    this.orderService
-      .placeOrder(order)
+        alert(
+          'Payment initialization failed'
+        );
   
-      .subscribe({
+      }
   
-        next: (res: any) => {
-  
-          console.log(
-            'ORDER CREATED:',
-            res
-          );
-  
-          this.cartService.clearCart();
-  
-          // REDIRECT
-          this.router.navigate([
-            '/track-order',
-            res._id
-          ]);
-  
-        },
-  
-        error: (err: any) => {
-  
-          console.error(err);
-  
-          alert(
-  
-            err.error?.message ||
-  
-            'Order failed'
-  
-          );
-  
-        }
-  
-      });
+    });
   
   }
 
-  payNow() {
+  // ==============================
+  // VERIFY PAYMENT
+  // ==============================
+  verifyPayment(
+    paymentData: any
+  ): void {
 
     this.http.post(
-      `${this.paymentBaseUrl}/create-order`,
-      { amount: 500 }
-    ).subscribe((order: any) => {
 
-      const options = {
-        key: 'rzp_test_Sop8avBtckAdw2',
+      `${this.paymentBaseUrl}/verify-payment`,
 
-        amount: order.amount,
-        currency: order.currency,
-        name: 'Patheya Express',
-        description: 'Food Order',
+      paymentData
 
-        order_id: order.id,
+    ).subscribe({
 
-        handler: (response: any) => {
+      next: (verify: any) => {
 
-          console.log('PAYMENT SUCCESS', response);
+        if (
 
-          this.http.post(
-            `${this.paymentBaseUrl}/verify-payment`,
-            response
-          ).subscribe((verify: any) => {
+          verify.success
 
-            console.log('VERIFY RESPONSE', verify);
+        ) {
 
-            if (verify.success) {
-              alert('Payment Successful');
-            }
+          this.placeOrder();
 
-          });
-
-        },
-        
-        prefill: {
-          name: 'Hari',
-          email: 'test@test.com'
-        },
-
-        theme: {
-          color: '#3399cc'
         }
-      };
 
-      const rzp = new (window as any).Razorpay(options);
+      },
 
-      rzp.open();
+      error: (err) => {
+
+        console.log(err);
+
+        alert(
+          'Payment verification failed'
+        );
+
+      }
 
     });
 
   }
+
+  // ==============================
+  // PLACE ORDER
+  // ==============================
+  placeOrder(): void {
+
+    const order = {
+
+      restaurantId:
+
+        this.cartItems[0]
+          ?.restaurantId,
+
+      items:
+        this.cartItems,
+
+      total:
+        this.grandTotal,
+
+      orderType:
+        this.orderType,
+
+      address:
+        this.address,
+
+      paymentMethod:
+        'razorpay',
+
+      status:
+        'Placed'
+
+    };
+
+    this.orderService
+      .placeOrder(order)
+      .subscribe({
+
+        next: (res: any) => {
+
+          this.cartService
+            .clearCart();
+
+          this.router.navigate([
+
+            '/track-order',
+
+            res.data._id
+
+          ]);
+
+        },
+
+        error: (err) => {
+
+          console.log(err);
+
+          alert(
+            'Order failed'
+          );
+
+        }
+
+      });
+
+  }
+
+  // ==============================
+  // TRACKBY
+  // ==============================
+  trackByItem(
+    index: number,
+    item: any
+  ): string {
+
+    return item._id;
+
+  }
+
 }

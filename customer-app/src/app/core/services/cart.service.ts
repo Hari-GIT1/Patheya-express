@@ -1,79 +1,292 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import {
 
-@Injectable({ providedIn: 'root' })
+  Injectable
+
+} from '@angular/core';
+
+import {
+
+  BehaviorSubject
+
+} from 'rxjs';
+
+@Injectable({
+
+  providedIn: 'root'
+
+})
+
 export class CartService {
 
-  private STORAGE_KEY = 'cart_items';
+  // ==============================
+  // STORAGE KEY
+  // ==============================
+  private readonly STORAGE_KEY =
+    'cart_items';
 
-  private cart: any[] = this.loadCart();
+  // ==============================
+  // CART STATE
+  // ==============================
+  private cartItems: any[] =
+    this.loadCart();
 
-  private cartSubject = new BehaviorSubject<any[]>(this.cart);
-  cart$ = this.cartSubject.asObservable();
+  private cartSubject =
+    new BehaviorSubject<any[]>(
 
-  // 🔄 Load from localStorage
+      this.cartItems
+
+    );
+
+  // PUBLIC OBSERVABLE
+  cart$ =
+    this.cartSubject.asObservable();
+
+  constructor() {}
+
+  // ==============================
+  // LOAD CART
+  // ==============================
   private loadCart(): any[] {
-    const data = localStorage.getItem(this.STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
+
+    const data =
+      localStorage.getItem(
+
+        this.STORAGE_KEY
+
+      );
+
+    return data
+      ? JSON.parse(data)
+      : [];
+
   }
 
-  // 💾 Save to localStorage
-  private saveCart() {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.cart));
+  // ==============================
+  // SAVE CART
+  // ==============================
+  private persistCart(): void {
+
+    localStorage.setItem(
+
+      this.STORAGE_KEY,
+
+      JSON.stringify(
+        this.cartItems
+      )
+
+    );
+
   }
 
-  private updateCart() {
-    this.saveCart();                // ✅ persist
-    this.cartSubject.next([...this.cart]); // ✅ update UI
+  // ==============================
+  // UPDATE STATE
+  // ==============================
+  private updateState(): void {
+
+    this.persistCart();
+
+    this.cartSubject.next([
+
+      ...this.cartItems
+
+    ]);
+
   }
 
-  getCart() {
-    return this.cart;
+  // ==============================
+  // GET CART
+  // ==============================
+  getCart(): any[] {
+
+    return [...this.cartItems];
+
   }
 
-  addToCart(item: any, restaurantId: string) {
+  // ==============================
+  // GET ITEM COUNT
+  // ==============================
+  getItemCount(): number {
 
-    // 🚨 If cart has items from another restaurant → clear
-    if (this.cart.length > 0 && this.cart[0].restaurantId !== restaurantId) {
+    return this.cartItems.reduce(
+
+      (sum, item) =>
+
+        sum + item.quantity,
+
+      0
+
+    );
+
+  }
+
+  // ==============================
+  // GET TOTAL
+  // ==============================
+  getTotal(): number {
+
+    return this.cartItems.reduce(
+
+      (sum, item) =>
+
+        sum +
+
+        (item.price * item.quantity),
+
+      0
+
+    );
+
+  }
+
+  // ==============================
+  // ADD TO CART
+  // ==============================
+  addToCart(
+
+    item: any,
+
+    restaurantId: string
+
+  ): void {
+
+    // DIFFERENT RESTAURANT
+    if (
+
+      this.cartItems.length > 0 &&
+
+      this.cartItems[0]
+        .restaurantId !==
+          restaurantId
+
+    ) {
+
       this.clearCart();
+
     }
-  
-    const existing = this.cart.find(i => i._id === item._id);
-  
-    if (existing) {
-      existing.quantity++;
-    } else {
-      this.cart.push({
+
+    // FIND EXISTING
+    const existingItem =
+      this.cartItems.find(
+
+        i => i._id === item._id
+
+      );
+
+    // INCREASE QTY
+    if (existingItem) {
+
+      existingItem.quantity += 1;
+
+    }
+
+    // NEW ITEM
+    else {
+
+      this.cartItems.push({
+
         ...item,
+
         quantity: 1,
-        restaurantId   // ✅ store restaurant
+
+        restaurantId
+
       });
-    }
-  
-    this.updateCart();
-  }
 
-  increaseQty(item: any) {
-    item.quantity++;
-    this.updateCart();
-  }
-
-  decreaseQty(item: any) {
-    item.quantity--;
-
-    if (item.quantity <= 0) {
-      this.cart = this.cart.filter(i => i._id !== item._id);
     }
 
-    this.updateCart();
+    this.updateState();
+
   }
 
-  getTotal() {
-    return this.cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  // ==============================
+  // INCREASE QUANTITY
+  // ==============================
+  increaseQty(item: any): void {
+
+    const cartItem =
+      this.cartItems.find(
+
+        i => i._id === item._id
+
+      );
+
+    if (!cartItem) return;
+
+    cartItem.quantity += 1;
+
+    this.updateState();
+
   }
 
-  clearCart() {
-    this.cart = [];
-    this.updateCart();
+  // ==============================
+  // DECREASE QUANTITY
+  // ==============================
+  decreaseQty(item: any): void {
+
+    const cartItem =
+      this.cartItems.find(
+
+        i => i._id === item._id
+
+      );
+
+    if (!cartItem) return;
+
+    cartItem.quantity -= 1;
+
+    // REMOVE ITEM
+    if (
+
+      cartItem.quantity <= 0
+
+    ) {
+
+      this.removeItem(item._id);
+
+      return;
+
+    }
+
+    this.updateState();
+
   }
+
+  // ==============================
+  // REMOVE ITEM
+  // ==============================
+  removeItem(itemId: string): void {
+
+    this.cartItems =
+
+      this.cartItems.filter(
+
+        item =>
+          item._id !== itemId
+
+      );
+
+    this.updateState();
+
+  }
+
+  // ==============================
+  // CLEAR CART
+  // ==============================
+  clearCart(): void {
+
+    this.cartItems = [];
+
+    this.updateState();
+
+  }
+
+  // ==============================
+  // CHECK EMPTY
+  // ==============================
+  isCartEmpty(): boolean {
+
+    return this.cartItems.length === 0;
+
+  }
+
 }

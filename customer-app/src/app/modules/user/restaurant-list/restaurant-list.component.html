@@ -1,40 +1,122 @@
-<div class="container mt-4">
-  <div class="row">
+<div class="restaurant-page">
 
-    <div *ngFor="let r of filteredRestaurants" class="col-md-4 mb-4">
+  <!-- ============================= -->
+  <!-- EMPTY -->
+  <!-- ============================= -->
 
-      <div class="card restaurant-card h-100"
-           (click)="goToDetails(r._id)"
-           style="cursor:pointer">
+  <div
 
-        <!-- IMAGE -->
-        <img [src]="r.image" class="card-img-top" alt="food">
+    *ngIf="filteredRestaurants.length === 0"
 
-        <div class="card-body">
+    class="empty-state">
 
-          <h5 class="fw-bold mb-1">{{ r.name }}</h5>
+    <div class="empty-icon">
 
-          <p class="text-muted small mb-2">
-            {{ r.cuisines.join(', ') }}
-          </p>
+      🍽️
 
-          <div class="d-flex justify-content-between align-items-center">
+    </div>
 
-            <span class="badge bg-success">
-              ⭐ {{ r.rating }}
-            </span>
+    <h2>
+      No restaurants found
+    </h2>
 
-            <small class="text-muted">
-              ⏱ {{ r.deliveryTime }} mins
-            </small>
+    <p>
+      Try searching something else
+    </p>
+
+  </div>
+
+  <!-- ============================= -->
+  <!-- GRID -->
+  <!-- ============================= -->
+
+  <div class="restaurant-grid">
+
+    <div
+
+      *ngFor="
+        let r of filteredRestaurants;
+        trackBy: trackByRestaurant
+      "
+
+      class="restaurant-card"
+
+      (click)="goToDetails(r._id)">
+
+      <!-- IMAGE -->
+      <div class="image-wrapper">
+
+        <img
+
+          [src]="
+            r.image ||
+            'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1200&auto=format&fit=crop'
+          "
+
+          alt="restaurant">
+
+        <!-- OVERLAY -->
+        <div class="overlay"></div>
+
+        <!-- DELIVERY -->
+        <div class="delivery-badge">
+
+          ⏱
+          {{ r.deliveryTime || 30 }}
+          mins
+
+        </div>
+
+      </div>
+
+      <!-- CONTENT -->
+      <div class="card-content">
+
+        <!-- TOP -->
+        <div class="top-section">
+
+          <div>
+
+            <h3>
+              {{ r.name }}
+            </h3>
+
+            <p>
+
+              {{
+                r.cuisines?.join(', ')
+              }}
+
+            </p>
 
           </div>
 
-          <div class="mt-2">
+          <!-- RATING -->
+          <div class="rating">
 
-            <span *ngIf="r.pickupAvailable" class="badge bg-warning text-dark">
-              Pickup Available
-            </span>
+            ⭐
+            {{ r.rating || 4.3 }}
+
+          </div>
+
+        </div>
+
+        <!-- BOTTOM -->
+        <div class="bottom-section">
+
+          <!-- PICKUP -->
+          <div
+            *ngIf="r.pickupAvailable"
+            class="pickup-badge">
+
+            Pickup Available
+
+          </div>
+
+          <!-- PRICE -->
+          <div class="price-tag">
+
+            ₹200 for two
 
           </div>
 
@@ -45,4 +127,5 @@
     </div>
 
   </div>
+
 </div>

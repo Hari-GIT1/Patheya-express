@@ -1,96 +1,463 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { OrderService } from '../../../core/services/order.service';
-import { SocketService } from '../../../core/services/socket.service';
+import {
+
+  Component,
+
+  OnInit,
+
+  OnDestroy
+
+} from '@angular/core';
+
+import {
+
+  ActivatedRoute
+
+} from '@angular/router';
+
+import {
+
+  OrderService
+
+} from '../../../core/services/order.service';
+
+import {
+
+  SocketService
+
+} from '../../../core/services/socket.service';
 
 @Component({
+
   selector: 'app-track-order',
-  templateUrl: './track-order.component.html',
-  styleUrls: ['./track-order.component.scss']
+
+  templateUrl:
+    './track-order.component.html',
+
+  styleUrls: [
+    './track-order.component.scss'
+  ]
 
 })
-export class TrackOrderComponent implements OnInit {
 
-  order: any;
-  deliveryLocation = { lat: 12.9716, lng: 77.5946 }; // rider
-destination = { lat: 12.9616, lng: 77.5846 };      // customer
+export class TrackOrderComponent
+implements OnInit, OnDestroy {
 
-zoom = 14;
+  // ==============================
+  // ORDER
+  // ==============================
+  order: any = null;
+
+  loading = false;
+
+  // ==============================
+  // MAP
+  // ==============================
+  deliveryLocation = {
+
+    lat: 12.9716,
+
+    lng: 77.5946
+
+  };
+
+  destination = {
+
+    lat: 12.9616,
+
+    lng: 77.5846
+
+  };
+
+  zoom = 14;
+
+  directionsService =
+    new google.maps
+      .DirectionsService();
+
+  directionsResult:
+    google.maps
+      .DirectionsResult
+      | undefined;
+
+  // ==============================
+  // INTERVAL
+  // ==============================
+  private riderInterval: any;
 
   constructor(
-    private route: ActivatedRoute,
-    private orderService: OrderService,
-    private socketService: SocketService
+
+    private route:
+      ActivatedRoute,
+
+    private orderService:
+      OrderService,
+
+    private socketService:
+      SocketService
+
   ) {}
 
+  // ==============================
+  // INIT
+  // ==============================
   ngOnInit(): void {
-    this.drawRoute();
-    const orderId = this.route.snapshot.paramMap.get('id');
 
-    console.log('TRACK ID:', orderId);
+    const orderId =
+
+      this.route
+        .snapshot
+        .paramMap
+        .get('id');
 
     if (!orderId) return;
 
-    this.socketService.joinOrder(orderId);
+    this.loading = true;
 
-    this.orderService.getOrder(orderId).subscribe({
-      next: (res: any) => {
-        console.log('ORDER DATA:', res);
-        this.order = res;
-      },
-      error: (err) => console.error(err)
-    });
+    // JOIN SOCKET ROOM
+    this.socketService
+      .joinOrder(orderId);
 
-    this.socketService.onOrderStatusUpdate((updated: any) => {
-      if (updated._id === orderId) {
-        this.order = updated;
-      }
-    });
-    setInterval(() => {
-      this.deliveryLocation = {
-        lat: this.deliveryLocation.lat + (Math.random() - 0.5) * 0.001,
-        lng: this.deliveryLocation.lng + (Math.random() - 0.5) * 0.001
-      };
-    }, 2000);
+    // LOAD ORDER
+    this.loadOrder(orderId);
+
+    // LISTEN STATUS UPDATE
+    this.listenForUpdates(
+      orderId
+    );
+
+    // INITIAL ROUTE
+    this.drawRoute();
+
+    // FAKE LIVE RIDER
+    this.startFakeRiderMovement();
+
   }
 
-  get steps() {
-    return [
-      { key: 'placed', label: 'Order Placed' },
-      { key: 'preparing', label: 'Preparing' },
-      { key: 'out_for_delivery', label: 'Out for Delivery' },
-      { key: 'delivered', label: 'Delivered' }
-    ];
-  }
-  
-  getProgressIndex(status: string) {
-    const keys = this.steps.map(s => s.key);
-    return keys.indexOf(status);
-  }
-  
-  // 🔥 Fake ETA (can replace with real later)
-  get eta() {
-    if (!this.order?.createdAt) return '';
-  
-    const created = new Date(this.order.createdAt).getTime();
-    const eta = new Date(created + 30 * 60000); // +30 mins
-  
-    return eta.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  }
-  directionsService = new google.maps.DirectionsService();
-directionsResult: google.maps.DirectionsResult | undefined;
-drawRoute() {
-  this.directionsService.route(
-    {
-      origin: this.deliveryLocation,
-      destination: this.destination,
-      travelMode: google.maps.TravelMode.DRIVING
-    },
-    (result, status) => {
-      if (status === 'OK' && result) {
-        this.directionsResult = result;
-      }
+  // ==============================
+  // DESTROY
+  // ==============================
+  ngOnDestroy(): void {
+
+    if (this.riderInterval) {
+
+      clearInterval(
+        this.riderInterval
+      );
+
     }
-  );
-}
+
+  }
+
+  // ==============================
+  // LOAD ORDER
+  // ==============================
+  loadOrder(
+    orderId: string
+  ): void {
+
+    this.orderService
+      .getOrder(orderId)
+      .subscribe({
+
+        next: (res: any) => {
+
+          console.log(
+            'ORDER:',
+            res
+          );
+
+          // STANDARDIZED RESPONSE
+          this.order =
+            res.data;
+
+          this.loading = false;
+
+        },
+
+        error: (err) => {
+
+          console.log(err);
+
+          this.loading = false;
+
+        }
+
+      });
+
+  }
+
+  // ==============================
+  // SOCKET LISTENER
+  // ==============================
+  listenForUpdates(
+    orderId: string
+  ): void {
+
+    this.socketService
+    .onOrderStatusUpdate()
+    .subscribe((updated: any) => {
+
+          // HANDLE STANDARDIZED
+          const updatedOrder =
+
+            updated.data ||
+            updated;
+
+          if (
+
+            updatedOrder._id ===
+            orderId
+
+          ) {
+
+            this.order =
+              updatedOrder;
+
+          }
+
+        }
+
+      );
+
+  }
+
+  // ==============================
+  // TIMELINE STEPS
+  // ==============================
+  get steps() {
+
+    return [
+
+      {
+
+        key: 'placed',
+
+        label:
+          'Order Placed'
+
+      },
+
+      {
+
+        key: 'preparing',
+
+        label:
+          'Preparing Food'
+
+      },
+
+      {
+
+        key:
+          'out for delivery',
+
+        label:
+          'Out for Delivery'
+
+      },
+
+      {
+
+        key: 'delivered',
+
+        label:
+          'Delivered'
+
+      }
+
+    ];
+
+  }
+
+  // ==============================
+  // PROGRESS INDEX
+  // ==============================
+  getProgressIndex(
+    status: string
+  ): number {
+
+    const keys =
+
+      this.steps.map(
+        step => step.key
+      );
+
+    return keys.indexOf(
+
+      status?.toLowerCase()
+
+    );
+
+  }
+
+  // ==============================
+  // ETA
+  // ==============================
+  get eta(): string {
+
+    if (
+
+      !this.order?.createdAt
+
+    ) return '--';
+
+    const created =
+
+      new Date(
+        this.order.createdAt
+      ).getTime();
+
+    // 30 MIN ETA
+    const etaTime =
+
+      new Date(
+        created + 30 * 60000
+      );
+
+    return etaTime
+      .toLocaleTimeString(
+        [],
+        {
+
+          hour: '2-digit',
+
+          minute:
+            '2-digit'
+
+        }
+      );
+
+  }
+
+  // ==============================
+  // STATUS CLASS
+  // ==============================
+  getStatusClass(
+    status: string
+  ): string {
+
+    const value =
+      status?.toLowerCase();
+
+    if (value === 'placed') {
+
+      return 'status-placed';
+
+    }
+
+    if (value === 'preparing') {
+
+      return 'status-preparing';
+
+    }
+
+    if (
+
+      value ===
+      'out for delivery'
+
+    ) {
+
+      return 'status-out';
+
+    }
+
+    if (value === 'delivered') {
+
+      return 'status-delivered';
+
+    }
+
+    return '';
+
+  }
+
+  // ==============================
+  // DRAW ROUTE
+  // ==============================
+  drawRoute(): void {
+
+    this.directionsService
+      .route(
+
+        {
+
+          origin:
+            this.deliveryLocation,
+
+          destination:
+            this.destination,
+
+          travelMode:
+            google.maps
+              .TravelMode
+              .DRIVING
+
+        },
+
+        (
+
+          result,
+
+          status
+
+        ) => {
+
+          if (
+
+            status === 'OK' &&
+
+            result
+
+          ) {
+
+            this
+              .directionsResult =
+
+              result;
+
+          }
+
+        }
+
+      );
+
+  }
+
+  // ==============================
+  // FAKE RIDER MOVEMENT
+  // ==============================
+  startFakeRiderMovement():
+  void {
+
+    this.riderInterval =
+
+      setInterval(() => {
+
+        this.deliveryLocation = {
+
+          lat:
+
+            this.deliveryLocation
+              .lat +
+
+            (Math.random() - 0.5)
+              * 0.001,
+
+          lng:
+
+            this.deliveryLocation
+              .lng +
+
+            (Math.random() - 0.5)
+              * 0.001
+
+        };
+
+        this.drawRoute();
+
+      }, 3000);
+
+  }
+
 }

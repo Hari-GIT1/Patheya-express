@@ -1,12 +1,44 @@
 export interface DeliveryPartner {
-    id: string;
-    name: string;
-    phone: string;
-  
-    isAvailable: boolean;
-  
-    currentLocation?: {
-      latitude: number;
-      longitude: number;
-    };
-  }
+
+  _id: string;
+
+  name: string;
+
+  phone: string;
+
+  email?: string;
+
+  avatar?: string;
+
+  vehicleType?:
+    'Bike' |
+    'Scooter' |
+    'Cycle';
+
+  vehicleNumber?: string;
+
+  isAvailable: boolean;
+
+  isOnline?: boolean;
+
+  currentLocation?: {
+
+    latitude: number;
+
+    longitude: number;
+
+    updatedAt?: string;
+
+  };
+
+  rating?: number;
+
+  totalDeliveries?: number;
+
+  currentOrderId?: string;
+
+  createdAt?: string;
+
+  updatedAt?: string;
+
+}

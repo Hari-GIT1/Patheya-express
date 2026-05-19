@@ -1,0 +1,382 @@
+:host {
+
+    display: block;
+  
+    background: #f8fafc;
+  
+    min-height: 100vh;
+  
+  }
+  
+  /* HERO */
+  
+  .restaurant-hero {
+  
+    height: 320px;
+  
+    position: relative;
+  
+    background:
+      linear-gradient(
+        rgba(0,0,0,0.6),
+        rgba(0,0,0,0.5)
+      ),
+      url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1600&auto=format&fit=crop');
+  
+    background-size: cover;
+  
+    background-position: center;
+  
+    display: flex;
+  
+    align-items: center;
+  
+  }
+  
+  .hero-content {
+  
+    position: relative;
+  
+    z-index: 2;
+  
+    color: white;
+  
+  }
+  
+  .tag {
+  
+    display: inline-block;
+  
+    padding: 10px 18px;
+  
+    background: rgba(255,255,255,0.15);
+  
+    border-radius: 40px;
+  
+    margin-bottom: 18px;
+  
+  }
+  
+  .hero-content h1 {
+  
+    font-size: 56px;
+  
+    font-weight: 800;
+  
+    margin-bottom: 16px;
+  
+  }
+  
+  .hero-content p {
+  
+    font-size: 18px;
+  
+    opacity: 0.9;
+  
+  }
+  
+  /* SECTION */
+  
+  .section-header {
+  
+    margin-bottom: 30px;
+  
+  }
+  
+  .section-header h2 {
+  
+    font-size: 36px;
+  
+    font-weight: 800;
+  
+  }
+  
+  .section-header p {
+  
+    color: #64748b;
+  
+  }
+  
+  /* MENU */
+  
+  .menu-grid {
+  
+    display: grid;
+  
+    gap: 24px;
+  
+  }
+  
+  .food-card {
+  
+    background: white;
+  
+    border-radius: 24px;
+  
+    overflow: hidden;
+  
+    box-shadow:
+      0 4px 30px rgba(0,0,0,0.06);
+  
+    transition: 0.3s;
+  
+  }
+  
+  .food-card:hover {
+  
+    transform: translateY(-6px);
+  
+  }
+  
+  .food-image {
+  
+    height: 240px;
+  
+    overflow: hidden;
+  
+  }
+  
+  .food-image img {
+  
+    width: 100%;
+  
+    height: 100%;
+  
+    object-fit: cover;
+  
+  }
+  
+  .food-content {
+  
+    padding: 24px;
+  
+  }
+  
+  .top-row {
+  
+    display: flex;
+  
+    justify-content: space-between;
+  
+    align-items: center;
+  
+  }
+  
+  .top-row h3 {
+  
+    font-size: 24px;
+  
+    font-weight: 700;
+  
+  }
+  
+  .food-type {
+  
+    padding: 6px 12px;
+  
+    border-radius: 10px;
+  
+    font-size: 13px;
+  
+    font-weight: 600;
+  
+  }
+  
+  .food-type.veg {
+  
+    background: #dcfce7;
+  
+    color: #166534;
+  
+  }
+  
+  .food-type.nonveg {
+  
+    background: #fee2e2;
+  
+    color: #991b1b;
+  
+  }
+  
+  .description {
+  
+    color: #64748b;
+  
+    margin: 16px 0;
+  
+  }
+  
+  .bottom-row {
+  
+    display: flex;
+  
+    justify-content: space-between;
+  
+    align-items: center;
+  
+  }
+  
+  .price {
+  
+    font-size: 24px;
+  
+    font-weight: 800;
+  
+  }
+  
+  /* BUTTONS */
+  
+  .add-btn {
+  
+    border: none;
+  
+    background: black;
+  
+    color: white;
+  
+    padding: 12px 20px;
+  
+    border-radius: 14px;
+  
+    font-weight: 600;
+  
+  }
+  
+  .qty-box {
+  
+    display: flex;
+  
+    align-items: center;
+  
+    gap: 12px;
+  
+    background: #f1f5f9;
+  
+    padding: 10px 16px;
+  
+    border-radius: 14px;
+  
+  }
+  
+  .qty-box button {
+  
+    border: none;
+  
+    background: transparent;
+  
+    font-size: 18px;
+  
+    font-weight: 700;
+  
+  }
+  
+  /* CART */
+  
+  .cart-card {
+  
+    position: sticky;
+  
+    top: 100px;
+  
+    background: white;
+  
+    border-radius: 24px;
+  
+    padding: 28px;
+  
+    box-shadow:
+      0 4px 30px rgba(0,0,0,0.08);
+  
+  }
+  
+  .cart-header {
+  
+    display: flex;
+  
+    justify-content: space-between;
+  
+    margin-bottom: 20px;
+  
+  }
+  
+  .cart-item {
+  
+    display: flex;
+  
+    justify-content: space-between;
+  
+    align-items: center;
+  
+    padding: 16px 0;
+  
+    border-bottom: 1px solid #e5e7eb;
+  
+  }
+  
+  .cart-item h5 {
+  
+    margin: 0;
+  
+  }
+  
+  .cart-item p {
+  
+    margin: 4px 0 0;
+  
+    color: #64748b;
+  
+  }
+  
+  .cart-total {
+  
+    display: flex;
+  
+    justify-content: space-between;
+  
+    font-size: 22px;
+  
+    font-weight: 800;
+  
+    margin: 24px 0;
+  
+  }
+  
+  .checkout-btn {
+  
+    width: 100%;
+  
+    border: none;
+  
+    background: #16a34a;
+  
+    color: white;
+  
+    padding: 18px;
+  
+    border-radius: 18px;
+  
+    font-size: 16px;
+  
+    font-weight: 700;
+  
+  }
+  
+  .empty-cart {
+  
+    text-align: center;
+  
+    color: #94a3b8;
+  
+    padding: 40px 0;
+  
+  }
+  
+  @media (max-width: 768px) {
+  
+    .hero-content h1 {
+  
+      font-size: 40px;
+  
+    }
+  
+  }

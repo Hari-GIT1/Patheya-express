@@ -53,49 +53,96 @@ asyncHandler(async (
 // ==============================
 // VERIFY PAYMENT
 // ==============================
-exports.verifyPayment =
-asyncHandler(async (
+const crypto = require('crypto');
 
+exports.verifyPayment = async (
   req,
-
   res
-
 ) => {
 
-  const isAuthentic =
-    await paymentService
-      .verifyPayment(
+  try {
 
-        req.body
+    const {
 
-      );
+      razorpay_order_id,
 
-  if (!isAuthentic) {
+      razorpay_payment_id,
 
-    return errorResponse(
+      razorpay_signature
 
-      res,
+    } = req.body;
 
-      'Invalid payment signature',
+    // ==============================
+    // GENERATE SIGNATURE
+    // ==============================
+    const generatedSignature =
 
-      400
+      crypto
+        .createHmac(
 
-    );
+          'sha256',
+
+          process.env
+            .RAZORPAY_KEY_SECRET
+
+        )
+
+        .update(
+
+          razorpay_order_id
+          +
+          '|'
+          +
+          razorpay_payment_id
+
+        )
+
+        .digest('hex');
+
+    // ==============================
+    // VERIFY
+    // ==============================
+    if (
+
+      generatedSignature !==
+      razorpay_signature
+
+    ) {
+
+      return res.status(400)
+        .json({
+
+          success: false,
+
+          message:
+            'Invalid payment signature'
+
+        });
+
+    }
+
+    return res.json({
+
+      success: true,
+
+      message:
+        'Payment verified'
+
+    });
+
+  } catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+
+      success: false,
+
+      message:
+        'Payment verification failed'
+
+    });
 
   }
 
-  successResponse(
-
-    res,
-
-    {
-
-      verified: true
-
-    },
-
-    'Payment verified'
-
-  );
-
-});
+};
