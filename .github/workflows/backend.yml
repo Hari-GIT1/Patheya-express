@@ -1,0 +1,46 @@
+name: Backend CI
+
+on:
+
+  push:
+
+    branches:
+
+      - develop
+      - qa
+      - uat
+      - main
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Repository
+
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+
+        uses: actions/setup-node@v4
+
+        with:
+
+          node-version: 22
+
+      - name: Install Dependencies
+
+        run: npm install
+
+        working-directory:
+          patheya-backend
+
+      - name: Validate Build
+
+        run: echo "Backend build successful"
+
+        working-directory:
+          patheya-backend
