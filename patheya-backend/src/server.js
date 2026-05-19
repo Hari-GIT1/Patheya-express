@@ -1,50 +1,197 @@
-const express = require('express');
-const cors = require('cors');
-const http = require('http'); // ✅ FIX
-const { Server } = require('socket.io');
-const connectDB = require('./config/db');
-const PORT = process.env.PORT || 3000;
-
 require('dotenv-flow').config();
-console.log('ENV:', process.env.NODE_ENV);
-console.log('DB:', process.env.MONGO_URI);
 
-const app = express();
+// VALIDATE ENV
+require('./config/validateEnv');
 
-app.use(cors());
-app.use(express.json());
+const http =
+  require('http');
 
-// ✅ create HTTP server
-const server = http.createServer(app);
+const socketIO =
+  require('socket.io');
 
-// ✅ socket setup
-const io = new Server(server, {
-  cors: { origin: '*' }
-});
+const app =
+  require('./app');
 
-app.set('io', io);
+const connectDB =
+  require('./config/db');
+
+const config =
+  require('./config');
+
+const { initSocket } = 
+  require('./sockets');
+// PORT
+const PORT =
+  config.port || 3000;
+
+// CONNECT DATABASE
 connectDB();
 
-// ✅ routes
-app.use('/api/auth', require('./routes/auth.routes'));
-app.use('/api/menu', require('./routes/menu.routes'));
-app.use('/api/orders', require('./routes/order.routes'));
-app.use('/api/restaurants', require('./routes/restaurant.routes'));
-app.use('/uploads', express.static('uploads'));
-app.use('/api/payment', require('./routes/payment.routes'));
+// CREATE HTTP SERVER
+const server =
+  http.createServer(app);
 
-// ✅ socket connection
-io.on('connection', (socket) => {
-  console.log('User connected:', socket.id);
+// SOCKET.IO
+const io =
+  socketIO(server, {
 
-  socket.on('joinOrderRoom', (orderId) => {
-    socket.join(orderId);
+    cors: {
+
+      origin:
+
+        config.nodeEnv === 'production'
+
+          ? [
+
+              'https://app.patheyaexpress.in',
+
+              'https://partner.patheyaexpress.in',
+
+              'https://admin.patheyaexpress.in'
+              
+
+            ]
+
+          : [
+
+            config.urls.customer,
+            config.urls.partner,
+            config.urls.admin
+            ],
+
+      methods: [
+
+        'GET',
+
+        'POST',
+
+        'PATCH',
+
+        'PUT',
+
+        'DELETE'
+
+      ],
+
+      credentials: true
+
+    }
+
   });
-});
-app.get('/', (req, res) => {
-  res.send('Patheya Express Backend Running');
-});
 
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// MAKE IO AVAILABLE
+app.set('io', io);
+
+// ==============================
+// SOCKET CONNECTIONS
+// ==============================
+io.on(
+
+  'connection',
+
+  (socket) => {
+
+    console.log(
+
+      'SOCKET CONNECTED:',
+
+      socket.id
+
+    );
+
+    // JOIN RESTAURANT ROOM
+    socket.on(
+
+      'joinRestaurantRoom',
+
+      (restaurantId) => {
+
+        socket.join(restaurantId);
+
+        console.log(
+
+          'JOINED RESTAURANT:',
+
+          restaurantId
+
+        );
+
+      }
+
+    );
+
+    // JOIN ORDER ROOM
+    socket.on(
+
+      'joinOrderRoom',
+
+      (orderId) => {
+
+        socket.join(orderId);
+
+        console.log(
+
+          'JOINED ORDER:',
+
+          orderId
+
+        );
+
+      }
+
+    );
+    //JOIN ADMIN ROOM
+    socket.on(
+      'joinAdminRoom',
+      () => {
+    
+        socket.join('admins');
+    
+        console.log(
+          'ADMIN JOINED'
+        );
+    
+      }
+    );
+
+    // DISCONNECT
+    socket.on(
+
+      'disconnect',
+
+      () => {
+
+        console.log(
+
+          'SOCKET DISCONNECTED:',
+
+          socket.id
+
+        );
+
+      }
+
+    );
+
+  }
+
+);
+
+// START SERVER
+server.listen(
+
+  PORT,
+
+  '0.0.0.0',
+
+  () => {
+
+    console.log(
+
+      `🚀 Server running on port ${PORT}`
+
+    );
+
+  }
+
+);

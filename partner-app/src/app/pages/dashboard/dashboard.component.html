@@ -1,0 +1,441 @@
+<div class="dashboard-page container-fluid py-4">
+
+  <!-- HEADER -->
+  <div class="dashboard-header mb-4">
+
+    <div>
+      <h2 class="dashboard-title">
+        👋 Welcome Back Owner
+      </h2>
+
+      <p class="dashboard-subtitle">
+        Manage orders, menu & discounts
+      </p>
+    </div>
+
+  </div>
+
+  <!-- STATS -->
+  <div class="row g-4 mb-4">
+
+    <!-- ORDERS -->
+    <div class="col-lg-4 col-md-6">
+
+      <div
+        class="stat-card orders-card"
+        routerLink="/orders">
+
+        <div>
+
+          <p class="stat-label">
+            Total Orders
+          </p>
+
+          <h2 class="stat-value">
+            {{ totalOrders }}
+          </h2>
+
+        </div>
+
+        <div class="stat-icon blue">
+
+          <i class="bi bi-bag-check-fill"></i>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- MENU -->
+    <div class="col-lg-4 col-md-6">
+
+      <div
+        class="stat-card menu-card"
+        routerLink="/menu">
+
+        <div>
+
+          <p class="stat-label">
+            Menu Items
+          </p>
+
+          <h2 class="stat-value">
+            {{ totalMenuItems }}
+          </h2>
+
+        </div>
+
+        <div class="stat-icon orange">
+
+          <i class="bi bi-grid-fill"></i>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- RUNNING -->
+    <div class="col-lg-4 col-md-6">
+
+      <div class="stat-card running-card">
+
+        <div>
+
+          <p class="stat-label">
+            Running Orders
+          </p>
+
+          <h2 class="stat-value">
+            {{ runningOrders.length }}
+          </h2>
+
+        </div>
+
+        <div class="stat-icon green">
+
+          <i class="bi bi-lightning-charge-fill"></i>
+
+        </div>
+
+      </div>
+
+    </div>
+    <!--Order History-->
+    <div class="col-lg-4 col-md-6">
+
+      <div
+        class="stat-card"
+        routerLink="/order-history">
+    
+        <div>
+    
+          <p class="stat-label">
+            Sales & History
+          </p>
+    
+          <h2 class="stat-value">
+            ₹{{ totalRevenue }}
+          </h2>
+    
+        </div>
+    
+        <div class="stat-icon green">
+    
+          <i class="bi bi-bar-chart-fill"></i>
+    
+        </div>
+    
+      </div>
+    
+    </div>
+
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="row g-4">
+
+    <!-- RUNNING ORDERS -->
+    <div class="col-lg-8">
+
+      <div class="dashboard-card">
+
+        <div class="section-header">
+
+          <h4>
+            🔥 Current Running Orders
+          </h4>
+
+          <button
+            class="view-all-btn"
+            routerLink="/orders">
+
+            View All
+
+          </button>
+
+        </div>
+
+        <!-- ORDERS -->
+        <div
+          class="running-order"
+          *ngFor="let order of runningOrders">
+
+          <div>
+
+            <h5 class="order-id">
+
+              Order #{{ order._id.slice(-5) }}
+
+            </h5>
+
+            <p class="order-items">
+
+              {{ order.items.length }} items
+
+            </p>
+
+          </div>
+
+          <div>
+
+            <span class="running-badge">
+
+              {{ order.status }}
+
+            </span>
+
+          </div>
+
+        </div>
+
+        <!-- EMPTY -->
+        <div
+          class="empty-orders"
+          *ngIf="runningOrders.length === 0">
+
+          No running orders
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- DISCOUNTS -->
+    <div class="col-lg-4">
+
+      <div class="dashboard-card">
+
+        <div class="section-header">
+
+          <h4>
+            🎁 Discounts
+          </h4>
+
+          <button
+            class="create-discount-btn"
+            (click)="showDiscountModal = true">
+
+            + Create
+
+          </button>
+
+        </div>
+
+        <!-- DISCOUNT LIST -->
+        <div
+          class="discount-item"
+          *ngFor="let discount of discounts">
+
+          <div>
+
+            <h6 class="discount-code">
+
+              {{ discount.code }}
+
+            </h6>
+
+            <p class="discount-percent">
+
+              {{ discount.percentage }}% OFF
+
+            </p>
+
+          </div>
+
+          <span class="discount-badge">
+
+            Active
+
+          </span>
+
+        </div>
+
+        <!-- EMPTY -->
+        <div
+          class="empty-orders"
+          *ngIf="discounts.length === 0">
+
+          No discounts created
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- DISCOUNT MODAL -->
+
+<div
+  class="custom-modal"
+  *ngIf="showDiscountModal">
+
+  <div class="modal-box">
+
+    <!-- HEADER -->
+    <div class="modal-header-custom">
+
+      <h4>
+        🎁 Create Discount
+      </h4>
+
+      <button
+        class="close-btn"
+        (click)="showDiscountModal = false">
+
+        ✕
+
+      </button>
+
+    </div>
+
+    <!-- CODE -->
+    <div class="mb-3">
+
+      <label class="form-label">
+        Coupon Code
+      </label>
+
+      <input
+        type="text"
+        class="modern-input"
+        placeholder="SAVE20"
+        [(ngModel)]="discountForm.code">
+
+    </div>
+
+    <!-- PERCENT -->
+    <div class="mb-4">
+
+      <label class="form-label">
+        Discount Percentage
+      </label>
+
+      <input
+        type="number"
+        class="modern-input"
+        placeholder="20"
+        [(ngModel)]="discountForm.percentage">
+
+    </div>
+
+    <!-- BUTTON -->
+    <button
+      class="save-btn w-100"
+      (click)="createDiscount()">
+
+      Create Discount
+
+    </button>
+
+  </div>
+
+</div>
+
+<!-- NEW ORDER POPUP -->
+
+<div
+  *ngIf="showOrderPopup"
+  style="
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 999999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  ">
+
+  <div
+    style="
+      width: 360px;
+      background: white;
+      border-radius: 24px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+    ">
+
+    <h2
+      style="
+        font-size: 24px;
+        font-weight: 800;
+        margin-bottom: 16px;
+      ">
+
+      🚨 New Order
+
+    </h2>
+
+    <p
+      style="
+        margin-bottom: 10px;
+      ">
+
+      Order #
+      {{ incomingOrder?._id?.slice(-5) }}
+
+    </p>
+
+    <p
+      style="
+        margin-bottom: 20px;
+      ">
+
+      ₹{{ incomingOrder?.total }}
+
+    </p>
+
+    <div
+      style="
+        display: flex;
+        gap: 12px;
+      ">
+
+      <button
+
+        (click)="acceptOrder(incomingOrder)"
+
+        style="
+          flex: 1;
+          border: none;
+          padding: 14px;
+          border-radius: 12px;
+          background: #22c55e;
+          color: white;
+          font-weight: 700;
+        ">
+
+        Accept
+
+      </button>
+
+      <button
+
+        (click)="rejectPopup()"
+
+        style="
+          flex: 1;
+          border: none;
+          padding: 14px;
+          border-radius: 12px;
+          background: #ef4444;
+          color: white;
+          font-weight: 700;
+        ">
+
+        Reject
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

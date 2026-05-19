@@ -1,0 +1,131 @@
+<div class="restaurant-page">
+
+  <!-- ============================= -->
+  <!-- EMPTY -->
+  <!-- ============================= -->
+
+  <div
+
+    *ngIf="filteredRestaurants.length === 0"
+
+    class="empty-state">
+
+    <div class="empty-icon">
+
+      🍽️
+
+    </div>
+
+    <h2>
+      No restaurants found
+    </h2>
+
+    <p>
+      Try searching something else
+    </p>
+
+  </div>
+
+  <!-- ============================= -->
+  <!-- GRID -->
+  <!-- ============================= -->
+
+  <div class="restaurant-grid">
+
+    <div
+
+      *ngFor="
+        let r of filteredRestaurants;
+        trackBy: trackByRestaurant
+      "
+
+      class="restaurant-card"
+
+      (click)="goToDetails(r._id)">
+
+      <!-- IMAGE -->
+      <div class="image-wrapper">
+
+        <img
+
+          [src]="
+            r.image ||
+            'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1200&auto=format&fit=crop'
+          "
+
+          alt="restaurant">
+
+        <!-- OVERLAY -->
+        <div class="overlay"></div>
+
+        <!-- DELIVERY -->
+        <div class="delivery-badge">
+
+          ⏱
+          {{ r.deliveryTime || 30 }}
+          mins
+
+        </div>
+
+      </div>
+
+      <!-- CONTENT -->
+      <div class="card-content">
+
+        <!-- TOP -->
+        <div class="top-section">
+
+          <div>
+
+            <h3>
+              {{ r.name }}
+            </h3>
+
+            <p>
+
+              {{
+                r.cuisines?.join(', ')
+              }}
+
+            </p>
+
+          </div>
+
+          <!-- RATING -->
+          <div class="rating">
+
+            ⭐
+            {{ r.rating || 4.3 }}
+
+          </div>
+
+        </div>
+
+        <!-- BOTTOM -->
+        <div class="bottom-section">
+
+          <!-- PICKUP -->
+          <div
+            *ngIf="r.pickupAvailable"
+            class="pickup-badge">
+
+            Pickup Available
+
+          </div>
+
+          <!-- PRICE -->
+          <div class="price-tag">
+
+            ₹200 for two
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

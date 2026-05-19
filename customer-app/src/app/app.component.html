@@ -1,0 +1,73 @@
+<!-- ============================= -->
+<!-- NAVBAR -->
+<!-- ============================= -->
+
+<app-navbar></app-navbar>
+
+<!-- ============================= -->
+<!-- ROUTER -->
+<!-- ============================= -->
+
+<main class="main-layout">
+
+  <router-outlet></router-outlet>
+
+</main>
+
+<!-- ============================= -->
+<!-- FLOATING CART -->
+<!-- ============================= -->
+
+<div
+
+  *ngIf="
+    cartCount > 0 &&
+    showFloatingCart
+  "
+
+  class="floating-cart"
+
+  (click)="goToCart()">
+
+  <!-- LEFT -->
+  <div class="cart-left">
+
+    <div class="cart-icon">
+
+      🛒
+
+    </div>
+
+    <div>
+
+      <strong>
+
+        {{ cartCount }}
+        items
+
+      </strong>
+
+      <p>
+
+        Ready to checkout
+
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- RIGHT -->
+  <div class="cart-right">
+
+    ₹ {{ total }}
+
+    <span>
+
+      View Cart →
+
+    </span>
+
+  </div>
+
+</div>

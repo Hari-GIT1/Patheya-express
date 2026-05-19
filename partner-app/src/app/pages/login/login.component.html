@@ -1,0 +1,97 @@
+<div class="auth-container">
+
+  <div class="container-fluid">
+
+    <div class="row min-vh-100 align-items-center">
+
+      <!-- LEFT CONTENT -->
+      <div class="col-lg-6 d-none d-lg-flex flex-column justify-content-center px-5">
+
+        <h1 class="display-4 fw-bold mb-4">
+          Manage your restaurant business smarter
+        </h1>
+
+        <p class="lead text-muted">
+          Orders, menu, analytics, delivery tracking and customer growth — all in one dashboard.
+        </p>
+
+        <img
+          src="assets/partner-food.png"
+          class="img-fluid mt-4 hero-image">
+
+      </div>
+
+      <!-- LOGIN CARD -->
+      <div class="col-lg-6 d-flex justify-content-center">
+
+        <div class="auth-card shadow-lg">
+
+          <h2 class="fw-bold mb-4 text-center">
+            Partner Login
+          </h2>
+
+          <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+
+            <!-- EMAIL -->
+            <div class="mb-3">
+          
+              <label class="form-label fw-semibold">
+                Email
+              </label>
+          
+              <input
+                type="email"
+                class="form-control form-control-lg"
+                formControlName="email"
+                placeholder="Enter your email">
+          
+            </div>
+          
+            <!-- PASSWORD -->
+            <div class="mb-4">
+          
+              <label class="form-label fw-semibold">
+                Password
+              </label>
+          
+              <input
+                type="password"
+                class="form-control form-control-lg"
+                formControlName="password"
+                placeholder="Enter password">
+          
+            </div>
+          
+            <!-- BUTTON -->
+            <button
+              class="btn btn-danger w-100 btn-lg rounded-pill"
+              [disabled]="loading">
+          
+              {{ loading ? 'Logging in...' : 'Login' }}
+          
+            </button>
+          
+          </form>
+
+          <p class="text-center mt-4">
+
+            New restaurant partner?
+
+            <a
+              routerLink="/register"
+              class="text-danger fw-semibold text-decoration-none">
+
+              Register now
+            </a>
+
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

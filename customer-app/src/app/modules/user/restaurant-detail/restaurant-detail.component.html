@@ -1,0 +1,267 @@
+<!-- ============================= -->
+<!-- HERO -->
+<!-- ============================= -->
+
+<section class="restaurant-hero">
+
+  <div class="overlay"></div>
+
+  <div class="container hero-content">
+
+    <div>
+
+      <span class="tag">
+        🍽️ Premium Dining
+      </span>
+
+      <h1>
+        Delicious Food Delivered Fast
+      </h1>
+
+      <p>
+        Explore curated dishes from your
+        favorite restaurant.
+      </p>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ============================= -->
+<!-- MAIN -->
+<!-- ============================= -->
+
+<div class="container py-5">
+
+  <div class="row g-4">
+
+    <!-- ============================= -->
+    <!-- MENU -->
+    <!-- ============================= -->
+
+    <div class="col-lg-8">
+
+      <div class="section-header">
+
+        <h2>Recommended Dishes</h2>
+
+        <p>
+          Handpicked items loved by customers
+        </p>
+
+      </div>
+
+      <!-- LOADING -->
+      <div
+        *ngIf="loading"
+        class="loading-state">
+
+        Loading menu...
+
+      </div>
+
+      <!-- MENU GRID -->
+      <div class="menu-grid">
+
+        <div
+
+          class="food-card"
+
+          *ngFor="let item of menu">
+
+          <!-- IMAGE -->
+          <div class="food-image">
+
+            <img
+
+              [src]="item.image || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1200&auto=format&fit=crop'"
+
+              alt="food">
+
+          </div>
+
+          <!-- CONTENT -->
+          <div class="food-content">
+
+            <div class="top-row">
+
+              <h3>
+                {{ item.name }}
+              </h3>
+
+              <span
+
+                class="food-type"
+
+                [class.veg]="item.category === 'veg'"
+
+                [class.nonveg]="item.category === 'non-veg'">
+
+                {{ item.category }}
+
+              </span>
+
+            </div>
+
+            <p class="description">
+
+              Freshly prepared with premium ingredients.
+
+            </p>
+
+            <div class="bottom-row">
+
+              <div class="price">
+
+                ₹ {{ item.price }}
+
+              </div>
+
+              <!-- ADD BUTTON -->
+              <div>
+
+                <!-- ADD -->
+                <button
+
+                  *ngIf="!item.quantity"
+
+                  class="add-btn"
+
+                  (click)="addToCart(item)">
+
+                  ADD +
+
+                </button>
+
+                <!-- QTY -->
+                <div
+
+                  *ngIf="item.quantity"
+
+                  class="qty-box">
+
+                  <button
+                    (click)="decrease(item)">
+                    -
+                  </button>
+
+                  <span>
+                    {{ item.quantity }}
+                  </span>
+
+                  <button
+                    (click)="increase(item)">
+                    +
+                  </button>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ============================= -->
+    <!-- CART -->
+    <!-- ============================= -->
+
+    <div class="col-lg-4">
+
+      <div class="cart-card">
+
+        <div class="cart-header">
+
+          <h3>Your Cart 🛒</h3>
+
+          <span>
+            {{ cartItems.length }} items
+          </span>
+
+        </div>
+
+        <!-- EMPTY -->
+        <div
+
+          *ngIf="cartItems.length === 0"
+
+          class="empty-cart">
+
+          Your cart is empty
+
+        </div>
+
+        <!-- ITEMS -->
+        <div
+          *ngFor="let item of cartItems"
+          class="cart-item">
+
+          <div>
+
+            <h5>
+              {{ item.name }}
+            </h5>
+
+            <p>
+              ₹ {{ item.price }}
+            </p>
+
+          </div>
+
+          <div class="qty-box small">
+
+            <button
+              (click)="decrease(item)">
+              -
+            </button>
+
+            <span>
+              {{ item.quantity }}
+            </span>
+
+            <button
+              (click)="increase(item)">
+              +
+            </button>
+
+          </div>
+
+        </div>
+
+        <!-- TOTAL -->
+        <div class="cart-total">
+
+          <span>Total</span>
+
+          <strong>
+            ₹ {{ total }}
+          </strong>
+
+        </div>
+
+        <!-- CHECKOUT -->
+        <button
+
+          class="checkout-btn"
+
+          routerLink="/checkout">
+
+          Proceed to Checkout →
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

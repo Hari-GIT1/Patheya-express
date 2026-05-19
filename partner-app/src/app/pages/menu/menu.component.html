@@ -1,0 +1,404 @@
+<div class="menu-page container-fluid py-4">
+
+  <!-- HEADER -->
+  <div class="menu-header mb-4">
+
+    <div>
+      <h2 class="page-title">
+        🍽 Menu Management
+      </h2>
+
+      <p class="page-subtitle">
+        Manage your restaurant menu items easily
+      </p>
+    </div>
+
+    <button
+      class="add-btn"
+      (click)="showAddForm = !showAddForm">
+
+      <i class="bi bi-plus-circle"></i>
+
+      {{ showAddForm ? 'Close Form' : 'Add Item' }}
+
+    </button>
+
+  </div>
+
+  <!-- ADD FORM -->
+  <div
+    class="add-form-card mb-5"
+    *ngIf="showAddForm">
+
+    <form (ngSubmit)="addMenuItem()">
+
+      <div class="row g-4">
+
+        <!-- NAME -->
+        <div class="col-md-4">
+
+          <label class="form-label">
+            Item Name
+          </label>
+
+          <input
+            type="text"
+            class="modern-input"
+            placeholder="Ex: Chicken Biryani"
+            [(ngModel)]="newItem.name"
+            name="name">
+
+        </div>
+
+        <!-- PRICE -->
+        <div class="col-md-3">
+
+          <label class="form-label">
+            Price
+          </label>
+
+          <input
+            type="number"
+            class="modern-input"
+            placeholder="₹ 299"
+            [(ngModel)]="newItem.price"
+            name="price">
+
+        </div>
+
+        <!-- CATEGORY -->
+        <div class="col-md-3">
+
+          <label class="form-label">
+            Category
+          </label>
+
+          <select
+            class="modern-input"
+            [(ngModel)]="newItem.category"
+            name="category">
+
+            <option value="veg">
+              🟢 Veg
+            </option>
+
+            <option value="non-veg">
+              🔴 Non Veg
+            </option>
+
+          </select>
+
+        </div>
+        <div class="mb-3">
+
+          <label class="form-label">
+        
+            Food Image
+        
+          </label>
+        
+          <input
+        
+            type="file"
+        
+            class="form-control"
+        
+            accept="image/*"
+        
+            (change)="onImageSelect($event)"
+        
+          />
+        
+        </div>
+
+        <!-- BUTTON -->
+        <div class="col-md-2 d-flex align-items-end">
+
+          <button class="save-btn w-100">
+
+            Save Item
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </form>
+
+  </div>
+
+  <!-- MENU GRID -->
+  <div class="row g-4">
+
+    <div
+      class="col-xl-3 col-lg-4 col-md-6"
+      *ngFor="let item of menuItems">
+
+      <div class="menu-card">
+
+        <!-- IMAGE -->
+        <div class="image-wrapper">
+
+          <img
+            [src]="item.image || 'assets/food-placeholder.jpg'"
+            class="menu-image">
+
+          <!-- CATEGORY BADGE -->
+          <div
+            class="category-badge"
+            [ngClass]="{
+              'veg-badge': item.category === 'veg',
+              'nonveg-badge': item.category === 'non-veg'
+            }">
+
+            {{ item.category }}
+
+          </div>
+
+        </div>
+
+        <!-- BODY -->
+        <div class="menu-body">
+
+          <div class="d-flex justify-content-between align-items-start">
+
+            <div>
+
+              <h5 class="item-title">
+                {{ item.name }}
+              </h5>
+
+              <p class="item-desc">
+                Delicious restaurant special item
+              </p>
+
+            </div>
+
+            <div class="price-tag">
+
+              ₹{{ item.price }}
+
+            </div>
+
+          </div>
+
+<!-- AVAILABILITY -->
+<div class="availability-section">
+
+  <div class="d-flex justify-content-between align-items-center">
+
+    <span class="availability-label">
+
+      Availability
+
+    </span>
+
+    <!-- TOGGLE -->
+    <label class="switch">
+
+      <input
+        type="checkbox"
+        [(ngModel)]="item.isAvailable"
+        (change)="toggleAvailability(item)">
+
+      <span class="slider round"></span>
+
+    </label>
+
+  </div>
+
+  <div class="mt-2">
+
+    <span
+      class="availability-pill"
+      [ngClass]="{
+        'available': item.isAvailable,
+        'unavailable': !item.isAvailable
+      }">
+
+      <i class="bi bi-circle-fill"></i>
+
+      {{ item.isAvailable ? 'Available' : 'Out of Stock' }}
+    </span>
+
+  </div>
+
+</div>
+
+          <!-- ACTIONS -->
+          <div class="action-buttons">
+
+            <button
+            class="edit-btn"
+            (click)="openEditModal(item)">
+          
+            <i class="bi bi-pencil-square"></i>
+          
+            Edit
+          
+          </button>
+
+          <button
+          class="delete-btn"
+          (click)="openDeleteModal(item)">
+        
+          <i class="bi bi-trash"></i>
+        
+          Delete
+        
+        </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+  <!-- EDIT MODAL -->
+
+<div
+class="custom-modal"
+*ngIf="showEditModal">
+
+<div class="modal-box">
+
+  <div class="modal-header-custom">
+
+    <h4>
+      Edit Menu Item
+    </h4>
+
+    <button
+      class="close-btn"
+      (click)="showEditModal = false">
+
+      ✕
+
+    </button>
+
+  </div>
+
+  <div class="modal-body-custom">
+
+    <!-- NAME -->
+    <div class="mb-3">
+
+      <label class="form-label">
+        Item Name
+      </label>
+
+      <input
+        type="text"
+        class="modern-input"
+        [(ngModel)]="editItem.name">
+
+    </div>
+
+    <!-- PRICE -->
+    <div class="mb-3">
+
+      <label class="form-label">
+        Price
+      </label>
+
+      <input
+        type="number"
+        class="modern-input"
+        [(ngModel)]="editItem.price">
+
+    </div>
+
+    <!-- CATEGORY -->
+    <div class="mb-4">
+
+      <label class="form-label">
+        Category
+      </label>
+
+      <select
+        class="modern-input"
+        [(ngModel)]="editItem.category">
+
+        <option value="veg">
+          Veg
+        </option>
+
+        <option value="non-veg">
+          Non Veg
+        </option>
+
+      </select>
+
+    </div>
+
+    <!-- ACTION -->
+    <button
+      class="save-btn w-100"
+      (click)="updateMenuItem()">
+
+      Update Item
+
+    </button>
+
+  </div>
+
+</div>
+
+</div>
+<!-- DELETE MODAL -->
+
+<div
+  class="custom-modal"
+  *ngIf="showDeleteModal">
+
+  <div class="delete-modal-box">
+
+    <div class="text-center">
+
+      <div class="delete-icon">
+
+        <i class="bi bi-trash"></i>
+
+      </div>
+
+      <h4 class="mt-3">
+        Delete Item?
+      </h4>
+
+      <p class="text-muted">
+
+        This action cannot be undone.
+
+      </p>
+
+      <div class="d-flex gap-3 mt-4">
+
+        <button
+          class="cancel-btn flex-fill"
+          (click)="showDeleteModal = false">
+
+          Cancel
+
+        </button>
+
+        <button
+          class="confirm-delete-btn flex-fill"
+          (click)="deleteMenuItem()">
+
+          Delete
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+</div>

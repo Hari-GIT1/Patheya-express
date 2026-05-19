@@ -1,0 +1,230 @@
+<div class="cart-page">
+
+  <!-- ============================= -->
+  <!-- HEADER -->
+  <!-- ============================= -->
+
+  <div class="cart-header">
+
+    <div>
+
+      <h1>
+        Your Cart 🛒
+      </h1>
+
+      <p>
+        Review your delicious items before checkout
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- ============================= -->
+  <!-- EMPTY STATE -->
+  <!-- ============================= -->
+
+  <div
+
+    *ngIf="cartItems.length === 0"
+
+    class="empty-cart">
+
+    <div class="empty-icon">
+
+      🍔
+
+    </div>
+
+    <h2>
+      Your cart is empty
+    </h2>
+
+    <p>
+      Add some delicious food to continue
+    </p>
+
+    <button
+
+      routerLink="/"
+
+      class="browse-btn">
+
+      Browse Restaurants
+
+    </button>
+
+  </div>
+
+  <!-- ============================= -->
+  <!-- CART CONTENT -->
+  <!-- ============================= -->
+
+  <div
+
+    *ngIf="cartItems.length > 0"
+
+    class="cart-layout">
+
+    <!-- LEFT -->
+    <div class="cart-items">
+
+      <div
+
+        *ngFor="let item of cartItems"
+
+        class="cart-card">
+
+        <!-- IMAGE -->
+        <div class="food-image">
+
+          <img
+
+            [src]="
+              item.image ||
+              'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800&auto=format&fit=crop'
+            "
+
+            alt="food">
+
+        </div>
+
+        <!-- INFO -->
+        <div class="food-info">
+
+          <div>
+
+            <h3>
+              {{ item.name }}
+            </h3>
+
+            <p class="category">
+
+              {{ item.category }}
+
+            </p>
+
+          </div>
+
+          <div class="price">
+
+            ₹ {{ item.price }}
+
+          </div>
+
+        </div>
+
+        <!-- QTY -->
+        <div class="qty-section">
+
+          <button
+
+            (click)="decrease(item)">
+
+            −
+
+          </button>
+
+          <span>
+
+            {{ item.quantity }}
+
+          </span>
+
+          <button
+
+            (click)="increase(item)">
+
+            +
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div class="summary-card">
+
+      <h3>
+        Order Summary
+      </h3>
+
+      <!-- ITEMS -->
+      <div class="summary-row">
+
+        <span>
+          Item Total
+        </span>
+
+        <strong>
+          ₹ {{ total }}
+        </strong>
+
+      </div>
+
+      <div class="summary-row">
+
+        <span>
+          Delivery Fee
+        </span>
+
+        <strong>
+          ₹ 40
+        </strong>
+
+      </div>
+
+      <div class="summary-row">
+
+        <span>
+          Taxes & Charges
+        </span>
+
+        <strong>
+          ₹ 25
+        </strong>
+
+      </div>
+
+      <hr>
+
+      <!-- GRAND TOTAL -->
+      <div class="summary-row total-row">
+
+        <span>
+          Grand Total
+        </span>
+
+        <strong>
+          ₹ {{ total + 65 }}
+        </strong>
+
+      </div>
+
+      <!-- SAVINGS -->
+      <div class="savings-box">
+
+        🎉 You saved ₹120
+        on this order
+
+      </div>
+
+      <!-- BUTTON -->
+      <button
+
+        class="checkout-btn"
+
+        (click)="goToCheckout()">
+
+        Proceed to Checkout →
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

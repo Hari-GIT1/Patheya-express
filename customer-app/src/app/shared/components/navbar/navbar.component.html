@@ -1,0 +1,168 @@
+<nav class="custom-navbar">
+
+  <div class="container navbar-container">
+
+    <!-- ============================= -->
+    <!-- LEFT -->
+    <!-- ============================= -->
+
+    <div class="nav-left">
+
+      <a
+        routerLink="/"
+        class="brand">
+
+        <span class="logo">
+          🍔
+        </span>
+
+        <span class="brand-text">
+          {{ userName }}
+        </span>
+
+      </a>
+
+    </div>
+
+    <!-- ============================= -->
+    <!-- CENTER -->
+    <!-- ============================= -->
+
+    <div class="nav-center">
+
+      <!-- CUSTOMER LINKS -->
+      <ng-container *ngIf="isCustomer()">
+
+        <a
+          routerLink="/"
+          routerLinkActive="active-link">
+
+          Home
+
+        </a>
+
+        <a
+          routerLink="/orders"
+          routerLinkActive="active-link">
+
+          Orders
+
+        </a>
+
+      </ng-container>
+
+      <!-- OWNER LINKS -->
+      <ng-container *ngIf="isOwner()">
+
+        <a
+          routerLink="/restaurant/dashboard"
+          routerLinkActive="active-link">
+
+          Dashboard
+
+        </a>
+
+        <a
+          routerLink="/restaurant/menu"
+          routerLinkActive="active-link">
+
+          Menu
+
+        </a>
+
+        <a
+          routerLink="/restaurant/orders"
+          routerLinkActive="active-link">
+
+          Orders
+
+        </a>
+
+      </ng-container>
+
+    </div>
+
+    <!-- ============================= -->
+    <!-- RIGHT -->
+    <!-- ============================= -->
+
+    <div class="nav-right">
+
+      <!-- GUEST -->
+      <ng-container *ngIf="!isLoggedIn()">
+
+        <a
+          routerLink="/auth/login"
+          class="login-link">
+
+          Login
+
+        </a>
+
+        <a
+          routerLink="/auth/register"
+          class="signup-btn">
+
+          Get Started
+
+        </a>
+
+      </ng-container>
+
+      <!-- CUSTOMER -->
+      <ng-container *ngIf="isCustomer()">
+
+        <a
+          routerLink="/cart"
+          class="cart-btn">
+
+          🛒
+
+          <span
+            *ngIf="cartCount > 0"
+            class="cart-badge">
+
+            {{ cartCount }}
+
+          </span>
+
+        </a>
+
+      </ng-container>
+
+      <!-- LOGGED IN -->
+      <ng-container *ngIf="isLoggedIn()">
+
+        <div class="profile-box">
+
+          <div class="avatar">
+
+            {{ getInitial() }}
+
+          </div>
+
+          <div class="user-info">
+
+            <span class="email">
+              {{ user?.email }}
+            </span>
+
+          </div>
+
+        </div>
+
+        <button
+          class="logout-btn"
+          (click)="logout()">
+
+          Logout
+
+        </button>
+
+      </ng-container>
+
+    </div>
+
+  </div>
+
+</nav>

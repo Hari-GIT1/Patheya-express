@@ -1,0 +1,415 @@
+:host {
+
+  display: block;
+
+  min-height: 100vh;
+
+  background: #f8fafc;
+
+}
+
+.checkout-page {
+
+  max-width: 1400px;
+
+  margin: auto;
+
+  padding: 40px 24px;
+
+}
+
+/* HEADER */
+
+.checkout-header {
+
+  margin-bottom: 36px;
+
+}
+
+.checkout-header h1 {
+
+  font-size: 42px;
+
+  font-weight: 800;
+
+  margin-bottom: 8px;
+
+}
+
+.checkout-header p {
+
+  color: #64748b;
+
+}
+
+/* EMPTY */
+
+.empty-state {
+
+  min-height: 70vh;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  align-items: center;
+
+  text-align: center;
+
+}
+
+.empty-icon {
+
+  font-size: 90px;
+
+  margin-bottom: 20px;
+
+}
+
+.browse-btn {
+
+  border: none;
+
+  padding: 16px 28px;
+
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f43f5e,
+      #fb7185
+    );
+
+  color: white;
+
+  font-weight: 700;
+
+}
+
+/* LAYOUT */
+
+.checkout-layout {
+
+  display: grid;
+
+  grid-template-columns:
+    1fr 420px;
+
+  gap: 32px;
+
+}
+
+/* LEFT */
+
+.checkout-left {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 24px;
+
+}
+
+/* CARD */
+
+.checkout-card {
+
+  background: white;
+
+  border-radius: 28px;
+
+  padding: 28px;
+
+  box-shadow:
+    0 4px 20px rgba(0,0,0,0.04);
+
+}
+
+.checkout-card h3 {
+
+  font-size: 24px;
+
+  font-weight: 800;
+
+  margin-bottom: 22px;
+
+}
+
+/* DELIVERY */
+
+.delivery-options {
+
+  display: flex;
+
+  gap: 16px;
+
+}
+
+.delivery-options button {
+
+  flex: 1;
+
+  border: 1px solid #e2e8f0;
+
+  background: #f8fafc;
+
+  padding: 18px;
+
+  border-radius: 18px;
+
+  font-weight: 700;
+
+  transition: 0.3s;
+
+}
+
+.delivery-options button.active {
+
+  background:
+    linear-gradient(
+      135deg,
+      #f43f5e,
+      #fb7185
+    );
+
+  color: white;
+
+  border: none;
+
+}
+
+/* ADDRESS */
+
+textarea {
+
+  width: 100%;
+
+  min-height: 120px;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 18px;
+
+  padding: 18px;
+
+  resize: none;
+
+  background: #f8fafc;
+
+}
+
+textarea:focus {
+
+  outline: none;
+
+  border-color: #fb7185;
+
+}
+
+/* ITEMS */
+
+.order-item {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  padding: 18px 0;
+
+  border-bottom:
+    1px solid #f1f5f9;
+
+}
+
+.item-left {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 16px;
+
+}
+
+.item-left img {
+
+  width: 72px;
+
+  height: 72px;
+
+  border-radius: 18px;
+
+  object-fit: cover;
+
+}
+
+.item-left h4 {
+
+  font-size: 18px;
+
+  font-weight: 700;
+
+  margin-bottom: 4px;
+
+}
+
+.item-left p {
+
+  color: #64748b;
+
+  margin: 0;
+
+}
+
+/* SUMMARY */
+
+.checkout-summary {
+
+  position: relative;
+
+}
+
+.summary-card {
+
+  position: sticky;
+
+  top: 110px;
+
+  background: white;
+
+  border-radius: 28px;
+
+  padding: 32px;
+
+  box-shadow:
+    0 4px 20px rgba(0,0,0,0.05);
+
+}
+
+.summary-card h3 {
+
+  font-size: 28px;
+
+  font-weight: 800;
+
+  margin-bottom: 28px;
+
+}
+
+.summary-row {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  margin-bottom: 18px;
+
+}
+
+.grand-total {
+
+  font-size: 20px;
+
+  font-weight: 800;
+
+}
+
+/* TRUST */
+
+.trust-box {
+
+  margin-top: 22px;
+
+  padding: 16px;
+
+  border-radius: 18px;
+
+  background: #dcfce7;
+
+  color: #166534;
+
+  font-weight: 600;
+
+  text-align: center;
+
+}
+
+/* BUTTON */
+
+.pay-btn {
+
+  width: 100%;
+
+  border: none;
+
+  border-radius: 18px;
+
+  padding: 18px;
+
+  margin-top: 28px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f43f5e,
+      #fb7185
+    );
+
+  color: white;
+
+  font-size: 17px;
+
+  font-weight: 700;
+
+  transition: 0.3s;
+
+}
+
+.pay-btn:hover {
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 12px 24px rgba(244,63,94,0.25);
+
+}
+
+/* MOBILE */
+
+@media (max-width: 992px) {
+
+  .checkout-layout {
+
+    grid-template-columns: 1fr;
+
+  }
+
+  .summary-card {
+
+    position: static;
+
+  }
+
+}
+
+@media (max-width: 576px) {
+
+  .checkout-header h1 {
+
+    font-size: 34px;
+
+  }
+
+  .delivery-options {
+
+    flex-direction: column;
+
+  }
+
+}

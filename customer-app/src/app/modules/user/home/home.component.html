@@ -1,0 +1,223 @@
+<!-- ============================= -->
+<!-- HERO SECTION -->
+<!-- ============================= -->
+
+<section class="hero-section">
+
+  <div class="hero-overlay"></div>
+
+  <div class="container hero-content">
+
+    <div class="hero-text">
+
+      <span class="hero-badge">
+        🍔 Fast Delivery Across Your City
+      </span>
+
+      <h1>
+        Discover the Best Food
+        Near You
+      </h1>
+
+      <p>
+        Order from top restaurants with
+        lightning-fast delivery and live tracking.
+      </p>
+
+      <!-- SEARCH -->
+      <div class="search-wrapper">
+
+        <i class="bi bi-search"></i>
+
+        <input
+          type="text"
+          placeholder="Search restaurants, cuisines..."
+          [(ngModel)]="searchTerm">
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ============================= -->
+<!-- FILTER BAR -->
+<!-- ============================= -->
+
+<section class="filter-section">
+
+  <div class="container">
+
+    <div class="filter-wrapper">
+
+      <!-- CATEGORY FILTERS -->
+      <div class="category-pills">
+
+        <button
+
+          class="pill"
+
+          [class.active]="selectedCategory === 'all'"
+
+          (click)="selectedCategory = 'all'">
+
+          All
+
+        </button>
+
+        <button
+
+          class="pill veg"
+
+          [class.active]="selectedCategory === 'veg'"
+
+          (click)="selectedCategory = 'veg'">
+
+          Veg
+
+        </button>
+
+        <button
+
+          class="pill nonveg"
+
+          [class.active]="selectedCategory === 'non-veg'"
+
+          (click)="selectedCategory = 'non-veg'">
+
+          Non-Veg
+
+        </button>
+
+      </div>
+
+      <!-- SORT -->
+      <select
+        class="sort-dropdown"
+        [(ngModel)]="sortOption">
+
+        <option value="">
+          Sort By
+        </option>
+
+        <option value="rating">
+          Top Rated
+        </option>
+
+        <option value="delivery">
+          Fast Delivery
+        </option>
+
+      </select>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ============================= -->
+<!-- RESTAURANTS -->
+<!-- ============================= -->
+
+<section class="restaurants-section">
+
+  <div class="container">
+
+    <!-- LOADING -->
+    <div
+      *ngIf="loading"
+      class="loading-state">
+
+      Loading restaurants...
+
+    </div>
+
+    <!-- EMPTY -->
+    <div
+      *ngIf="!loading && filteredRestaurants.length === 0"
+      class="empty-state">
+
+      <h3>No restaurants found</h3>
+
+      <p>
+        Try searching something else
+      </p>
+
+    </div>
+
+    <!-- GRID -->
+    <div class="restaurant-grid">
+
+      <div
+
+        class="restaurant-card"
+
+        *ngFor="let r of filteredRestaurants"
+
+        (click)="openRestaurant(r._id)">
+
+        <!-- IMAGE -->
+        <div class="image-wrapper">
+
+          <img
+
+            [src]="r.image || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1200&auto=format&fit=crop'"
+
+            alt="restaurant">
+
+          <!-- OFFER -->
+          <div class="offer-badge">
+
+            40% OFF
+
+          </div>
+
+        </div>
+
+        <!-- CONTENT -->
+        <div class="restaurant-content">
+
+          <div class="top-row">
+
+            <h3>
+              {{ r.name }}
+            </h3>
+
+            <div class="rating">
+
+              ⭐ {{ r.rating || 4.3 }}
+
+            </div>
+
+          </div>
+
+          <p class="cuisine">
+
+            {{ r.cuisine || 'Multi Cuisine' }}
+
+          </p>
+
+          <div class="meta-info">
+
+            <span>
+              ⏱ {{ r.deliveryTime || 30 }} mins
+            </span>
+
+            <span>
+              ₹{{ r.minimumOrder || 200 }} for one
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
