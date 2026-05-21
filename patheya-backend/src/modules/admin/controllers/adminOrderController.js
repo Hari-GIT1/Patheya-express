@@ -1,7 +1,7 @@
 const adminOrderService = require(
     '../services/adminOrderService'
   );
-  const Order =
+const Order =
   require('../../../models/Order');
 const { updateOrderStatus } = require('../../../controllers/customer/order.controller');
   

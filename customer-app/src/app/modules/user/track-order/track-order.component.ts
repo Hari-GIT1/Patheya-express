@@ -236,7 +236,10 @@ implements OnInit, OnDestroy {
           'Order Placed'
 
       },
-
+      {
+        key: 'accepted',
+        label: 'Accepted'
+      },
       {
 
         key: 'preparing',
@@ -245,14 +248,18 @@ implements OnInit, OnDestroy {
           'Preparing Food'
 
       },
-
+      {
+        key: 'ready',
+        label: 'Ready for Pickup'
+      },
       {
 
         key:
-          'out for delivery',
+          'out_for_delivery',
 
         label:
-          'Out for Delivery'
+          'out_for_delivery',
+
 
       },
 
@@ -354,7 +361,7 @@ implements OnInit, OnDestroy {
     if (
 
       value ===
-      'out for delivery'
+      'out_for_delivery'
 
     ) {
 

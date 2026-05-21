@@ -197,7 +197,7 @@ implements OnInit {
     if (
 
       value ===
-      'out for delivery'
+      'out_for_delivery'
 
     ) {
 

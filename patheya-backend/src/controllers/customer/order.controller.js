@@ -32,7 +32,6 @@ asyncHandler(async (
   res
 
 ) => {
-
   const order =
     await orderService.createOrder(
 
@@ -225,18 +224,13 @@ asyncHandler(async (
   const { status } =
     req.body;
 
+  // ==========================
+  // FIND ORDER
+  // ==========================
+
   const order =
-    await Order.findByIdAndUpdate(
-
-      req.params.id,
-
-      { status },
-
-      {
-        returnDocument:
-          'after'
-      }
-
+    await Order.findById(
+      req.params.id
     );
 
   if (!order) {
@@ -253,43 +247,178 @@ asyncHandler(async (
 
   }
 
-  // SOCKET EVENT
+  // ==========================
+  // VALID STATUS FLOW
+  // ==========================
+
+  const validTransitions = {
+
+    placed: [
+      'accepted',
+      'cancelled'
+    ],
+
+    accepted: [
+      'preparing',
+      'cancelled'
+    ],
+
+    preparing: [
+      'ready'
+    ],
+    
+    ready: [
+      'out_for_delivery'
+    ],
+
+    out_for_delivery: [
+      'delivered'
+    ],
+
+    delivered: [],
+
+    cancelled: []
+
+  };
+
+  const allowedStatuses =
+    validTransitions[
+      order.status
+    ];
+
+  if (
+    !allowedStatuses.includes(status)
+  ) {
+
+    return errorResponse(
+
+      res,
+
+      `Cannot change status from ${order.status} to ${status}`,
+
+      400
+
+    );
+
+  }
+
+  // ==========================
+  // UPDATE STATUS
+  // ==========================
+
+  order.status = status;
+
+  // ==========================
+  // TIMELINE
+  // ==========================
+
+  order.statusTimeline.push({
+
+    status,
+
+    changedAt: new Date()
+
+  });
+
+  // ==========================
+  // STATUS TIMESTAMPS
+  // ==========================
+
+  if (status === 'accepted') {
+
+    order.acceptedAt =
+      new Date();
+
+  }
+
+  if (status === 'preparing') {
+
+    order.preparingAt =
+      new Date();
+
+  }
+  if (status === 'ready') {
+
+    order.readyAt =
+      new Date();
+
+  }
+
+
+  if (
+    status ===
+    'out_for_delivery'
+  ) {
+
+    order.outForDeliveryAt =
+      new Date();
+
+  }
+
+  if (status === 'delivered') {
+
+    order.deliveredAt =
+      new Date();
+
+  }
+
+  if (status === 'cancelled') {
+
+    order.cancelledAt =
+      new Date();
+
+  }
+
+  // ==========================
+  // SAVE
+  // ==========================
+
+  await order.save();
+
+  // ==========================
+  // SOCKET EVENTS
+  // ==========================
+
   const io =
     req.app.get('io');
 
-    io.to(order.restaurantId.toString())
-    .emit(
-      'orderStatusUpdated',
-      order
-    );
+  // RESTAURANT ROOM
+  io.to(
+    order.restaurantId.toString()
+  )
 
+  .emit(
+    'orderStatusUpdated',
+    order
+  );
+
+  // ADMIN ROOM
   io.to('admins')
+
   .emit(
     'adminOrderUpdated',
     {
+
       type: 'ORDER_UPDATED',
+
       orderId: order._id,
+
       status: order.status,
+
       order
+
     }
   );
-  io.to('admins')
+
+  // CUSTOMER ORDER ROOM
+  io.to(
+    order._id.toString()
+  )
+
   .emit(
-    'adminNewOrder',
-    {
-      type: 'NEW_ORDER',
-      order
-    }
+    'orderStatusUpdated',
+    order
   );
-
-  io.to(order._id.toString())
-    .emit(
-
-      'orderStatusUpdated',
-
-      order
-
-    );
 
   successResponse(
 

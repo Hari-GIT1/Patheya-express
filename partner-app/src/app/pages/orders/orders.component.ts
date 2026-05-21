@@ -25,6 +25,7 @@ import {
   SocketService
 
 } from 'src/app/core/services/socket.service';
+import { NgZone } from '@angular/core';
 
 @Component({
 
@@ -50,7 +51,8 @@ implements OnInit, OnDestroy {
       AuthService,
 
     private socketService:
-      SocketService
+      SocketService,
+    private ngZone: NgZone
 
   ) {}
 
@@ -89,10 +91,13 @@ implements OnInit, OnDestroy {
           'NEW ORDER:',
           order
         );
+        this.ngZone.run(() => {
 
-        this.orders.unshift(
-          order
-        );
+          this.orders.unshift(
+            order
+          );
+    
+        });
 
       });
 
@@ -115,8 +120,12 @@ implements OnInit, OnDestroy {
 
         if (index !== -1) {
 
-          this.orders[index] =
-            updated;
+          this.ngZone.run(() => {
+
+            this.orders[index] =
+              updated;
+        
+          });
 
         }
 
@@ -141,6 +150,7 @@ implements OnInit, OnDestroy {
   // ==============================
   // GET ORDERS
   // ==============================
+
   getOrders(): void {
 
     this.orderService

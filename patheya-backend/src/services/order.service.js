@@ -1,6 +1,10 @@
 const Order =
   require('../models/Order');
 
+// ==============================
+// CREATE ORDER
+// ==============================
+
 exports.createOrder =
 async (
 
@@ -9,6 +13,46 @@ async (
   orderData
 
 ) => {
+  console.log('ORDER DATA:', orderData);
+
+  // ==========================
+  // PRICING
+  // ==========================
+
+  const subtotal =
+    orderData.items.reduce(
+
+      (acc, item) => {
+
+        return (
+          acc +
+          (item.price * item.quantity)
+        );
+
+      },
+
+      0
+
+    );
+
+  const deliveryFee =
+    orderData.deliveryFee || 0;
+
+  const tax =
+    orderData.tax || 0;
+
+  const discount =
+    orderData.discount || 0;
+
+  const grandTotal =
+    subtotal +
+    deliveryFee +
+    tax -
+    discount;
+
+  // ==========================
+  // CREATE ORDER
+  // ==========================
 
   const order =
     await Order.create({
@@ -21,16 +65,82 @@ async (
       items:
         orderData.items,
 
-      total:
-        orderData.total,
+      // ======================
+      // PRICING
+      // ======================
 
-      status: 'placed'
+      pricing: {
+
+        subtotal,
+
+        deliveryFee,
+
+        tax,
+
+        discount,
+
+        grandTotal
+
+      },
+
+      // BACKWARD COMPATIBILITY
+      total: grandTotal,
+
+      // ======================
+      // ORDER TYPE
+      // ======================
+
+      orderType:
+        orderData.orderType || 'delivery',
+
+      // ======================
+      // ADDRESS
+      // ======================
+
+      address:
+        orderData.address || '',
+
+      deliveryAddress:
+        orderData.deliveryAddress || {},
+
+      // ======================
+      // CUSTOMER SNAPSHOT
+      // ======================
+
+      customer: {
+
+        name:
+          orderData.customer?.name || '',
+
+        email:
+          orderData.customer?.email || '',
+
+        phone:
+          orderData.customer?.phone || ''
+
+      },
+
+      // ======================
+      // STATUS
+      // ======================
+
+      status: 'placed',
+
+      statusTimeline: [
+        {
+          status: 'placed'
+        }
+      ]
 
     });
 
   return order;
 
 };
+
+// ==============================
+// GET PARTNER ORDERS
+// ==============================
 
 exports.getPartnerOrders =
 async (restaurantId) => {
@@ -39,13 +149,19 @@ async (restaurantId) => {
 
     restaurantId
 
-  }).sort({
+  })
+
+  .sort({
 
     createdAt: -1
 
   });
 
 };
+
+// ==============================
+// GET USER ORDERS
+// ==============================
 
 exports.getUserOrders =
 async (userId) => {
@@ -54,7 +170,9 @@ async (userId) => {
 
     userId
 
-  }).sort({
+  })
+
+  .sort({
 
     createdAt: -1
 
