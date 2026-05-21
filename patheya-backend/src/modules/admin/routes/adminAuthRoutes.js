@@ -16,5 +16,9 @@ router.get(
     adminAuthMiddleware,
     adminAuthController.getMe
   );
+router.post(
+    '/register',
+    adminAuthController.register
+  );
 
 module.exports = router;

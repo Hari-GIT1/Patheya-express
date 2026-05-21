@@ -28,8 +28,44 @@ const login = async (req, res) => {
     });
   }
 };
+const register = async (
+  req,
+  res
+) => {
+
+  try {
+
+    const admin =
+      await adminAuthService
+      .registerAdmin(req.body);
+
+    res.status(201).json({
+
+      success: true,
+
+      message:
+        'Admin created successfully',
+
+      data: admin
+
+    });
+
+  } catch (error) {
+
+    res.status(400).json({
+
+      success: false,
+
+      message: error.message
+
+    });
+
+  }
+
+};
 
 module.exports = {
   login,
   getMe,
+  register
 };

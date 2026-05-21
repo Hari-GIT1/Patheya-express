@@ -1,4 +1,12 @@
-import { Component, HostListener } from '@angular/core';
+import {
+
+  Component,
+
+  HostListener,
+
+  OnInit
+
+} from '@angular/core';
 
 import { Router } from '@angular/router';
 
@@ -10,24 +18,48 @@ from 'src/app/core/menu.config';
   templateUrl: './admin-layout.component.html',
   styleUrls: ['./admin-layout.component.scss']
 })
-@HostListener(
-  'window:keydown',
-  ['$event']
-)
 
-export class AdminLayoutComponent {
+export class AdminLayoutComponent
+implements OnInit {
 
-  menuItems = MENU_ITEMS;
+  admin = JSON.parse(
+    localStorage.getItem(
+      'adminData'
+    ) || '{}'
+  );
+
+  menuItems = MENU_ITEMS.filter(
+    item =>
+      item.roles  .includes(
+        this.admin.role
+      )
+  );
+
   showCommandPalette = false;
+
+  pendingRestaurantCount = 0;
 
   constructor(
     private router: Router
   ) {}
 
-  logout() {
+  ngOnInit(): void {
+
+    // Future:
+    // load pending restaurant count
+    // initialize sockets
+    // load notifications
+
+  }
+
+  logout(): void {
 
     localStorage.removeItem(
       'adminToken'
+    );
+
+    localStorage.removeItem(
+      'adminData'
     );
 
     this.router.navigate([
@@ -35,40 +67,52 @@ export class AdminLayoutComponent {
     ]);
 
   }
-  toggleCommandPalette() {
+
+  toggleCommandPalette(): void {
 
     this.showCommandPalette =
       !this.showCommandPalette;
-  
+
   }
-  
-  closeCommandPalette() {
-  
+
+  closeCommandPalette(): void {
+
     this.showCommandPalette =
       false;
-  
+
   }
+
+  // KEYBOARD SHORTCUT
+
+  @HostListener(
+    'window:keydown',
+    ['$event']
+  )
+
   handleKeyboardEvent(
     event: KeyboardEvent
-  ) {
-  
+  ): void {
+
     if (
-  
-      (event.ctrlKey ||
-        event.metaKey)
-  
+
+      (
+        event.ctrlKey ||
+        event.metaKey
+      )
+
       &&
-  
-      event.key === 'k'
-  
+
+      event.key.toLowerCase()
+      === 'k'
+
     ) {
-  
+
       event.preventDefault();
-  
+
       this.toggleCommandPalette();
-  
+
     }
-  
+
   }
 
 }
