@@ -3,81 +3,97 @@ require('dotenv-flow').config();
 // VALIDATE ENV
 require('./config/validateEnv');
 
-const http =
-  require('http');
+const http = require('http');
+const socketIO = require('socket.io');
 
-const socketIO =
-  require('socket.io');
+const app = require('./app');
 
-const app =
-  require('./app');
+const connectDB = require('./config/db');
 
-const connectDB =
-  require('./config/db');
+const config = require('./config');
 
-const config =
-  require('./config');
-
-const { initSocket } = 
-  require('./sockets');
+// ==============================
 // PORT
-const PORT =
-  config.port || 3000;
+// ==============================
 
+const PORT = config.port || 3000;
+
+// ==============================
 // CONNECT DATABASE
+// ==============================
+
 connectDB();
 
+// ==============================
 // CREATE HTTP SERVER
-const server =
-  http.createServer(app);
+// ==============================
 
+const server = http.createServer(app);
+
+// ==============================
+// ALLOWED SOCKET ORIGINS
+// ==============================
+
+const allowedOrigins = [
+
+  // LOCALHOST
+  'http://localhost:4200',
+  'http://localhost:4201',
+  'http://localhost:4202',
+
+  // PRODUCTION
+  'https://app.patheyaexpress.in',
+  'https://partner.patheyaexpress.in',
+  'https://admin.patheyaexpress.in',
+
+  // VERCEL
+  'https://patheya-admin-app.vercel.app',
+  'https://patheya-express-partner.vercel.app',
+
+  // RENDER
+  'https://patheya-express.onrender.com',
+  'https://patheya-express-uat.onrender.com'
+];
+
+// ==============================
 // SOCKET.IO
-const io =
-  socketIO(server, {
+// ==============================
 
-    cors: {
+const io = socketIO(server, {
 
-      origin:
+  cors: {
 
-        config.nodeEnv === 'production'
+    origin: function(origin, callback) {
 
-          ? [
+      if (!origin) {
+        return callback(null, true);
+      }
 
-              'https://app.patheyaexpress.in',
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
 
-              'https://partner.patheyaexpress.in',
+      console.log('SOCKET BLOCKED:', origin);
 
-              'https://admin.patheyaexpress.in'
-              
+      return callback(
+        new Error(`Socket CORS Blocked: ${origin}`)
+      );
 
-            ]
+    },
 
-          : [
+    methods: [
+      'GET',
+      'POST',
+      'PUT',
+      'PATCH',
+      'DELETE'
+    ],
 
-            config.urls.customer,
-            config.urls.partner,
-            config.urls.admin
-            ],
+    credentials: true
 
-      methods: [
+  }
 
-        'GET',
-
-        'POST',
-
-        'PATCH',
-
-        'PUT',
-
-        'DELETE'
-
-      ],
-
-      credentials: true
-
-    }
-
-  });
+});
 
 // MAKE IO AVAILABLE
 app.set('io', io);
@@ -85,99 +101,84 @@ app.set('io', io);
 // ==============================
 // SOCKET CONNECTIONS
 // ==============================
-io.on(
 
-  'connection',
+io.on('connection', (socket) => {
 
-  (socket) => {
+  console.log('SOCKET CONNECTED:', socket.id);
 
-    console.log(
+  // ==========================
+  // JOIN RESTAURANT ROOM
+  // ==========================
 
-      'SOCKET CONNECTED:',
+  socket.on(
+    'joinRestaurantRoom',
+    (restaurantId) => {
 
-      socket.id
+      socket.join(restaurantId);
 
-    );
+      console.log(
+        'JOINED RESTAURANT:',
+        restaurantId
+      );
 
-    // JOIN RESTAURANT ROOM
-    socket.on(
+    }
+  );
 
-      'joinRestaurantRoom',
+  // ==========================
+  // JOIN ORDER ROOM
+  // ==========================
 
-      (restaurantId) => {
+  socket.on(
+    'joinOrderRoom',
+    (orderId) => {
 
-        socket.join(restaurantId);
+      socket.join(orderId);
 
-        console.log(
+      console.log(
+        'JOINED ORDER:',
+        orderId
+      );
 
-          'JOINED RESTAURANT:',
+    }
+  );
 
-          restaurantId
+  // ==========================
+  // JOIN ADMIN ROOM
+  // ==========================
 
-        );
+  socket.on(
+    'joinAdminRoom',
+    () => {
 
-      }
+      socket.join('admins');
 
-    );
+      console.log('ADMIN JOINED');
 
-    // JOIN ORDER ROOM
-    socket.on(
+    }
+  );
 
-      'joinOrderRoom',
+  // ==========================
+  // DISCONNECT
+  // ==========================
 
-      (orderId) => {
+  socket.on(
+    'disconnect',
+    () => {
 
-        socket.join(orderId);
+      console.log(
+        'SOCKET DISCONNECTED:',
+        socket.id
+      );
 
-        console.log(
+    }
+  );
 
-          'JOINED ORDER:',
+});
 
-          orderId
-
-        );
-
-      }
-
-    );
-    //JOIN ADMIN ROOM
-    socket.on(
-      'joinAdminRoom',
-      () => {
-    
-        socket.join('admins');
-    
-        console.log(
-          'ADMIN JOINED'
-        );
-    
-      }
-    );
-
-    // DISCONNECT
-    socket.on(
-
-      'disconnect',
-
-      () => {
-
-        console.log(
-
-          'SOCKET DISCONNECTED:',
-
-          socket.id
-
-        );
-
-      }
-
-    );
-
-  }
-
-);
-
+// ==============================
 // START SERVER
+// ==============================
+
 server.listen(
 
   PORT,
@@ -187,9 +188,7 @@ server.listen(
   () => {
 
     console.log(
-
       `🚀 Server running on port ${PORT}`
-
     );
 
   }

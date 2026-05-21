@@ -13,16 +13,15 @@ const rateLimit =
 const morgan =
   require('morgan');
 
-const mongoSanitize =
-  require(
-    'express-mongo-sanitize'
-  );
 
 const hpp =
   require('hpp');
 
 const compression =
   require('compression');
+
+  const config =
+  require('./config');
 
 const app = express();
 app.set(
@@ -43,10 +42,6 @@ app.use(
   })
 );
 
-// SANITIZE MONGO
-app.use(
-  mongoSanitize()
-);
 
 // HPP
 app.use(
@@ -67,11 +62,11 @@ const limiter =
     windowMs:
       15 * 60 * 1000,
 
-    max: 300,
+  max: 300,
 
-    message: {
+  message: {
 
-      success: false,
+    success: false,
 
       message:
         'Too many requests'
@@ -80,99 +75,87 @@ const limiter =
 
   });
 
-app.use(
-  '/api',
-  limiter
-);
-const config = require('./config');
-
-// ==============================
-// ALLOWED ORIGINS
-// ==============================
-const allowedOrigins =
-
-  process.env.NODE_ENV === 'production'
-
-    ? [
-
-        'https://app.patheyaexpress.in',
-
-        'https://partner.patheyaexpress.in',
-
-        'https://admin.patheyaexpress.in'
-
-      ]
-
-    : [
-
-        config.urls.customer,
-
-        config.urls.partner,
-
-        config.urls.admin
-      ];
-
-console.log(
-  'ALLOWED ORIGINS:',
-  allowedOrigins
-);
-
-console.log(
-  'NODE_ENV:',
-  process.env.NODE_ENV
-);
-
-// ==============================
-// SECURITY MIDDLEWARE
-// ==============================
-
-
+app.use('/api', limiter);
 
 // ==============================
 // LOGGER
 // ==============================
+
 app.use(morgan('dev'));
+
+// ==============================
+// ALLOWED ORIGINS
+// ==============================
+
+const allowedOrigins = [
+
+  // LOCALHOST
+  'http://localhost:4200',
+  'http://localhost:4201',
+  'http://localhost:4202',
+
+  // PRODUCTION
+  'https://app.patheyaexpress.in',
+  'https://partner.patheyaexpress.in',
+  'https://admin.patheyaexpress.in',
+
+  // VERCEL
+  'https://patheya-admin-app.vercel.app',
+  'https://patheya-express-partner.vercel.app',
+
+  // RENDER
+  'https://patheya-express.onrender.com',
+  'https://patheya-express-uat.onrender.com'
+];
+
+console.log('NODE_ENV:', config.nodeEnv);
+console.log('ALLOWED ORIGINS:', allowedOrigins);
 
 // ==============================
 // CORS
 // ==============================
-app.use(cors({
 
-  origin: function(
+app.use(
+  cors({
 
-    origin,
+    origin: function(origin, callback) {
 
-    callback
+      // POSTMAN / MOBILE APPS
+      if (!origin) {
+        return callback(null, true);
+      }
 
-  ) {
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
 
-    if (
+      console.log('BLOCKED BY CORS:', origin);
 
-      !origin ||
-
-      allowedOrigins.includes(origin)
-
-    ) {
-
-      callback(null, true);
-
-    } else {
-
-      callback(
-
-        new Error(
-          'Not allowed by CORS'
-        )
-
+      return callback(
+        new Error(`CORS NOT ALLOWED: ${origin}`)
       );
 
-    }
+    },
 
-  },
+    credentials: true,
 
-  credentials: true
+    methods: [
+      'GET',
+      'POST',
+      'PUT',
+      'PATCH',
+      'DELETE',
+      'OPTIONS'
+    ],
 
-}));
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization'
+    ]
+
+  })
+);
+
 
 // ==============================
 // BODY PARSER
@@ -184,6 +167,39 @@ app.use(
 
   })
 );
+app.use((req, res, next) => {
+
+  const sanitize = (obj) => {
+
+    if (!obj || typeof obj !== 'object') {
+      return;
+    }
+
+    Object.keys(obj).forEach((key) => {
+
+      if (
+        key.includes('$') ||
+        key.includes('.')
+      ) {
+
+        delete obj[key];
+
+      } else {
+
+        sanitize(obj[key]);
+
+      }
+
+    });
+
+  };
+
+  sanitize(req.body);
+  sanitize(req.params);
+
+  next();
+
+});
 
 // ==============================
 // ROUTES
@@ -209,19 +225,19 @@ const ownerRoutes =
 const discountRoutes =
   require('./routes/customer/discount.routes');
 
-const adminAuthRoutes = 
- require('./modules/admin/routes/adminAuthRoutes');
- 
-const adminDashboardRoutes = 
- require('./modules/admin/routes/adminDashboardRoutes');
+const adminAuthRoutes =
+  require('./modules/admin/routes/adminAuthRoutes');
 
-const adminRestaurantRoutes = 
- require('./modules/admin/routes/adminRestaurantRoutes');
+const adminDashboardRoutes =
+  require('./modules/admin/routes/adminDashboardRoutes');
 
-const adminUserRoutes = 
- require('./modules/admin/routes/adminUserRoutes');
-const adminOrderRoutes = 
- require('./modules/admin/routes/adminOrderRoutes');
+const adminRestaurantRoutes =
+  require('./modules/admin/routes/adminRestaurantRoutes');
+
+const adminUserRoutes =
+  require('./modules/admin/routes/adminUserRoutes');
+const adminOrderRoutes =
+  require('./modules/admin/routes/adminOrderRoutes');
 // ==============================
 // API ROUTES
 // ==============================
@@ -283,18 +299,11 @@ app.use(
 // ==============================
 // HEALTH CHECK
 // ==============================
-app.get('/health', (
 
-  req,
-
-  res
-
-) => {
+app.get('/health', (req, res) => {
 
   res.status(200).json({
-
     status: 'ok'
-
   });
 
 });
@@ -302,38 +311,31 @@ app.get('/health', (
 // ==============================
 // ROOT
 // ==============================
-app.get('/', (
 
-  req,
+app.get('/', (req, res) => {
 
-  res
-
-) => {
-
-  res.send(
-    'Patheya Express Backend Running'
-  );
+  res.send('Patheya Express Backend Running');
 
 });
 
 // ==============================
 // 404 HANDLER
 // ==============================
+
 app.use((req, res) => {
 
   res.status(404).json({
 
     success: false,
-
     message: 'Route not found'
-
   });
 
 });
 
 // ==============================
-// ERROR MIDDLEWARE
+// ERROR HANDLER
 // ==============================
+
 const errorMiddleware =
   require('./middleware/error.middleware');
 
