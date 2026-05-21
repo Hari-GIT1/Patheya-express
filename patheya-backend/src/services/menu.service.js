@@ -1,5 +1,7 @@
 const MenuItem =
   require('../models/MenuItem');
+const Restaurant =
+  require('../models/Restaurant');
 
 // ==============================
 // GET PARTNER MENU
@@ -51,6 +53,22 @@ async (
 
 ) => {
 
+  // FIND OWNER RESTAURANT
+  const restaurant =
+    await Restaurant.findOne({
+
+      ownerId: user.id
+
+    });
+
+  if (!restaurant) {
+
+    throw new Error(
+      'Restaurant not found for this partner'
+    );
+
+  }
+
   return await MenuItem.create({
 
     name:
@@ -63,10 +81,10 @@ async (
       body.category,
 
     restaurantId:
-      user.restaurantId,
+      restaurant._id,
 
     image:
-      file?.path
+      file?.path || ''
 
   });
 
