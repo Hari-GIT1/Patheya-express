@@ -1,44 +1,173 @@
-import { Component } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { AuthService } from '../../../core/services/auth.service';
-import { Router } from '@angular/router';
+import {
+
+  Component
+
+} from '@angular/core';
+
+import {
+
+  FormBuilder,
+
+  Validators
+
+} from '@angular/forms';
+
+import {
+
+  Router
+
+} from '@angular/router';
+
+import {
+
+  AuthService
+
+} from '../../../core/services/auth.service';
 
 @Component({
+
   selector: 'app-register',
-  templateUrl: './register.component.html'
+
+  templateUrl:
+    './register.component.html',
+
+  styleUrls: [
+    './register.component.scss'
+  ]
+
 })
+
 export class RegisterComponent {
+
   loading = false;
 
-  registerForm = this.fb.group({
-    name: ['', Validators.required],
-    email: ['', [Validators.required, Validators.email]],
-    phone: ['', Validators.required],
-    password: ['', Validators.required]
-  });
+  error = '';
 
   constructor(
-    private fb: FormBuilder,
-    private authService: AuthService,
-    private router: Router
+
+    private fb:
+      FormBuilder,
+
+    private authService:
+      AuthService,
+
+    private router:
+      Router
+
   ) {}
 
-  onSubmit() {
-    if (this.registerForm.invalid) return;
+  registerForm =
+    this.fb.group({
 
-    const formValue = this.registerForm.value;
+      name: [
+
+        '',
+
+        Validators.required
+
+      ],
+
+      email: [
+
+        '',
+
+        [
+
+          Validators.required,
+
+          Validators.email
+
+        ]
+
+      ],
+
+      phone: [
+
+        '',
+
+        Validators.required
+
+      ],
+
+      password: [
+
+        '',
+
+        [
+
+          Validators.required,
+
+          Validators.minLength(6)
+
+        ]
+
+      ]
+
+    });
+
+  // ==============================
+  // SUBMIT
+  // ==============================
+  onSubmit(): void {
+
+    if (
+
+      this.registerForm.invalid
+
+    ) return;
+
+    this.loading = true;
 
     const payload = {
-      name: formValue.name || '',
-      email: formValue.email || '',
-      phone: formValue.phone || '',
-      password: formValue.password || ''
+
+      name:
+        this.registerForm.value
+          .name || '',
+
+      email:
+        this.registerForm.value
+          .email || '',
+
+      phone:
+        this.registerForm.value
+          .phone || '',
+
+      password:
+        this.registerForm.value
+          .password || ''
+
     };
-    
-    this.authService.register(payload).subscribe({
-      next: () => {
-        this.router.navigate(['/auth/login']);
-      }
-    });
+
+    this.authService
+      .register(payload)
+      .subscribe({
+
+        next: () => {
+
+          this.loading = false;
+
+          this.router.navigate([
+            '/auth/login'
+          ]);
+
+        },
+
+        error: (err) => {
+
+          console.log(err);
+
+          this.error =
+
+            err.error?.message ||
+
+            'Registration failed';
+
+          this.loading = false;
+
+        }
+
+      });
+
   }
+
 }

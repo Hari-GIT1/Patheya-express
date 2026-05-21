@@ -7,7 +7,6 @@ import { CheckoutComponent } from './checkout/checkout.component';
 import { OrdersComponent } from './orders/orders.component';
 import { TrackOrderComponent } from './track-order/track-order.component';
 import { RestaurantDetailComponent } from './restaurant-detail/restaurant-detail.component';
-import { RoleGuard } from '../../core/guards/role.guard';
 
 const routes: Routes = [
 
@@ -27,32 +26,28 @@ const routes: Routes = [
   {
     path: 'cart',
     component: CartComponent,
-    canActivate: [RoleGuard],
-    data: { role: 'user' }
+    data: { role: 'customer' }
   },
 
   // 💳 CHECKOUT
   {
     path: 'checkout',
     component: CheckoutComponent,
-    canActivate: [RoleGuard],
-    data: { role: 'user' }
+    data: { role: 'customer' }
   },
 
   // 📦 MY ORDERS
   {
     path: 'orders',
     component: OrdersComponent,
-    canActivate: [RoleGuard],
-    data: { role: 'user' }
+    data: { role: 'customer' }
   },
 
   // 📍 TRACK ORDER
   {
     path: 'track-order/:id',
     component: TrackOrderComponent,
-    canActivate: [RoleGuard],
-    data: { role: 'user' }
+    data: { role: 'customer' }
   }
 ];
 

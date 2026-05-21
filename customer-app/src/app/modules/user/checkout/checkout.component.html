@@ -1,40 +1,282 @@
-<div class="container mt-4">
+<div class="checkout-page">
 
-  <h3>Checkout</h3>
+  <!-- ============================= -->
+  <!-- HEADER -->
+  <!-- ============================= -->
 
-  <div class="mb-3">
-    <button class="btn me-2"
-            [ngClass]="orderType === 'delivery' ? 'btn-primary' : 'btn-outline-primary'"
-            (click)="orderType = 'delivery'">
-      Delivery
-    </button>
+  <div class="checkout-header">
 
-    <button class="btn"
-            [ngClass]="orderType === 'pickup' ? 'btn-success' : 'btn-outline-success'"
-            (click)="orderType = 'pickup'">
-      Pickup
-    </button>
+    <div>
+
+      <h1>
+        Checkout 🍽️
+      </h1>
+
+      <p>
+        Complete your order securely
+      </p>
+
+    </div>
+
   </div>
 
-  <input *ngIf="orderType === 'delivery'"
-         class="form-control mb-3"
-         placeholder="Enter address"
-         [(ngModel)]="address">
+  <!-- ============================= -->
+  <!-- EMPTY -->
+  <!-- ============================= -->
 
-  <div *ngFor="let item of cartItems">
-    {{ item.name }} x {{ item.quantity }} = ₹ {{ item.price * item.quantity }}
+  <div
+
+    *ngIf="cartItems.length === 0"
+
+    class="empty-state">
+
+    <div class="empty-icon">
+
+      🛒
+
+    </div>
+
+    <h2>
+      Your cart is empty
+    </h2>
+
+    <button
+      routerLink="/"
+      class="browse-btn">
+
+      Browse Restaurants
+
+    </button>
+
   </div>
 
-  <hr>
+  <!-- ============================= -->
+  <!-- CHECKOUT -->
+  <!-- ============================= -->
 
-  <h4>Total: ₹ {{ total }}</h4>
+  <div
 
-  <button class="btn btn-success w-100 mt-3"
-          (click)="placeOrder()">
-    Place Order
-  </button>
-  <button (click)="payNow()">
-    Pay ₹500
-  </button>
+    *ngIf="cartItems.length > 0"
+
+    class="checkout-layout">
+
+    <!-- LEFT -->
+    <div class="checkout-left">
+
+      <!-- DELIVERY TYPE -->
+      <div class="checkout-card">
+
+        <h3>
+          Delivery Type
+        </h3>
+
+        <div class="delivery-options">
+
+          <button
+
+            [ngClass]="{
+              active:
+              orderType === 'delivery'
+            }"
+
+            (click)="
+              orderType = 'delivery'
+            ">
+
+            🚚 Delivery
+
+          </button>
+
+          <button
+
+            [ngClass]="{
+              active:
+              orderType === 'pickup'
+            }"
+
+            (click)="
+              orderType = 'pickup'
+            ">
+
+            🏪 Pickup
+
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- ADDRESS -->
+      <div
+
+        *ngIf="orderType === 'delivery'"
+
+        class="checkout-card">
+
+        <h3>
+          Delivery Address
+        </h3>
+
+        <textarea
+
+          [(ngModel)]="address"
+
+          placeholder="Enter complete delivery address">
+
+        </textarea>
+
+      </div>
+
+      <!-- ITEMS -->
+      <div class="checkout-card">
+
+        <h3>
+          Order Items
+        </h3>
+
+        <div
+
+          *ngFor="
+            let item of cartItems;
+            trackBy: trackByItem
+          "
+
+          class="order-item">
+
+          <div class="item-left">
+
+            <img
+
+              [src]="
+                item.image ||
+                'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800&auto=format&fit=crop'
+              "
+
+              alt="food">
+
+            <div>
+
+              <h4>
+                {{ item.name }}
+              </h4>
+
+              <p>
+                Qty:
+                {{ item.quantity }}
+              </p>
+
+            </div>
+
+          </div>
+
+          <strong>
+
+            ₹ {{
+              item.price *
+              item.quantity
+            }}
+
+          </strong>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div class="checkout-summary">
+
+      <div class="summary-card">
+
+        <h3>
+          Payment Summary
+        </h3>
+
+        <div class="summary-row">
+
+          <span>
+            Item Total
+          </span>
+
+          <strong>
+            ₹ {{ total }}
+          </strong>
+
+        </div>
+
+        <div class="summary-row">
+
+          <span>
+            Delivery Fee
+          </span>
+
+          <strong>
+            ₹ {{ deliveryFee }}
+          </strong>
+
+        </div>
+
+        <div class="summary-row">
+
+          <span>
+            Taxes
+          </span>
+
+          <strong>
+            ₹ {{ taxes }}
+          </strong>
+
+        </div>
+
+        <hr>
+
+        <div class="summary-row grand-total">
+
+          <span>
+            Grand Total
+          </span>
+
+          <strong>
+            ₹ {{ grandTotal }}
+          </strong>
+
+        </div>
+
+        <!-- TRUST -->
+        <div class="trust-box">
+
+          🔒 Secure Razorpay Payment
+
+        </div>
+
+        <!-- PAYMENT BUTTON -->
+        <button
+
+          class="pay-btn"
+
+          [disabled]="loading"
+
+          (click)="payNow()">
+
+          <span *ngIf="!loading">
+
+            Pay ₹ {{ grandTotal }}
+
+          </span>
+
+          <span *ngIf="loading">
+
+            Processing...
+
+          </span>
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
 
 </div>

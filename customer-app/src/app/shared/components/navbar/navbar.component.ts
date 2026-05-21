@@ -1,43 +1,160 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { AuthService } from 'src/app/core/services/auth.service';
+import {
+
+  Component,
+
+  OnInit
+
+} from '@angular/core';
+
+import {
+
+  Router
+
+} from '@angular/router';
+
+import {
+
+  AuthService
+
+} from 'src/app/core/services/auth.service';
+
+import {
+
+  CartService
+
+} from 'src/app/core/services/cart.service';
 
 @Component({
+
   selector: 'app-navbar',
+
   templateUrl: './navbar.component.html',
+
   styleUrls: ['./navbar.component.scss']
+
 })
-export class NavbarComponent {
+
+export class NavbarComponent
+implements OnInit {
 
   user: any = null;
 
+  cartCount = 0;
+
   constructor(
-    private authService: AuthService,
-    private router: Router
+
+    private authService:
+      AuthService,
+
+    private cartService:
+      CartService,
+
+    private router:
+      Router
+
   ) {}
 
-  ngOnInit() {
-    this.authService.user$.subscribe(user => {
-      this.user = user;
-    });
+  ngOnInit(): void {
+
+    // USER
+    this.authService.user$
+      .subscribe(user => {
+
+        this.user = user;
+
+      });
+
+    // CART COUNT
+    this.cartService.cart$
+      .subscribe(items => {
+
+        this.cartCount =
+          items.reduce(
+
+            (sum, item) =>
+
+              sum + item.quantity,
+
+            0
+
+          );
+
+      });
+
   }
 
-  logout() {
+  // ==============================
+  // LOGOUT
+  // ==============================
+  logout(): void {
+
     this.authService.logout();
-    this.router.navigate(['/auth/login']);
+
+    this.router.navigate([
+      '/auth/login'
+    ]);
+
   }
 
+  // ==============================
+  // ROLE CHECKS
+  // ==============================
   isCustomer(): boolean {
-    return localStorage.getItem('role') === 'CUSTOMER';
+
+    return this.user?.role ===
+      'customer';
+
   }
-  
 
   isOwner(): boolean {
-    return localStorage.getItem('role') === 'OWNER';
+
+    return (
+      this.user?.role ===
+      'restaurant_owner'
+    );
+  
   }
 
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('token')
-        || !!localStorage.getItem('ownerToken');
+
+    return !!this.user;
+
   }
+
+  // ==============================
+  // AVATAR INITIAL
+  // ==============================
+  getInitial(): string {
+
+    return (
+  
+      this.user?.name
+        ?.charAt(0)
+  
+      ||
+  
+      this.user?.email
+        ?.charAt(0)
+  
+      ||
+  
+      'U'
+  
+    ).toUpperCase();
+  
+  }
+  get userName(): string {
+
+    return (
+  
+      this.user?.name ||
+  
+      this.user?.email ||
+  
+      'User'
+  
+    );
+  
+  }
+
 }

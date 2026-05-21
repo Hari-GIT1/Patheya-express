@@ -1,48 +1,167 @@
-import { Component } from '@angular/core';
-import {FormBuilder,Validators} from '@angular/forms';
-import { AuthService } from '../../core/services/auth.service';
-import { Router } from '@angular/router';
+import {
+
+  Component
+
+} from '@angular/core';
+
+import {
+
+  FormBuilder,
+
+  Validators
+
+} from '@angular/forms';
+
+import {
+
+  Router
+
+} from '@angular/router';
+
+import {
+
+  AuthService
+
+} from '../../core/services/auth.service';
 
 @Component({
+
   selector: 'app-register',
+
   templateUrl: './register.component.html',
+
   styleUrls: ['./register.component.scss']
+
 })
+
 export class RegisterComponent {
 
   loading = false;
 
   constructor(
-    private fb: FormBuilder,
-    private authService: AuthService,
-    private router: Router
+
+    private fb:
+      FormBuilder,
+
+    private authService:
+      AuthService,
+
+    private router:
+      Router
+
   ) {}
 
-  registerForm = this.fb.group({
+  registerForm =
+    this.fb.group({
 
-    restaurantName: ['', Validators.required],
+      name: [
 
-    email: ['', [Validators.required, Validators.email]],
+        '',
 
-    phone: ['', Validators.required],
+        Validators.required
 
-    password: ['', Validators.required]
+      ],
 
-  });
+      restaurantName: [
 
+        '',
+
+        Validators.required
+
+      ],
+
+      email: [
+
+        '',
+
+        [
+
+          Validators.required,
+
+          Validators.email
+
+        ]
+
+      ],
+
+      phone: [
+
+        '',
+
+        Validators.required
+
+      ],
+
+      password: [
+
+        '',
+
+        [
+
+          Validators.required,
+
+          Validators.minLength(6)
+
+        ]
+
+      ]
+
+    });
+
+  // ==============================
+  // REGISTER
+  // ==============================
   onRegister(): void {
 
-    if (this.registerForm.invalid) return;
+    if (
+
+      this.registerForm.invalid
+
+    ) return;
 
     this.loading = true;
 
     this.authService
-      .register(this.registerForm.value)
+      .register(
+        this.registerForm.value
+      )
       .subscribe({
 
-        next: () => {
+        next: (res: any) => {
 
-          this.router.navigate(['/login']);
+          console.log(
+            'REGISTER SUCCESS:',
+            res
+          );
+
+          // AUTO LOGIN
+          if (res.data?.token) {
+
+            this.authService
+              .saveToken(
+
+                res.data.token
+
+              );
+
+            this.authService
+              .saveUser(
+
+                res.data.user
+
+              );
+
+            this.router.navigate([
+              '/dashboard'
+            ]);
+
+          } else {
+
+            this.router.navigate([
+              '/login'
+            ]);
+
+          }
 
           this.loading = false;
 

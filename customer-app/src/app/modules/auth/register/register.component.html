@@ -1,29 +1,196 @@
-<div class="container d-flex justify-content-center mt-5">
-    <mat-card style="width: 400px;">
-      <h2 class="text-center">Register</h2>
-  
-      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-  
-        <mat-form-field class="w-100">
-          <input matInput placeholder="Name" formControlName="name">
-        </mat-form-field>
-  
-        <mat-form-field class="w-100">
-          <input matInput placeholder="Email" formControlName="email">
-        </mat-form-field>
-  
-        <mat-form-field class="w-100">
-          <input matInput placeholder="Phone" formControlName="phone">
-        </mat-form-field>
-  
-        <mat-form-field class="w-100">
-          <input matInput type="password" placeholder="Password" formControlName="password">
-        </mat-form-field>
-  
-        <button mat-raised-button color="primary" class="w-100">
-          Register
-        </button>
-  
-      </form>
-    </mat-card>
+<div class="register-page">
+
+  <!-- ============================= -->
+  <!-- LEFT SIDE -->
+  <!-- ============================= -->
+
+  <div class="register-left">
+
+    <div class="overlay"></div>
+
+    <div class="hero-content">
+
+      <span class="tag">
+
+        🚀 Join PatheyaExpress
+
+      </span>
+
+      <h1>
+
+        Food delivery
+        made smarter.
+
+      </h1>
+
+      <p>
+
+        Discover amazing restaurants,
+        track orders live,
+        and enjoy seamless food delivery.
+
+      </p>
+
+      <div class="features">
+
+        <div class="feature">
+
+          🍔 1000+ Restaurants
+
+        </div>
+
+        <div class="feature">
+
+          ⚡ Fast Delivery
+
+        </div>
+
+        <div class="feature">
+
+          📍 Live Tracking
+
+        </div>
+
+      </div>
+
+    </div>
+
   </div>
+
+  <!-- ============================= -->
+  <!-- RIGHT SIDE -->
+  <!-- ============================= -->
+
+  <div class="register-right">
+
+    <div class="register-card">
+
+      <!-- HEADER -->
+      <div class="header">
+
+        <h2>
+          Create Account
+        </h2>
+
+        <p>
+          Start ordering your favorite food 🍽️
+        </p>
+
+      </div>
+
+      <!-- FORM -->
+      <form
+
+        [formGroup]="registerForm"
+
+        (ngSubmit)="onSubmit()">
+
+        <!-- NAME -->
+        <div class="input-group-custom">
+
+          <label>
+            Full Name
+          </label>
+
+          <input
+
+            type="text"
+
+            placeholder="Enter your name"
+
+            formControlName="name">
+
+        </div>
+
+        <!-- EMAIL -->
+        <div class="input-group-custom">
+
+          <label>
+            Email Address
+          </label>
+
+          <input
+
+            type="email"
+
+            placeholder="Enter your email"
+
+            formControlName="email">
+
+        </div>
+
+        <!-- PHONE -->
+        <div class="input-group-custom">
+
+          <label>
+            Phone Number
+          </label>
+
+          <input
+
+            type="text"
+
+            placeholder="Enter phone number"
+
+            formControlName="phone">
+
+        </div>
+
+        <!-- PASSWORD -->
+        <div class="input-group-custom">
+
+          <label>
+            Password
+          </label>
+
+          <input
+
+            type="password"
+
+            placeholder="Create password"
+
+            formControlName="password">
+
+        </div>
+
+        <!-- BUTTON -->
+        <button
+
+          class="register-btn"
+
+          [disabled]="loading">
+
+          <span *ngIf="!loading">
+
+            Create Account →
+
+          </span>
+
+          <span *ngIf="loading">
+
+            Creating Account...
+
+          </span>
+
+        </button>
+
+      </form>
+
+      <!-- FOOTER -->
+      <div class="auth-footer">
+
+        Already have an account?
+
+        <a routerLink="/auth/login">
+
+          Login
+
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

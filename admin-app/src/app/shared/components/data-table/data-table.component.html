@@ -1,0 +1,161 @@
+<div class="table-wrapper">
+
+    <!-- LOADING -->
+    <div
+      *ngIf="loading"
+      class="table-loader"
+    >
+  
+      <div
+        class="
+          spinner-border
+          text-primary
+        "
+      ></div>
+  
+    </div>
+  
+    <!-- EMPTY -->
+    <div
+      *ngIf="
+        !loading &&
+        rows.length === 0
+      "
+      class="empty-state"
+    >
+  
+      No data available
+  
+    </div>
+  
+    <!-- TABLE -->
+    <table
+      *ngIf="
+        !loading &&
+        rows.length > 0
+      "
+      class="
+        table
+        align-middle
+        mb-0
+      "
+    >
+  
+      <thead>
+  
+        <tr>
+  
+          <th
+            *ngFor="
+              let col of columns
+            "
+          >
+  
+            {{ col.label }}
+  
+          </th>
+          
+          <th *ngIf="getActions">
+
+            Actions
+          
+          </th>
+  
+        </tr>
+  
+      </thead>
+  
+      <tbody>
+  
+        <tr
+          *ngFor="
+            let row of rows
+          "
+            (click)="
+            rowClick.emit(row)
+          "
+        
+          class="table-row"
+        >
+  
+          <td
+            *ngFor="
+              let col of columns
+            "
+          >
+  
+            <!-- STATUS -->
+            <ng-container
+              *ngIf="
+                col.type === 'status'
+              "
+            >
+  
+              <span
+                class="status-badge"
+                [ngClass]="
+                  row[col.key]
+                "
+              >
+  
+                {{
+                  row[col.key]
+                }}
+  
+              </span>
+  
+            </ng-container>
+  
+            <!-- NORMAL -->
+            <ng-container
+              *ngIf="
+                col.type !== 'status'
+              "
+            >
+  
+              {{
+                row[col.key]
+              }}
+  
+            </ng-container>
+  
+          </td>
+          <td *ngIf="getActions">
+
+            <div class="table-actions">
+          
+              <button
+          
+              *ngFor="
+              let action of getActions(row)"
+          
+          class="action-btn"
+
+          
+          (click)="
+          $event.stopPropagation();
+        
+          actionClick.emit({
+            action:
+              action.key,
+            row
+          })
+        "
+          
+              >
+          
+                {{ action.label }}
+          
+              </button>
+          
+            </div>
+          
+          </td>
+  
+        </tr>
+  
+      </tbody>
+  
+    </table>
+  
+  </div>

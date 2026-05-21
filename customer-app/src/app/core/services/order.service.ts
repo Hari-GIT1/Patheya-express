@@ -1,50 +1,125 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
+import {
 
-@Injectable({ providedIn: 'root' })
+  Injectable
+
+} from '@angular/core';
+
+import {
+
+  Observable
+
+} from 'rxjs';
+
+import {
+
+  ApiService
+
+} from './api.service';
+
+@Injectable({
+
+  providedIn: 'root'
+
+})
+
 export class OrderService {
 
-  private baseUrl = `${environment.api.baseUrl}/orders`;
+  constructor(
 
-  constructor(private http: HttpClient) {}
+    private api:
+      ApiService
 
- // 🛒 PLACE ORDER
-  placeOrder(order: any) {
-    const token = localStorage.getItem('token');
+  ) {}
 
-    return this.http.post(this.baseUrl, order, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-  }
+  // ==============================
+  // PLACE ORDER
+  // ==============================
+  placeOrder(
 
-  // 📦 GET SINGLE ORDER
-  getOrder(id: string) {
-    return this.http.get<any>(`${this.baseUrl}/${id}`);
-  }
+    order: any
 
-  // 🍽️ GET RESTAURANT ORDERS
-  getRestaurantOrders(restaurantId: string) {
-    return this.http.get<any[]>(
-      `${this.baseUrl}/restaurant/${restaurantId}`
+  ): Observable<any> {
+
+    return this.api.post(
+
+      'orders',
+
+      order
+
     );
+
   }
 
-  // 🔄 UPDATE ORDER STATUS
-  updateOrderStatus(orderId: string, status: string) {
-    return this.http.put(
-      `${this.baseUrl}/${orderId}/status`,
+  // ==============================
+  // GET SINGLE ORDER
+  // ==============================
+  getOrder(
+
+    id: string
+
+  ): Observable<any> {
+
+    return this.api.get(
+
+      `orders/${id}`
+
+    );
+
+  }
+
+  // ==============================
+  // GET RESTAURANT ORDERS
+  // ==============================
+  getRestaurantOrders(
+
+    restaurantId: string
+
+  ): Observable<any> {
+
+    return this.api.get(
+
+      `orders/restaurant/${restaurantId}`
+
+    );
+
+  }
+
+  // ==============================
+  // UPDATE STATUS
+  // ==============================
+  updateOrderStatus(
+
+    orderId: string,
+
+    status: string
+
+  ): Observable<any> {
+
+    return this.api.patch(
+
+      `orders/${orderId}/status`,
+
       { status }
+
     );
+
   }
 
-  // 👤 GET USER ORDERS
-  getUserOrders(userId: string) {
-    return this.http.get<any[]>(
-      `${this.baseUrl}/user/${userId}`
+  // ==============================
+  // GET USER ORDERS
+  // ==============================
+  getUserOrders(
+
+    userId: string
+
+  ): Observable<any> {
+
+    return this.api.get(
+
+      `orders/user/${userId}`
+
     );
+
   }
+
 }

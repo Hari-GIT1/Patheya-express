@@ -1,31 +1,59 @@
 import { Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment';
-import { HttpClient } from '@angular/common/http';
+
+import {
+  HttpClient
+} from '@angular/common/http';
+
+import {
+  Observable
+} from 'rxjs';
+
+import {
+  environment
+} from 'src/environments/environment';
+
 @Injectable({
   providedIn: 'root'
 })
+
 export class DiscountService {
 
-  constructor(private http:HttpClient) { }
-  createDiscount(data: any) {
+  apiUrl =
+    environment.apiUrl;
+
+  constructor(
+    private http: HttpClient
+  ) {}
+
+  // ==============================
+  // CREATE DISCOUNT
+  // ==============================
+  createDiscount(
+    data: any
+  ): Observable<any> {
 
     return this.http.post(
-  
-      `${environment.apiUrl}/discounts`,
-  
+
+      `${this.apiUrl}/discounts`,
+
       data
-  
+
     );
-  
+
   }
-  
-  getDiscounts() {
-  
+
+  // ==============================
+  // GET DISCOUNTS
+  // ==============================
+  getDiscounts():
+  Observable<any> {
+
     return this.http.get(
-  
-      `${environment.apiUrl}/discounts`
-  
+
+      `${this.apiUrl}/discounts`
+
     );
-  
+
   }
+
 }

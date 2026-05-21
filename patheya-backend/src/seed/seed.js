@@ -24,7 +24,7 @@ const seed = async () => {
 
     // 👤 USERS
     const users = await User.insertMany([
-      { name: 'Hari User', email: 'user@test.com', password, role: 'user' },
+      { name: 'Hari User', email: 'user@test.com', password, role: 'customer' },
       { name: 'Owner One', email: 'owner1@test.com', password, role: 'owner' },
       { name: 'Owner Two', email: 'owner2@test.com', password, role: 'owner' }
     ]);

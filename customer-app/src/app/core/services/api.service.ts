@@ -1,52 +1,146 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment';
+import {
+
+  Injectable
+
+} from '@angular/core';
+
+import {
+
+  HttpClient,
+
+  HttpParams
+
+} from '@angular/common/http';
+
+import {
+
+  Observable
+
+} from 'rxjs';
+
+import {
+
+  environment
+
+} from 'src/environments/environment';
 
 @Injectable({
+
   providedIn: 'root'
+
 })
+
 export class ApiService {
 
-  private baseUrl = environment.api.baseUrl;
+  private baseUrl =
+    environment.api.baseUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(
 
-  get<T>(url: string) {
-    const token = localStorage.getItem('token');
+    private http:
+      HttpClient
 
-    return this.http.get<T>(`${this.baseUrl}/${url}`, {
-      headers: new HttpHeaders({
-        Authorization: `Bearer ${token}`
-      })
-    });
+  ) {}
+
+  // ==============================
+  // GET
+  // ==============================
+  get<T>(
+
+    endpoint: string,
+
+    params?: HttpParams
+
+  ): Observable<T> {
+
+    return this.http.get<T>(
+
+      `${this.baseUrl}/${endpoint}`,
+
+      { params }
+
+    );
+
   }
 
-  post<T>(url: string, data: any) {
-    const token = localStorage.getItem('token');
+  // ==============================
+  // POST
+  // ==============================
+  post<T>(
 
-    return this.http.post<T>(`${this.baseUrl}/${url}`, data, {
-      headers: new HttpHeaders({
-        Authorization: `Bearer ${token}`
-      })
-    });
+    endpoint: string,
+
+    data: any
+
+  ): Observable<T> {
+
+    return this.http.post<T>(
+
+      `${this.baseUrl}/${endpoint}`,
+
+      data
+
+    );
+
   }
-  put<T>(url: string, data: any) {
-    const token = localStorage.getItem('token');
-  
-    return this.http.put<T>(`${this.baseUrl}/${url}`, data, {
-      headers: new HttpHeaders({
-        Authorization: `Bearer ${token}`
-      })
-    });
+
+  // ==============================
+  // PUT
+  // ==============================
+  put<T>(
+
+    endpoint: string,
+
+    data: any
+
+  ): Observable<T> {
+
+    return this.http.put<T>(
+
+      `${this.baseUrl}/${endpoint}`,
+
+      data
+
+    );
+
   }
-  
-  delete<T>(url: string) {
-    const token = localStorage.getItem('token');
-  
-    return this.http.delete<T>(`${this.baseUrl}/${url}`, {
-      headers: new HttpHeaders({
-        Authorization: `Bearer ${token}`
-      })
-    });
+
+  // ==============================
+  // PATCH
+  // ==============================
+  patch<T>(
+
+    endpoint: string,
+
+    data: any
+
+  ): Observable<T> {
+
+    return this.http.patch<T>(
+
+      `${this.baseUrl}/${endpoint}`,
+
+      data
+
+    );
+
   }
+
+  // ==============================
+  // DELETE
+  // ==============================
+  delete<T>(
+
+    endpoint: string
+
+  ): Observable<T> {
+
+    return this.http.delete<T>(
+
+      `${this.baseUrl}/${endpoint}`
+
+    );
+
+  }
+
 }

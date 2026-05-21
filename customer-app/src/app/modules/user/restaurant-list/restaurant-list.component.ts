@@ -1,41 +1,180 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { RestaurantService } from '../../../core/services/restaurant.service';
-import { Router } from '@angular/router';
+import {
+
+  Component,
+
+  Input,
+
+  OnInit,
+
+  OnChanges,
+
+  SimpleChanges
+
+} from '@angular/core';
+
+import {
+
+  Router
+
+} from '@angular/router';
+
+import {
+
+  RestaurantService
+
+} from '../../../core/services/restaurant.service';
 
 @Component({
-  selector: 'app-restaurant-list',
-  templateUrl: './restaurant-list.component.html'
-})
-export class RestaurantListComponent implements OnInit, OnChanges {
 
-  @Input() searchTerm: string = ''; // ✅ FIXED
+  selector: 'app-restaurant-list',
+
+  templateUrl:
+    './restaurant-list.component.html',
+
+  styleUrls: [
+    './restaurant-list.component.scss'
+  ]
+
+})
+
+export class RestaurantListComponent
+implements OnInit, OnChanges {
+
+  @Input()
+  searchTerm = '';
 
   restaurants: any[] = [];
+
   filteredRestaurants: any[] = [];
 
-  constructor(private restaurantService: RestaurantService, private router: Router) {}
+  loading = false;
+
+  constructor(
+
+    private restaurantService:
+      RestaurantService,
+
+    private router: Router
+
+  ) {}
 
   ngOnInit(): void {
-    this.restaurantService.getAllRestaurants().subscribe(res => {
-      this.restaurants = res;
-      this.filteredRestaurants = res;
-    });
+
+    this.loadRestaurants();
+
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.filterRestaurants(); // ✅ FIXED
+  ngOnChanges(
+    changes: SimpleChanges
+  ): void {
+
+    this.filterRestaurants();
+
   }
 
-  filterRestaurants() {
-    const term = this.searchTerm.toLowerCase();
+  // ==============================
+  // LOAD RESTAURANTS
+  // ==============================
+  loadRestaurants(): void {
 
-    this.filteredRestaurants = this.restaurants.filter(r =>
-      r.name.toLowerCase().includes(term) ||
-      r.cuisines.join(',').toLowerCase().includes(term)
+    this.loading = true;
+
+    this.restaurantService
+      .getAll()
+      .subscribe({
+
+        next: (res: any) => {
+
+          console.log(
+            'RESTAURANTS:',
+            res
+          );
+
+          this.restaurants =
+          Array.isArray(res)
+            ? res
+            : res.data || [];
+
+          this.filteredRestaurants =
+            [...this.restaurants];
+
+          this.loading = false;
+
+        },
+
+        error: (err: any) => {
+
+          console.error(err);
+
+          this.restaurants = [];
+
+          this.filteredRestaurants = [];
+
+          this.loading = false;
+
+        }
+
+      });
+
+  }
+
+  // ==============================
+  // FILTER RESTAURANTS
+  // ==============================
+  filterRestaurants(): void {
+
+    const term =
+      this.searchTerm
+        .toLowerCase();
+
+    this.filteredRestaurants =
+      this.restaurants.filter(
+
+        (r: any) =>
+
+          r.name
+            ?.toLowerCase()
+            .includes(term)
+
+          ||
+
+          r.cuisines
+            ?.join(', ')
+            .toLowerCase()
+            .includes(term)
+
+      );
+
+  }
+
+  // ==============================
+  // OPEN DETAILS
+  // ==============================
+  goToDetails(
+    id: string
+  ): void {
+
+    console.log(
+      'OPEN RESTAURANT:',
+      id
     );
+
+    this.router.navigate([
+      '/restaurant',
+      id
+    ]);
+
   }
-  goToDetails(id: string) {
-    console.log('Clicked',id);
-    this.router.navigate(['/restaurant', id]);
-  }
+// ==============================
+// TRACK BY
+// ==============================
+trackByRestaurant(
+  index: number,
+  item: any
+): string {
+
+  return item._id;
+
+}
+
 }

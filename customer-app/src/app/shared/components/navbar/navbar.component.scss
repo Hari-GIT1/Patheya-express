@@ -1,12 +1,352 @@
-.navbar {
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+:host {
+
+  display: block;
+
+}
+
+/* NAVBAR */
+
+.custom-navbar {
+
+  position: sticky;
+
+  top: 0;
+
+  z-index: 999;
+
+  background:
+    rgba(255,255,255,0.85);
+
+  backdrop-filter: blur(18px);
+
+  border-bottom:
+    1px solid rgba(255,255,255,0.2);
+
+  box-shadow:
+    0 4px 30px rgba(0,0,0,0.04);
+
+}
+
+/* CONTAINER */
+
+.navbar-container {
+
+  height: 80px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+}
+
+/* BRAND */
+
+.brand {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  text-decoration: none;
+
+}
+
+.logo {
+
+  width: 46px;
+
+  height: 46px;
+
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f43f5e,
+      #fb7185
+    );
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 22px;
+
+}
+
+.brand-text {
+
+  font-size: 24px;
+
+  font-weight: 800;
+
+  color: #0f172a;
+
+}
+
+/* CENTER */
+
+.nav-center {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 28px;
+
+}
+
+.nav-center a {
+
+  text-decoration: none;
+
+  color: #475569;
+
+  font-weight: 600;
+
+  transition: all 0.25s ease;
+
+  position: relative;
+
+}
+
+.nav-center a:hover {
+
+  color: #f43f5e;
+
+}
+
+.active-link {
+
+  color: #f43f5e !important;
+
+}
+
+/* RIGHT */
+
+.nav-right {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 18px;
+
+}
+
+/* LOGIN */
+
+.login-link {
+
+  text-decoration: none;
+
+  color: #475569;
+
+  font-weight: 600;
+
+}
+
+.signup-btn {
+
+  text-decoration: none;
+
+  padding: 12px 20px;
+
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f43f5e,
+      #fb7185
+    );
+
+  color: white;
+
+  font-weight: 700;
+
+  transition: 0.3s;
+
+}
+
+.signup-btn:hover {
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 12px 24px rgba(244,63,94,0.25);
+
+}
+
+/* CART */
+
+.cart-btn {
+
+  position: relative;
+
+  width: 48px;
+
+  height: 48px;
+
+  border-radius: 14px;
+
+  background: #f8fafc;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  text-decoration: none;
+
+  font-size: 22px;
+
+}
+
+.cart-badge {
+
+  position: absolute;
+
+  top: -6px;
+
+  right: -6px;
+
+  width: 22px;
+
+  height: 22px;
+
+  border-radius: 50%;
+
+  background: #ef4444;
+
+  color: white;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+}
+
+/* PROFILE */
+
+.profile-box {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+}
+
+.avatar {
+
+  width: 42px;
+
+  height: 42px;
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      135deg,
+      #0f172a,
+      #334155
+    );
+
+  color: white;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-weight: 700;
+
+}
+
+.user-info {
+
+  display: flex;
+
+  flex-direction: column;
+
+}
+
+.email {
+
+  font-size: 13px;
+
+  color: #475569;
+
+}
+
+/* LOGOUT */
+
+.logout-btn {
+
+  border: none;
+
+  background: #fee2e2;
+
+  color: #991b1b;
+
+  padding: 10px 16px;
+
+  border-radius: 12px;
+
+  font-weight: 600;
+
+  transition: 0.3s;
+
+}
+
+.logout-btn:hover {
+
+  background: #fecaca;
+
+}
+
+/* MOBILE */
+
+@media (max-width: 992px) {
+
+  .nav-center {
+
+    display: none;
+
   }
-  
-  .nav-link {
-    cursor: pointer;
-    transition: 0.2s;
+
+}
+
+@media (max-width: 576px) {
+
+  .brand-text {
+
+    display: none;
+
   }
-  
-  .nav-link:hover {
-    color: #ff4d4d !important;
+
+  .email {
+
+    display: none;
+
   }
+
+}

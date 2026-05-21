@@ -1,0 +1,123 @@
+/* You can add global styles to this file, and also import other style files */
+/* =========================
+   GLOBAL RESET
+========================= */
+
+* {
+
+    margin: 0;
+  
+    padding: 0;
+  
+    box-sizing: border-box;
+  
+  }
+  
+  html,
+  body {
+  
+    height: 100%;
+  
+    font-family:
+      Inter,
+      sans-serif;
+  
+    background: #f4f7fb;
+  
+    color: #111827;
+  
+  }
+  
+  /* =========================
+     DESIGN TOKENS
+  ========================= */
+  
+  :root {
+  
+    /* COLORS */
+  
+    --primary:
+      #2563eb;
+  
+    --primary-hover:
+      #1d4ed8;
+  
+    --sidebar-bg:
+      #0f172a;
+  
+    --sidebar-hover:
+      #1e293b;
+  
+    --card-bg:
+      #ffffff;
+  
+    --border-color:
+      #e5e7eb;
+  
+    --text-muted:
+      #6b7280;
+  
+    --success:
+      #22c55e;
+  
+    --danger:
+      #ef4444;
+  
+    --warning:
+      #f59e0b;
+  
+    /* SHADOWS */
+  
+    --shadow-sm:
+      0 1px 2px rgba(0,0,0,0.05);
+  
+    --shadow-md:
+      0 4px 12px rgba(0,0,0,0.08);
+  
+    /* RADIUS */
+  
+    --radius-sm: 10px;
+  
+    --radius-md: 16px;
+  
+    --radius-lg: 24px;
+  
+  }
+  
+  /* =========================
+     SCROLLBAR
+  ========================= */
+  
+  ::-webkit-scrollbar {
+  
+    width: 8px;
+  
+  }
+  
+  ::-webkit-scrollbar-thumb {
+  
+    background: #cbd5e1;
+  
+    border-radius: 20px;
+  
+  }
+  
+  /* =========================
+     UTILITY
+  ========================= */
+  
+  .page-title {
+  
+    font-size: 28px;
+  
+    font-weight: 700;
+  
+  }
+  
+  .page-subtitle {
+  
+    color: var(--text-muted);
+  
+    margin-top: 4px;
+  
+  }

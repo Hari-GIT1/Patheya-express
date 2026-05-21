@@ -1,77 +1,115 @@
-const express = require('express');
-const cors = require('cors');
-const http = require('http'); // ✅ FIX
-const { Server } = require('socket.io');
-const connectDB = require('./config/db');
-const discountRoutes =
-  require('./routes/discount.routes');
-
-const PORT = process.env.PORT || 3000;
-const allowedOrigins = process.env.NODE_ENV === 'production'
-  ? [
-      'https://app.patheyaexpress.in',
-      'https://partner.patheyaexpress.in'
-    ]
-  : [
-      'http://localhost:4200',
-      'http://localhost:4201'
-    ];
-  
 require('dotenv-flow').config();
-console.log('ALLOWED ORIGINS:', allowedOrigins);
-console.log('NODE_ENV:', process.env.NODE_ENV);
 
-const app = express();
+// VALIDATE ENV
+require('./config/validateEnv');
 
-app.use(cors({
-  origin: function(origin, callback) {
+const http = require('http');
+const socketIO = require('socket.io');
 
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  
-  },
-  credentials: true
-}));
-app.get('/health', (req, res) => {
-  res.status(200).json({
-    status: 'ok'
-  });
-});
-app.use(express.json());
+const app = require('./app');
 
-// ✅ create HTTP server
-const server = http.createServer(app);
+const connectDB = require('./config/db');
 
-// ✅ socket setup
-const io = require('socket.io')(server, {
-  cors: {
-    origin: allowedOrigins,
-    methods: ['GET', 'POST']
-  }
-});
+const config = require('./config');
 
-app.set('io', io);
+// ==============================
+// PORT
+// ==============================
+
+const PORT = config.port || 3000;
+
+// ==============================
+// CONNECT DATABASE
+// ==============================
+
 connectDB();
 
-// ✅ routes
-app.use('/api/auth', require('./routes/auth.routes'));
-app.use('/api/menu', require('./routes/menu.routes'));
-app.use('/api/orders', require('./routes/order.routes'));
-app.use('/api/restaurants', require('./routes/restaurant.routes'));
-app.use('/uploads', express.static('uploads'));
-app.use('/api/payment', require('./routes/payment.routes'));
-app.use('/api/owner', require('./routes/owner.routes'));
-app.use('/api/discounts', discountRoutes);
+// ==============================
+// CREATE HTTP SERVER
+// ==============================
 
-// ✅ socket connection
+const server = http.createServer(app);
+
+// ==============================
+// ALLOWED SOCKET ORIGINS
+// ==============================
+
+const allowedOrigins = [
+
+  // LOCALHOST
+  'http://localhost:4200',
+  'http://localhost:4201',
+  'http://localhost:4202',
+
+  // PRODUCTION
+  'https://app.patheyaexpress.in',
+  'https://partner.patheyaexpress.in',
+  'https://admin.patheyaexpress.in',
+
+  // VERCEL
+  'https://patheya-admin-app.vercel.app',
+  'https://patheya-express-partner.vercel.app',
+
+  // RENDER
+  'https://patheya-express.onrender.com',
+  'https://patheya-express-uat.onrender.com'
+];
+
+// ==============================
+// SOCKET.IO
+// ==============================
+
+const io = socketIO(server, {
+
+  cors: {
+
+    origin: function(origin, callback) {
+
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      console.log('SOCKET BLOCKED:', origin);
+
+      return callback(
+        new Error(`Socket CORS Blocked: ${origin}`)
+      );
+
+    },
+
+    methods: [
+      'GET',
+      'POST',
+      'PUT',
+      'PATCH',
+      'DELETE'
+    ],
+
+    credentials: true
+
+  }
+
+});
+
+// MAKE IO AVAILABLE
+app.set('io', io);
+
+// ==============================
+// SOCKET CONNECTIONS
+// ==============================
+
 io.on('connection', (socket) => {
 
-  console.log('SOCKET CONNECTED');
+  console.log('SOCKET CONNECTED:', socket.id);
 
-  // ✅ JOIN RESTAURANT ROOM
+  // ==========================
+  // JOIN RESTAURANT ROOM
+  // ==========================
+
   socket.on(
     'joinRestaurantRoom',
     (restaurantId) => {
@@ -86,7 +124,10 @@ io.on('connection', (socket) => {
     }
   );
 
-  // ✅ JOIN ORDER ROOM
+  // ==========================
+  // JOIN ORDER ROOM
+  // ==========================
+
   socket.on(
     'joinOrderRoom',
     (orderId) => {
@@ -101,17 +142,55 @@ io.on('connection', (socket) => {
     }
   );
 
-  socket.on('disconnect', () => {
+  // ==========================
+  // JOIN ADMIN ROOM
+  // ==========================
 
-    console.log('SOCKET DISCONNECTED');
+  socket.on(
+    'joinAdminRoom',
+    () => {
 
-  });
+      socket.join('admins');
+
+      console.log('ADMIN JOINED');
+
+    }
+  );
+
+  // ==========================
+  // DISCONNECT
+  // ==========================
+
+  socket.on(
+    'disconnect',
+    () => {
+
+      console.log(
+        'SOCKET DISCONNECTED:',
+        socket.id
+      );
+
+    }
+  );
 
 });
-app.get('/', (req, res) => {
-  res.send('Patheya Express Backend Running');
-});
 
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// ==============================
+// START SERVER
+// ==============================
+
+server.listen(
+
+  PORT,
+
+  '0.0.0.0',
+
+  () => {
+
+    console.log(
+      `🚀 Server running on port ${PORT}`
+    );
+
+  }
+
+);

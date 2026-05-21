@@ -1,86 +1,274 @@
-<div class="container mt-4" *ngIf="order">
+<div
 
+  *ngIf="order"
+
+  class="track-page">
+
+  <!-- ============================= -->
   <!-- HEADER -->
-  <div class="card p-4 shadow-sm mb-4 text-center">
+  <!-- ============================= -->
 
-    <h4 class="fw-bold mb-2">
-      Order #{{ order._id.slice(-6) }}
-    </h4>
+  <div class="track-header">
 
-    <h5 class="text-success text-capitalize">
-      {{ order.status.replace('_', ' ') }}
-    </h5>
+    <div>
 
-    <p class="text-muted mb-0">
-      Estimated delivery by <strong>{{ eta }}</strong>
-    </p>
+      <h1>
+        Track Your Order 🚴
+      </h1>
 
-  </div>
-  <div class="card mt-4 p-3 shadow-sm">
+      <p>
 
-    <h5 class="mb-3">Live Tracking 📍</h5>
-  
-    <google-map
-    height="300px"
-    width="100%"
-    [center]="deliveryLocation"
-    [zoom]="zoom">
-  
-    <!-- 🚴 Rider -->
-    <map-marker
-      [position]="deliveryLocation"
-      label="🚴">
-    </map-marker>
-  
-    <!-- 🏠 Destination -->
-    <map-marker
-      [position]="destination"
-      label="🏠">
-    </map-marker>
-  
-    <!-- 🔥 ROUTE LINE -->
-    <map-directions-renderer
-      *ngIf="directionsResult"
-      [directions]="directionsResult">
-    </map-directions-renderer>
-  
-  </google-map>
-  
-  </div>
+        Order #
+        {{ order._id.slice(-6) }}
 
-  <!-- PROGRESS TRACKER -->
-  <div class="card p-4 shadow-sm">
+      </p>
 
-    <div class="d-flex justify-content-between align-items-center position-relative">
-  
-      <!-- BASE LINE -->
-      <div class="progress-line"></div>
-  
-      <!-- 🔥 ACTIVE LINE -->
-      <div class="progress-line-active"
-           [style.width.%]="(getProgressIndex(order.status) / (steps.length - 1)) * 100">
-      </div>
-  
-      <!-- STEPS -->
-      <div *ngFor="let step of steps; let i = index"
-           class="text-center step-box">
-  
-        <div class="step-circle"
-             [ngClass]="{
-               'active': i <= getProgressIndex(order.status),
-               'current': i === getProgressIndex(order.status)
-             }">
-          {{ i + 1 }}
-        </div>
-  
-        <small class="d-block mt-2">
-          {{ step.label }}
-        </small>
-  
-      </div>
-  
     </div>
-  
+
+    <!-- STATUS -->
+    <div
+
+      class="status-pill"
+
+      [ngClass]="
+        getStatusClass(
+          order.status
+        )
+      ">
+
+      {{ order.status }}
+
+    </div>
+
+  </div>
+
+  <!-- ============================= -->
+  <!-- MAIN -->
+  <!-- ============================= -->
+
+  <div class="track-layout">
+
+    <!-- LEFT -->
+    <div class="left-side">
+
+      <!-- ETA -->
+      <div class="eta-card">
+
+        <div>
+
+          <h2>
+            Arriving By
+          </h2>
+
+          <h1>
+            {{ eta }}
+          </h1>
+
+        </div>
+
+        <div class="bike-icon">
+
+          🛵
+
+        </div>
+
+      </div>
+
+      <!-- TIMELINE -->
+      <div class="timeline-card">
+
+        <h3>
+          Order Progress
+        </h3>
+
+        <div class="timeline">
+
+          <div
+
+            *ngFor="
+              let step of steps;
+              let i = index
+            "
+
+            class="timeline-step">
+
+            <!-- DOT -->
+            <div
+
+              class="dot"
+
+              [ngClass]="{
+                active:
+                i <= getProgressIndex(
+                  order.status
+                )
+              }">
+
+            </div>
+
+            <!-- CONTENT -->
+            <div class="step-content">
+
+              <h4>
+
+                {{ step.label }}
+
+              </h4>
+
+              <p>
+
+                {{
+                  i <=
+                  getProgressIndex(
+                    order.status
+                  )
+
+                  ? 'Completed'
+
+                  : 'Waiting'
+                }}
+
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ITEMS -->
+      <div class="items-card">
+
+        <h3>
+          Order Items
+        </h3>
+
+        <div
+
+          *ngFor="
+            let item of order.items
+          "
+
+          class="item-row">
+
+          <div class="item-left">
+
+            <img
+
+              [src]="
+                item.image ||
+                'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800&auto=format&fit=crop'
+              "
+
+              alt="food">
+
+            <div>
+
+              <h4>
+                {{ item.name }}
+              </h4>
+
+              <p>
+                Qty:
+                {{ item.quantity }}
+              </p>
+
+            </div>
+
+          </div>
+
+          <strong>
+
+            ₹ {{
+              item.price *
+              item.quantity
+            }}
+
+          </strong>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right-side">
+
+      <!-- MAP -->
+      <div class="map-card">
+
+        <h3>
+          Live Tracking
+        </h3>
+
+        <google-map
+
+          height="420px"
+
+          width="100%"
+
+          [center]="deliveryLocation"
+
+          [zoom]="zoom">
+
+          <!-- RIDER -->
+          <map-marker
+            [position]="deliveryLocation">
+          </map-marker>
+
+          <!-- DESTINATION -->
+          <map-marker
+            [position]="destination">
+          </map-marker>
+
+          <!-- ROUTE -->
+          <map-directions-renderer
+            *ngIf="directionsResult"
+            [directions]="directionsResult">
+          </map-directions-renderer>
+
+        </google-map>
+
+      </div>
+
+      <!-- TOTAL -->
+      <div class="summary-card">
+
+        <div class="summary-row">
+
+          <span>
+            Total Paid
+          </span>
+
+          <strong>
+
+            ₹ {{ order.total }}
+
+          </strong>
+
+        </div>
+
+        <div class="summary-row">
+
+          <span>
+            Payment Method
+          </span>
+
+          <strong>
+
+            Online Payment
+
+          </strong>
+
+        </div>
+
+      </div>
+
+    </div>
+
   </div>
 
 </div>

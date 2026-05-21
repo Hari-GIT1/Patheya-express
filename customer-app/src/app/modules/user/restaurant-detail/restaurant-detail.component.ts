@@ -1,56 +1,168 @@
-import { Component, OnInit } from '@angular/core';
-import { MenuService } from '../../../core/services/menu.service';
-import { CartService } from '../../../core/services/cart.service';
-import { ActivatedRoute } from '@angular/router';
+import {
+
+  Component,
+
+  OnInit
+
+} from '@angular/core';
+
+import {
+
+  ActivatedRoute
+
+} from '@angular/router';
+
+import {
+
+  MenuService
+
+} from '../../../core/services/menu.service';
+
+import {
+
+  CartService
+
+} from '../../../core/services/cart.service';
 
 @Component({
+
   selector: 'app-restaurant-detail',
-  templateUrl: './restaurant-detail.component.html'
+
+  templateUrl:
+    './restaurant-detail.component.html',
+
+  styleUrls: [
+    './restaurant-detail.component.scss'
+  ]
+
 })
-export class RestaurantDetailComponent implements OnInit {
+
+export class RestaurantDetailComponent
+implements OnInit {
 
   menu: any[] = [];
+
   cartItems: any[] = [];
+
   restaurantId!: string;
-  
+
+  loading = false;
 
   constructor(
-    private route: ActivatedRoute,
-    private menuService: MenuService,
-    public cartService: CartService
+
+    private route:
+      ActivatedRoute,
+
+    private menuService:
+      MenuService,
+
+    public cartService:
+      CartService
+
   ) {}
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-  
+
+    const id =
+
+      this.route.snapshot
+        .paramMap.get('id');
+
     if (!id) return;
-  
+
     this.restaurantId = id;
-  
-    this.menuService.getMenu(id).subscribe(res => {
-      this.menu = res;
-    });
-  
-    this.cartService.cart$.subscribe(items => {
-      this.cartItems = items;
-    });
+
+    this.loadMenu();
+
+    // CART SYNC
+    this.cartService.cart$
+      .subscribe(items => {
+
+        this.cartItems = items;
+
+      });
+
   }
 
-  addToCart(item: any) {
-    this.cartService.addToCart(item, this.restaurantId);
+  // ==============================
+  // LOAD MENU
+  // ==============================
+  loadMenu(): void {
+
+    this.loading = true;
+
+    this.menuService
+      .getMenu(this.restaurantId)
+      .subscribe({
+
+        next: (res: any) => {
+
+          this.menu =
+            res.data;
+
+          this.loading = false;
+
+        },
+
+        error: (err) => {
+
+          console.log(err);
+
+          this.loading = false;
+
+        }
+
+      });
+
   }
 
-  increase(item: any) {
-    this.cartService.increaseQty(item);
-    item.quantity++;
-  }
-  
-  decrease(item: any) {
-    this.cartService.decreaseQty(item);
-    item.quantity--;
+  // ==============================
+  // ADD TO CART
+  // ==============================
+  addToCart(item: any): void {
+
+    this.cartService
+      .addToCart(
+
+        item,
+
+        this.restaurantId
+
+      );
+
   }
 
-  get total() {
-    return this.cartService.getTotal();
+  // ==============================
+  // INCREASE QTY
+  // ==============================
+  increase(item: any): void {
+
+    this.cartService
+      .increaseQty(item);
+
+      this.cartService.increaseQty(item);
   }
+
+  // ==============================
+  // DECREASE QTY
+  // ==============================
+  decrease(item: any): void {
+
+    this.cartService
+      .decreaseQty(item);
+
+      this.cartService.decreaseQty(item);
+
+  }
+
+  // ==============================
+  // TOTAL
+  // ==============================
+  get total(): number {
+
+    return this.cartService
+      .getTotal();
+
+  }
+
 }

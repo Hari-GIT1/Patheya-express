@@ -1,29 +1,219 @@
-import { Component, OnInit } from '@angular/core';
-import { CartService } from './core/services/cart.service';
-import { Router } from '@angular/router';
+import {
+
+  Component,
+
+  OnInit,
+
+  OnDestroy
+
+} from '@angular/core';
+
+import {
+
+  Router,
+
+  NavigationEnd
+
+} from '@angular/router';
+
+import {
+
+  filter,
+
+  Subscription
+
+} from 'rxjs';
+
+import {
+
+  CartService
+
+} from './core/services/cart.service';
+
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html'
-})
-export class AppComponent implements OnInit {
 
+  selector: 'app-root',
+
+  templateUrl:
+    './app.component.html',
+
+  styleUrls: [
+    './app.component.scss'
+  ]
+
+})
+
+export class AppComponent
+implements OnInit, OnDestroy {
+
+  // ==============================
+  // CART
+  // ==============================
   cartCount = 0;
+
   total = 0;
 
-  constructor(private cartService: CartService, private router: Router) {}
+  showFloatingCart = true;
 
+  // ==============================
+  // SUBSCRIPTIONS
+  // ==============================
+  private cartSubscription!:
+    Subscription;
+
+  private routerSubscription!:
+    Subscription;
+
+  constructor(
+
+    private cartService:
+      CartService,
+
+    private router:
+      Router
+
+  ) {}
+
+  // ==============================
+  // INIT
+  // ==============================
   ngOnInit(): void {
-    window.addEventListener('storage', () => {
-      window.location.reload();
-    });
-    this.cartService.cart$.subscribe((items: any[]) => {
-      this.cartCount = items.reduce((sum, i) => sum + i.quantity, 0);
-      this.total = this.cartService.getTotal();
-    });
+
+    // CART STATE
+    this.cartSubscription =
+
+      this.cartService.cart$
+        .subscribe(items => {
+
+          this.cartCount =
+
+            items.reduce(
+
+              (
+
+                sum,
+
+                item
+
+              ) =>
+
+                sum +
+                item.quantity,
+
+              0
+
+            );
+
+          this.total =
+
+            this.cartService
+              .getTotal();
+
+        });
+
+    // ROUTE CHANGES
+    this.routerSubscription =
+
+      this.router.events
+        .pipe(
+
+          filter(
+
+            event =>
+
+              event instanceof
+              NavigationEnd
+
+          )
+
+        )
+
+        .subscribe(() => {
+
+          this.handleFloatingCart();
+
+        });
+
+    // INITIAL CHECK
+    this.handleFloatingCart();
+
   }
 
-  goToCart() {
-    this.router.navigate(['/cart']);
+  // ==============================
+  // DESTROY
+  // ==============================
+  ngOnDestroy(): void {
+
+    if (
+
+      this.cartSubscription
+
+    ) {
+
+      this.cartSubscription
+        .unsubscribe();
+
+    }
+
+    if (
+
+      this.routerSubscription
+
+    ) {
+
+      this.routerSubscription
+        .unsubscribe();
+
+    }
+
   }
+
+  // ==============================
+  // HANDLE FLOATING CART
+  // ==============================
+  handleFloatingCart(): void {
+
+    const hiddenRoutes = [
+
+      '/auth/login',
+    
+      '/auth/register',
+    
+      '/cart',
+    
+      '/checkout',
+    
+      '/track-order'
+    
+    ];
+
+    const currentUrl =
+      this.router.url;
+
+    this.showFloatingCart =
+
+      !hiddenRoutes.some(
+
+        route =>
+
+          currentUrl.includes(
+            route
+          )
+
+      );
+
+  }
+
+  // ==============================
+  // GO TO CART
+  // ==============================
+  goToCart(): void {
+
+    this.router.navigate([
+      '/cart'
+    ]);
+
+  }
+
 }
