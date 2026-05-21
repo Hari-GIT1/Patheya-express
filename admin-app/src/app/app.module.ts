@@ -13,6 +13,13 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { DataTableComponent } from './shared/components/data-table/data-table.component';
 import { OrdersComponent } from './pages/orders/orders.component';
+import { AdminRegisterComponent } from './pages/admin-register/admin-register.component';
+import { FinanceComponent } from './pages/finance/finance.component';
+import { SupportComponent } from './pages/support/support.component';
+import { MarketingComponent } from './pages/marketing/marketing.component';
+import { AdminManagementComponent } from './pages/admin-management/admin-management.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { PendingRestaurantsComponent } from './pages/pending-restaurants/pending-restaurants.component';
 
 @NgModule({
   declarations: [
@@ -21,13 +28,20 @@ import { OrdersComponent } from './pages/orders/orders.component';
     DashboardComponent,
     AdminLayoutComponent,
     DataTableComponent,
-    OrdersComponent
+    OrdersComponent,
+    AdminRegisterComponent,
+    FinanceComponent,
+    SupportComponent,
+    MarketingComponent,
+    AdminManagementComponent,
+    PendingRestaurantsComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    ReactiveFormsModule
   ],
   providers: [
     {

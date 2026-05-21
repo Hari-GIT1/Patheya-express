@@ -1,5 +1,9 @@
-import { Component }
-from '@angular/core';
+import { Component } from '@angular/core';
+
+import {
+  FormBuilder,
+  Validators
+} from '@angular/forms';
 
 import { Router }
 from '@angular/router';
@@ -8,19 +12,39 @@ import { AdminAuthService }
 from 'src/app/core/services/admin-auth.service';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-admin-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
 
-  email = '';
-
-  password = '';
-
   loading = false;
 
+  errorMessage = '';
+
+  loginForm = this.fb.group({
+
+    email: [
+      '',
+      [
+        Validators.required,
+        Validators.email
+      ]
+    ],
+
+    password: [
+      '',
+      [
+        Validators.required,
+        Validators.minLength(6)
+      ]
+    ]
+
+  });
+
   constructor(
+
+    private fb: FormBuilder,
 
     private authService:
       AdminAuthService,
@@ -29,51 +53,47 @@ export class LoginComponent {
 
   ) {}
 
-  login() {
+  onSubmit(): void {
+
+    if (this.loginForm.invalid) {
+
+      this.loginForm.markAllAsTouched();
+
+      return;
+
+    }
 
     this.loading = true;
 
-    this.authService.login({
+    this.authService
+      .login(this.loginForm.value)
+      .subscribe({
 
-      email: this.email,
+        next: () => {
 
-      password: this.password
+          this.router.navigate([
+            '/dashboard'
+          ]);
 
-    }).subscribe({
+        },
 
-      next: (res: any) => {
-        console.log(res);
+        error: (err: any) => {
 
-        localStorage.setItem(
+          this.errorMessage =
+            err?.error?.message ||
+            'Login failed';
 
-          'adminToken',
+          this.loading = false;
 
-          res.data.token
+        },
 
-        );
+        complete: () => {
 
-        localStorage.setItem(
-          'adminToken',
-          res.data.token
-        );
-        
-        this.router.navigate([
-          '/dashboard'
-        ]);
+          this.loading = false;
 
-      },
+        }
 
-      error: (err) => {
-
-        alert(
-          err.error.message
-        );
-
-        this.loading = false;
-
-      }
-
-    });
+      });
 
   }
 

@@ -1,265 +1,300 @@
 <div class="admin-shell">
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-  
-      <!-- LOGO -->
-      <div class="sidebar-logo">
-  
-        <div class="logo-box">
-  
-          P
-  
-        </div>
-  
-        <div>
-  
-          <h3>
-            Patheya
-          </h3>
-  
-          <p>
-            Admin Panel
-          </p>
-  
-        </div>
-  
-      </div>
-  
-      <!-- MENU -->
-      <nav class="sidebar-menu">
-  
-        <a
-          *ngFor="
-            let item of menuItems
-          "
-          [routerLink]="item.route"
-          routerLinkActive="active-menu"
-          class="menu-link"
-        >
-  
-          <i [class]="item.icon"></i>
-  
-          <span>
-  
-            {{ item.label }}
-  
-          </span>
-  
-        </a>
-  
-      </nav>
-  
-      <!-- FOOTER -->
-      <div class="sidebar-footer">
-  
-        <button
-          class="logout-btn"
-          (click)="logout()"
-        >
-  
-          <i
-            class="
-              fas
-              fa-sign-out-alt
-            "
-          ></i>
-  
-          Logout
-  
-        </button>
-  
-      </div>
-  
-    </aside>
-  
-    <!-- MAIN -->
-    <div class="main-shell">
-  
-      <!-- TOPBAR -->
-      <header class="topbar">
-  
-        <div class="topbar-search">
+  <!-- SIDEBAR -->
 
-            <i
-              class="
-                fas
-                fa-search
-              "
-            ></i>
-          
-            <input
-              type="text"
-              placeholder="
-                Search orders,
-                restaurants,
-                users...
-              "
-            />
-          
-          </div>
-  
-          <div class="topbar-right">
+  <aside class="sidebar">
 
-            <button   class="command-btn"
-            (click)="
-              toggleCommandPalette()
-            ">
-          
-              ⌘ K
-          
-            </button>
-          
-            <div class="live-pill">
-          
-              <span class="live-dot"></span>
-          
-              Live
-          
-            </div>
-          
-            <div class="admin-profile">
-          
-              H
-          
-            </div>
-          
-          </div>
-  
-      </header>
-  
-      <!-- CONTENT -->
-      <main class="content-area">
-  
-        <router-outlet></router-outlet>
-  
-      </main>
-  
+    <!-- LOGO -->
+
+    <div class="sidebar-logo">
+
+      <div class="logo-box">
+        P
+      </div>
+
+      <div>
+
+        <h3>
+          Patheya
+        </h3>
+
+        <p>
+          Admin Panel
+        </p>
+
+      </div>
+
     </div>
-  
-  </div>
-  <!-- COMMAND PALETTE -->
-<div
 
-class="command-overlay"
+    <!-- MENU -->
 
-*ngIf="
-  showCommandPalette
-"
+    <nav class="sidebar-menu">
 
-(click)="
-  closeCommandPalette()
-"
+      <a
 
->
-
-<div
-
-  class="command-modal"
-
-  (click)="
-    $event.stopPropagation()
-  "
-
->
-
-  <!-- SEARCH -->
-  <div class="command-search">
-
-    <i
-      class="
-        fas
-        fa-search
-      "
-    ></i>
-
-    <input
-      type="text"
-      placeholder="
-        Search anything...
-      "
-      autofocus
-    />
-
-  </div>
-
-  <!-- RESULTS -->
-  <div class="command-results">
-
-    <a
-      routerLink="/dashboard"
-      (click)="
-        closeCommandPalette()
-      "
-    >
-
-      <i
-        class="
-          fas
-          fa-chart-line
+        *ngFor="
+          let item of menuItems
         "
-      ></i>
 
-      Dashboard
+        [routerLink]="item.route"
 
-    </a>
+        routerLinkActive="active-menu"
 
-    <a
-      routerLink="/orders"
-      (click)="
-        closeCommandPalette()
-      "
-    >
+        class="menu-link"
 
-      <i
-        class="
-          fas
-          fa-shopping-bag
-        "
-      ></i>
+      >
 
-      Orders
+        <!-- ICON -->
 
-    </a>
+        <div class="menu-left">
 
-    <a
-      routerLink="/restaurants"
-      (click)="
-        closeCommandPalette()
-      "
-    >
+          <i [class]="item.icon"></i>
 
-      <i
-        class="
-          fas
-          fa-store
-        "
-      ></i>
+          <span>
+            {{ item.label }}
+          </span>
 
-      Restaurants
+        </div>
 
-    </a>
+        <!-- BADGE -->
 
-    <a
-      routerLink="/users"
-      (click)="
-        closeCommandPalette()
-      "
-    >
+        <span
 
-      <i
-        class="
-          fas
-          fa-users
-        "
-      ></i>
+          *ngIf="
+            item.route ===
+            '/pending-restaurants'
+            &&
+            pendingRestaurantCount > 0
+          "
 
-      Users
+          class="notification-badge"
 
-    </a>
+        >
+
+          {{ pendingRestaurantCount }}
+
+        </span>
+
+      </a>
+
+    </nav>
+
+    <!-- FOOTER -->
+
+    <div class="sidebar-footer">
+
+      <div class="admin-info">
+
+        <div class="admin-avatar">
+
+          {{
+            admin?.name
+            ?.charAt(0)
+            ?.toUpperCase()
+          }}
+
+        </div>
+
+        <div>
+
+          <h4>
+            {{ admin?.name }}
+          </h4>
+
+          <p>
+            {{ admin?.role }}
+          </p>
+
+        </div>
+
+      </div>
+
+      <button
+
+        class="logout-btn"
+
+        (click)="logout()"
+
+      >
+
+        <i
+          class="
+            fas
+            fa-sign-out-alt
+          "
+        ></i>
+
+        Logout
+
+      </button>
+
+    </div>
+
+  </aside>
+
+  <!-- MAIN -->
+
+  <div class="main-shell">
+
+    <!-- TOPBAR -->
+
+    <header class="topbar">
+
+      <!-- SEARCH -->
+
+      <div class="topbar-search">
+
+        <i
+          class="
+            fas
+            fa-search
+          "
+        ></i>
+
+        <input
+          type="text"
+          placeholder="
+            Search orders,
+            restaurants,
+            users...
+          "
+        />
+
+      </div>
+
+      <!-- RIGHT -->
+
+      <div class="topbar-right">
+
+        <!-- COMMAND BUTTON -->
+
+        <button
+
+          class="command-btn"
+
+          (click)="
+            toggleCommandPalette()
+          "
+
+        >
+
+          ⌘ K
+
+        </button>
+
+        <!-- LIVE -->
+
+        <div class="live-pill">
+
+          <span
+            class="live-dot"
+          ></span>
+
+          Live
+
+        </div>
+
+        <!-- PROFILE -->
+
+        <div class="admin-profile">
+
+          {{
+            admin?.name
+            ?.charAt(0)
+            ?.toUpperCase()
+          }}
+
+        </div>
+
+      </div>
+
+    </header>
+
+    <!-- CONTENT -->
+
+    <main class="content-area">
+
+      <router-outlet></router-outlet>
+
+    </main>
 
   </div>
 
 </div>
+
+<!-- COMMAND PALETTE -->
+
+<div
+
+  class="command-overlay"
+
+  *ngIf="
+    showCommandPalette
+  "
+
+  (click)="
+    closeCommandPalette()
+  "
+
+>
+
+  <div
+
+    class="command-modal"
+
+    (click)="
+      $event.stopPropagation()
+    "
+
+  >
+
+    <!-- SEARCH -->
+
+    <div class="command-search">
+
+      <i
+        class="
+          fas
+          fa-search
+        "
+      ></i>
+
+      <input
+        type="text"
+        placeholder="
+          Search anything...
+        "
+        autofocus
+      />
+
+    </div>
+
+    <!-- RESULTS -->
+
+    <div class="command-results">
+
+      <a
+
+        *ngFor="
+          let item of menuItems
+        "
+
+        [routerLink]="item.route"
+
+        (click)="
+          closeCommandPalette()
+        "
+
+      >
+
+        <i [class]="item.icon"></i>
+
+        {{ item.label }}
+
+      </a>
+
+    </div>
+
+  </div>
 
 </div>

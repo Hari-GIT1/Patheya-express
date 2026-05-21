@@ -295,6 +295,10 @@ app.use(
   '/api/admin/orders',
   adminOrderRoutes
 );
+app.use(
+  '/api/admin/restaurants',
+  adminRestaurantRoutes
+);
 
 // ==============================
 // HEALTH CHECK

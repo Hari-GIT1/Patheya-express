@@ -1,0 +1,108 @@
+<div class="page-header">
+
+    <h2>
+      Pending Restaurants
+    </h2>
+  
+    <p>
+      Review and approve restaurant
+      applications
+    </p>
+  
+  </div>
+  
+  <div
+    class="loading"
+    *ngIf="loading"
+  >
+    Loading...
+  </div>
+  
+  <div
+    class="restaurant-grid"
+    *ngIf="!loading"
+  >
+  
+    <div
+      class="restaurant-card"
+  
+      *ngFor="
+        let restaurant of restaurants
+      "
+    >
+  
+      <div class="restaurant-top">
+  
+        <h3>
+          {{ restaurant.name }}
+        </h3>
+  
+        <span class="status">
+          Pending
+        </span>
+  
+      </div>
+  
+      <div class="restaurant-info">
+  
+        <p>
+  
+          <strong>Email:</strong>
+  
+          {{ restaurant.email }}
+  
+        </p>
+  
+        <p>
+  
+          <strong>Phone:</strong>
+  
+          {{ restaurant.phone }}
+  
+        </p>
+  
+        <p>
+  
+          <strong>Address:</strong>
+  
+          {{ restaurant.address }}
+  
+        </p>
+  
+      </div>
+  
+      <div class="actions">
+  
+        <button
+          class="approve-btn"
+  
+          (click)="
+            approveRestaurant(
+              restaurant._id
+            )
+          "
+        >
+  
+          Approve
+  
+        </button>
+  
+        <button
+          class="reject-btn"
+  
+          (click)="
+            rejectRestaurant(
+              restaurant._id
+            )
+          "
+        >
+  
+          Reject
+  
+        </button>
+  
+      </div>
+  
+    </div>
+  
+  </div>

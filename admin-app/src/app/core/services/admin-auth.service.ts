@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 
 import { HttpClient } from '@angular/common/http';
 
+import { tap } from 'rxjs/operators';
+
 import { environment }
 from 'src/environments/environment';
 
@@ -22,6 +24,24 @@ export class AdminAuthService {
     return this.http.post(
       `${this.apiUrl}/login`,
       data
+    ).pipe(
+
+      tap((response: any) => {
+
+        localStorage.setItem(
+          'adminToken',
+          response.data.token
+        );
+
+        localStorage.setItem(
+          'adminData',
+          JSON.stringify(
+            response.data.admin
+          )
+        );
+
+      })
+
     );
 
   }
@@ -34,10 +54,38 @@ export class AdminAuthService {
 
   }
 
+  getToken(): string | null {
+
+    return localStorage.getItem(
+      'adminToken'
+    );
+
+  }
+
+  getAdmin() {
+
+    return JSON.parse(
+      localStorage.getItem(
+        'adminData'
+      ) || '{}'
+    );
+
+  }
+
+  isLoggedIn(): boolean {
+
+    return !!this.getToken();
+
+  }
+
   logout() {
 
     localStorage.removeItem(
       'adminToken'
+    );
+
+    localStorage.removeItem(
+      'adminData'
     );
 
   }

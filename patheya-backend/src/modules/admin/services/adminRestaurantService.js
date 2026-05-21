@@ -1,10 +1,21 @@
 const Restaurant = require('../../../models/Restaurant');
 
 const getPendingRestaurants = async () => {
+
   return await Restaurant.find({
-    approvalStatus: 'pending',
-  }).sort({ createdAt: -1 });
+
+    approvalStatus: {
+      $in: [null, 'pending']
+    }
+
+  }).sort({
+
+    createdAt: -1
+
+  });
+
 };
+
 
 const updateRestaurantStatus = async (
   restaurantId,

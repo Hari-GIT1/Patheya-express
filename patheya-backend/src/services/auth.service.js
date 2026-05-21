@@ -195,15 +195,29 @@ async (
 
     });
 
-  const restaurant =
+    const restaurant =
     await Restaurant.create({
-
+  
       name:
         ownerData.restaurantName,
-
+  
       ownerId:
-        user._id
-
+        user._id,
+  
+      phone:
+        ownerData.phone || '',
+  
+      email:
+        ownerData.email || '',
+  
+      address:
+        ownerData.address || '',
+  
+      approvalStatus:
+        'pending',
+  
+      isOpen: false
+  
     });
 
   user.restaurantId =
