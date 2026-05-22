@@ -13,6 +13,9 @@ const rateLimit =
 const morgan =
   require('morgan');
 
+const mongoSanitize =
+  require('express-mongo-sanitize');
+
 
 const hpp =
   require('hpp');
@@ -20,8 +23,22 @@ const hpp =
 const compression =
   require('compression');
 
-  const config =
+const config =
   require('./config');
+const notFound =
+  require(
+    './core/errors/notFound'
+  );
+
+const errorHandler =
+  require(
+    './core/errors/errorHandler'
+  );
+
+const stream =
+  require(
+    './core/logger/stream'
+  );
 
 const app = express();
 app.set(
@@ -37,6 +54,9 @@ app.use(
   helmet({
 
     crossOriginResourcePolicy:
+      false,
+  
+    contentSecurityPolicy:
       false
   
   })
@@ -81,7 +101,17 @@ app.use('/api', limiter);
 // LOGGER
 // ==============================
 
-app.use(morgan('dev'));
+app.use(
+
+  morgan(
+
+    'combined',
+
+    { stream }
+
+  )
+
+);
 
 // ==============================
 // ALLOWED ORIGINS
@@ -93,6 +123,7 @@ const allowedOrigins = [
   'http://localhost:4200',
   'http://localhost:4201',
   'http://localhost:4202',
+  'http://localhost:4203',
 
   // PRODUCTION
   'https://app.patheyaexpress.in',
@@ -155,6 +186,20 @@ app.use(
 
   })
 );
+// ==============================
+// PAYMENT WEBHOOK RAW BODY
+// ==============================
+
+app.use(
+
+  '/api/payment/webhook',
+
+  express.raw({
+
+    type: 'application/json'
+
+  })
+)
 
 
 // ==============================
@@ -162,6 +207,15 @@ app.use(
 // ==============================
 app.use(
   express.json({
+
+    limit: '10kb'
+
+  })
+);
+app.use(
+  express.urlencoded({
+
+    extended: true,
 
     limit: '10kb'
 
@@ -207,17 +261,14 @@ app.use((req, res, next) => {
 const authRoutes =
   require('./routes/auth/auth.routes');
 
-const menuRoutes =
-  require('./routes/partner/menu.routes');
-
 const orderRoutes =
-  require('./routes/customer/order.routes');
+  require('./modules/order/routes/order.routes');
 
 const restaurantRoutes =
   require('./routes/customer/restaurant.routes');
 
 const paymentRoutes =
-  require('./routes/customer/payment.routes');
+  require('./modules/payment/routes/payment.routes');
 
 const ownerRoutes =
   require('./routes/partner/owner.routes');
@@ -238,6 +289,23 @@ const adminUserRoutes =
   require('./modules/admin/routes/adminUserRoutes');
 const adminOrderRoutes =
   require('./modules/admin/routes/adminOrderRoutes');
+const deliveryAuthRoutes =
+  require(
+    './modules/delivery-partner/routes/auth.routes'
+  );
+const deliveryOrderRoutes =
+  require(
+    './modules/delivery-partner/routes/order.routes'
+  );
+const menuRoutes =
+  require(
+    './modules/menu/routes/menu.routes'
+  );
+  const healthRoutes =
+  require(
+    './routes/system/health.routes'
+  );
+
 // ==============================
 // API ROUTES
 // ==============================
@@ -296,21 +364,25 @@ app.use(
   adminOrderRoutes
 );
 app.use(
-  '/api/admin/restaurants',
-  adminRestaurantRoutes
+  '/api/delivery',
+  deliveryAuthRoutes
 );
 
+app.use(
+  '/api/delivery/orders',
+  deliveryOrderRoutes
+);
 // ==============================
 // HEALTH CHECK
 // ==============================
 
-app.get('/health', (req, res) => {
+app.use(
 
-  res.status(200).json({
-    status: 'ok'
-  });
+  '/health',
 
-});
+  healthRoutes
+
+);
 
 // ==============================
 // ROOT
@@ -326,23 +398,12 @@ app.get('/', (req, res) => {
 // 404 HANDLER
 // ==============================
 
-app.use((req, res) => {
-
-  res.status(404).json({
-
-    success: false,
-    message: 'Route not found'
-  });
-
-});
+app.use(notFound);
 
 // ==============================
 // ERROR HANDLER
 // ==============================
 
-const errorMiddleware =
-  require('./middleware/error.middleware');
 
-app.use(errorMiddleware);
-
+app.use(errorHandler);
 module.exports = app;

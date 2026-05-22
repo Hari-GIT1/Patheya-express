@@ -168,6 +168,8 @@ async (
 exports.updateAvailability =
 async (
 
+  user,
+  
   itemId,
 
   isAvailable

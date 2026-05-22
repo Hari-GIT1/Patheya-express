@@ -1,71 +1,120 @@
-const adminAuthService = require('../services/adminAuthService');
+const adminAuthService =
+  require(
+    '../services/adminAuthService'
+  );
 
-const getMe = async (req, res) => {
-    res.status(200).json({
-      success: true,
-      data: req.admin,
-    });
-  };
+const asyncHandler =
+  require(
+    '../../../utils/asyncHandler'
+  );
 
-const login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+const {
 
-    const data = await adminAuthService.loginAdmin(
-      email,
-      password
-    );
+  successResponse
 
-    res.status(200).json({
-      success: true,
-      message: 'Admin login successful',
-      data,
-    });
-  } catch (error) {
-    res.status(401).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-const register = async (
+} = require(
+  '../../../utils/response'
+);
+
+// ==============================
+// GET ME
+// ==============================
+
+exports.getMe =
+asyncHandler(async (
+
   req,
+
   res
+
 ) => {
 
-  try {
+  successResponse(
 
-    const admin =
-      await adminAuthService
-      .registerAdmin(req.body);
+    res,
 
-    res.status(201).json({
+    req.admin,
 
-      success: true,
+    'Admin profile fetched'
 
-      message:
-        'Admin created successfully',
+  );
 
-      data: admin
+});
 
-    });
+// ==============================
+// LOGIN
+// ==============================
 
-  } catch (error) {
+exports.login =
+asyncHandler(async (
 
-    res.status(400).json({
+  req,
 
-      success: false,
+  res
 
-      message: error.message
+) => {
 
-    });
+  const {
 
-  }
+    email,
 
-};
+    password
 
-module.exports = {
-  login,
-  getMe,
-  register
-};
+  } = req.body;
+
+  const data =
+    await adminAuthService
+      .loginAdmin(
+
+        email,
+
+        password
+
+      );
+
+  successResponse(
+
+    res,
+
+    data,
+
+    'Admin login successful'
+
+  );
+
+});
+
+// ==============================
+// REGISTER
+// ==============================
+
+exports.register =
+asyncHandler(async (
+
+  req,
+
+  res
+
+) => {
+
+  const admin =
+    await adminAuthService
+      .registerAdmin(
+
+        req.body
+
+      );
+
+  successResponse(
+
+    res,
+
+    admin,
+
+    'Admin created successfully',
+
+    201
+
+  );
+
+});

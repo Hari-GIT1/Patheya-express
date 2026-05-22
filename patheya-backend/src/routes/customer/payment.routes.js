@@ -3,10 +3,10 @@ const express = require('express');
 const router = express.Router();
 
 const auth =
-  require('../../middleware/auth.middleware');
+require('../../modules/auth/middleware/auth.middleware')
 
 const allowRoles =
-  require('../../middleware/role.middleware');
+require('../../modules/auth/middleware/role.middleware')
 
 const {
 

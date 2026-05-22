@@ -1,144 +1,162 @@
-const adminOrderService = require(
+const adminOrderService =
+  require(
     '../services/adminOrderService'
   );
+
+const asyncHandler =
+  require(
+    '../../../utils/asyncHandler'
+  );
+
+const ApiError =
+  require(
+    '../../../core/errors/ApiError'
+  );
+
 const Order =
-  require('../../../models/Order');
-const { updateOrderStatus } = require('../../../controllers/customer/order.controller');
-  
-  const getOrders = async (req, res) => {
-    try {
-      const orders =
-        await adminOrderService.getOrders(
-          req.query
-        );
-  
-      res.status(200).json({
-        success: true,
-        data: orders,
-      });
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: error.message,
-      });
-    }
-  };
-  
-  const getLiveOrders = async (
-    req,
-    res
-  ) => {
-    try {
-      const orders =
-        await adminOrderService.getLiveOrders();
-  
-      res.status(200).json({
-        success: true,
-        data: orders,
-      });
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: error.message,
-      });
-    }
-    
-  };
+  require(
+    '../../../models/Order'
+  );
+
+const {
+
+  successResponse
+
+} = require(
+  '../../../utils/response'
+);
+
+// ==============================
+// GET ORDERS
+// ==============================
+
+exports.getOrders =
+asyncHandler(async (
+
+  req,
+
+  res
+
+) => {
+
+  const orders =
+    await adminOrderService
+      .getOrders(
+
+        req.query
+
+      );
+
+  successResponse(
+
+    res,
+
+    orders,
+
+    'Orders fetched'
+
+  );
+
+});
+
+// ==============================
+// GET LIVE ORDERS
+// ==============================
+
+exports.getLiveOrders =
+asyncHandler(async (
+
+  req,
+
+  res
+
+) => {
+
+  const orders =
+    await adminOrderService
+      .getLiveOrders();
+
+  successResponse(
+
+    res,
+
+    orders,
+
+    'Live orders fetched'
+
+  );
+
+});
+
+// ==============================
+// UPDATE ORDER STATUS
+// ==============================
 
 exports.updateOrderStatus =
-async (req, res) => {
+asyncHandler(async (
 
-  try {
+  req,
 
-    const { status } =
-      req.body;
+  res
 
-    const order =
-      await Order.findByIdAndUpdate(
+) => {
 
-        req.params.id,
+  const { status } =
+    req.body;
 
-        { status },
+  const order =
+    await Order.findByIdAndUpdate(
 
-        { new: true }
+      req.params.id,
 
-      );
+      {
 
-    if (!order) {
+        status
 
-      return res.status(404)
-        .json({
+      },
 
-          success: false,
+      {
 
-          message:
-            'Order not found'
+        new: true
 
-        });
+      }
 
-    }
-
-    // SOCKETS
-    const io =
-      req.app.get('io');
-
-    // CUSTOMER
-    io.to(
-      order._id.toString()
-    ).emit(
-      'orderStatusUpdated',
-      order
     );
 
-    // PARTNER
-    io.to(
-      order.restaurantId.toString()
-    ).emit(
-      'orderStatusUpdated',
-      order
+  if (!order) {
+
+    throw new ApiError(
+
+      404,
+
+      'Order not found'
+
     );
-
-    // ADMIN
-    io.to('admins')
-      .emit(
-        'adminOrderUpdated',
-        {
-          order
-        }
-      );
-
-    res.json({
-
-      success: true,
-
-      data: order
-
-    });
 
   }
 
-  catch (err) {
+  // ==========================
+  // SOCKET EVENTS
+  // ==========================
 
-    console.error(err);
+  const socketService =
+    req.app.get(
+      'socketService'
+    );
 
-    res.status(500)
-      .json({
+  socketService
+    .emitOrderStatusUpdate(
+      order
+    );
 
-        success: false,
+  successResponse(
 
-        message:
-          'Server error'
+    res,
 
-      });
+    order,
 
-  }
+    'Order status updated'
 
-};
-  
-  
-  module.exports = {
-    getOrders,
-    getLiveOrders,
-    updateOrderStatus
-    
-  };
+  );
+
+});

@@ -1,7 +1,22 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-
 const Admin = require('../models/Admin');
+
+const {
+
+  generateToken
+
+} = require(
+  '../../auth/services/token.service'
+);
+
+const {
+
+  hashPassword,
+
+  comparePassword
+
+} = require(
+  '../../auth/services/password.service'
+);
 
 const loginAdmin = async (email, password) => {
 
@@ -17,7 +32,7 @@ const loginAdmin = async (email, password) => {
     throw new Error('Admin account disabled');
   }
 
-  const isMatch = await bcrypt.compare(
+  const isMatch = await comparePassword(
     password,
     admin.password
   );
@@ -30,17 +45,19 @@ const loginAdmin = async (email, password) => {
 
   await admin.save();
 
-  const token = jwt.sign(
-    {
-      id: admin._id,
-      role: admin.role,
-      permissions: admin.permissions,
-    },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: '7d',
-    }
-  );
+  const token =
+  generateToken({
+
+    id:
+      admin._id,
+
+    role:
+      admin.role,
+
+    permissions:
+      admin.permissions
+
+  });
 
   return {
     token,
@@ -69,7 +86,7 @@ const registerAdmin = async (
   }
 
   const hashedPassword =
-    await bcrypt.hash(
+    await hashPassword(
       data.password,
       10
     );

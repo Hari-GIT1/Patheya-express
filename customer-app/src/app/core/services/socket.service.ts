@@ -225,6 +225,33 @@ export class SocketService {
     );
 
   }
+  // ==============================
+// DELIVERY LOCATION UPDATED
+// ==============================
+
+onDeliveryLocationUpdate() {
+
+  return new Observable(
+
+    (observer) => {
+
+      this.socket.on(
+
+        'deliveryLocationUpdated',
+
+        (data: any) => {
+
+          observer.next(data);
+
+        }
+
+      );
+
+    }
+
+  );
+
+}
 
   // ==============================
   // GENERIC EMIT

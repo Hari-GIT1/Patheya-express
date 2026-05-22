@@ -49,15 +49,17 @@ implements OnInit, OnDestroy {
 
   loading = false;
 
+  liveEta = '--';
+
   // ==============================
   // MAP
   // ==============================
   deliveryLocation = {
 
     lat: 12.9716,
-
+  
     lng: 77.5946
-
+  
   };
 
   destination = {
@@ -78,11 +80,6 @@ implements OnInit, OnDestroy {
     google.maps
       .DirectionsResult
       | undefined;
-
-  // ==============================
-  // INTERVAL
-  // ==============================
-  private riderInterval: any;
 
   constructor(
 
@@ -117,6 +114,35 @@ implements OnInit, OnDestroy {
     this.socketService
       .joinOrder(orderId);
 
+// ==============================
+// LIVE DELIVERY LOCATION
+// ==============================
+
+this.socketService
+.onDeliveryLocationUpdate()
+
+.subscribe((data: any) => {
+
+  console.log(
+
+    'LIVE DELIVERY LOCATION:',
+
+    data
+
+  );
+
+  this.deliveryLocation = {
+
+    lat: data.latitude,
+  
+    lng: data.longitude
+  
+  };
+  
+  this.drawRoute();
+
+});
+
     // LOAD ORDER
     this.loadOrder(orderId);
 
@@ -128,8 +154,6 @@ implements OnInit, OnDestroy {
     // INITIAL ROUTE
     this.drawRoute();
 
-    // FAKE LIVE RIDER
-    this.startFakeRiderMovement();
 
   }
 
@@ -137,14 +161,6 @@ implements OnInit, OnDestroy {
   // DESTROY
   // ==============================
   ngOnDestroy(): void {
-
-    if (this.riderInterval) {
-
-      clearInterval(
-        this.riderInterval
-      );
-
-    }
 
   }
 
@@ -169,7 +185,30 @@ implements OnInit, OnDestroy {
           // STANDARDIZED RESPONSE
           this.order =
             res.data;
+            if (
 
+              this.order?.liveLocation
+                ?.latitude
+            
+            ) {
+            
+              this.deliveryLocation = {
+            
+                lat:
+                  this.order
+                    .liveLocation
+                    .latitude,
+            
+                lng:
+                  this.order
+                    .liveLocation
+                    .longitude
+            
+              };
+            
+              this.drawRoute();
+            
+            }
           this.loading = false;
 
         },
@@ -422,6 +461,20 @@ implements OnInit, OnDestroy {
               .directionsResult =
 
               result;
+// ======================
+// ETA
+// ======================
+
+const leg =
+result.routes[0]
+  .legs[0];
+
+if (leg?.duration?.text) {
+
+this.liveEta =
+  leg.duration.text;
+
+}
 
           }
 
@@ -431,40 +484,5 @@ implements OnInit, OnDestroy {
 
   }
 
-  // ==============================
-  // FAKE RIDER MOVEMENT
-  // ==============================
-  startFakeRiderMovement():
-  void {
-
-    this.riderInterval =
-
-      setInterval(() => {
-
-        this.deliveryLocation = {
-
-          lat:
-
-            this.deliveryLocation
-              .lat +
-
-            (Math.random() - 0.5)
-              * 0.001,
-
-          lng:
-
-            this.deliveryLocation
-              .lng +
-
-            (Math.random() - 0.5)
-              * 0.001
-
-        };
-
-        this.drawRoute();
-
-      }, 3000);
-
-  }
 
 }

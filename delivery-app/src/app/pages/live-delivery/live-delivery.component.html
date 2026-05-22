@@ -1,0 +1,130 @@
+<div class="live-page">
+
+    <!-- MAP -->
+    <google-map
+  
+      height="100vh"
+  
+      width="100%"
+  
+      [zoom]="15"
+  
+      [center]="deliveryLocation"
+  
+    >
+  
+      <!-- RIDER -->
+      <map-marker
+        [position]="deliveryLocation">
+      </map-marker>
+  
+      <!-- CUSTOMER -->
+      <map-marker
+        [position]="destination">
+      </map-marker>
+  
+      <!-- ROUTE -->
+      <map-directions-renderer
+  
+        *ngIf="directionsResult"
+  
+        [directions]="directionsResult"
+  
+      >
+  
+      </map-directions-renderer>
+  
+    </google-map>
+  
+    <!-- FLOATING CARD -->
+    <div class="delivery-sheet">
+  
+      <!-- CUSTOMER -->
+      <div class="customer-row">
+  
+        <div>
+  
+          <h5 class="fw-bold mb-1">
+  
+            Rajesh Kumar
+  
+          </h5>
+  
+          <p class="text-muted mb-0">
+  
+            Delivery in progress
+  
+          </p>
+  
+        </div>
+  
+        <div class="eta-chip">
+  
+          8 mins
+  
+        </div>
+  
+      </div>
+  
+      <!-- ADDRESS -->
+      <div class="address-box">
+  
+        <i class="bi bi-geo-alt"></i>
+  
+        <span>
+  
+          Koramangala 5th Block,
+          Bangalore
+  
+        </span>
+  
+      </div>
+  
+      <!-- ACTIONS -->
+      <div class="action-grid">
+  
+        <!-- CALL -->
+        <button class="action-card">
+  
+          <i class="bi bi-telephone"></i>
+  
+          <span>
+            Call
+          </span>
+  
+        </button>
+  
+        <!-- NAVIGATE -->
+        <button class="action-card">
+  
+          <i class="bi bi-map"></i>
+  
+          <span>
+            Navigate
+          </span>
+  
+        </button>
+  
+        <!-- CHAT -->
+        <button class="action-card">
+  
+          <i class="bi bi-chat"></i>
+  
+          <span>
+            Chat
+          </span>
+  
+        </button>
+  
+      </div>
+  
+      <!-- DELIVERED -->
+      <button class="delivered-btn">
+  
+        Mark As Delivered
+  
+      </button>
+  
+    </div>
+  
+  </div>

@@ -1,5 +1,4 @@
-const bcrypt =
-  require('bcryptjs');
+
 
 const User =
   require('../models/User');
@@ -7,13 +6,23 @@ const User =
 const Restaurant =
   require('../models/Restaurant');
 
-const {
+  const {
 
-  createToken
-
-} = require(
-  '../utils/jwt'
-);
+    generateToken
+  
+  } = require(
+    '../modules/auth/services/token.service'
+  );
+  
+  const {
+  
+    hashPassword,
+  
+    comparePassword
+  
+  } = require(
+    '../modules/auth/services/password.service'
+  )
 
 // ==============================
 // REGISTER CUSTOMER
@@ -41,8 +50,8 @@ async (
 
   }
 
-  const hashedPassword =
-    await bcrypt.hash(
+  const comparePassword =
+    await hashPassword(
 
       userData.password,
 
@@ -98,7 +107,7 @@ async (
   }
 
   const isMatch =
-    await bcrypt.compare(
+    await comparePassword(
 
       password,
 
@@ -115,33 +124,43 @@ async (
   }
 
   const token =
-    createToken(user);
+  generateToken({
 
-  return {
+    id:
+      user._id,
 
-    token,
+    role:
+      user.role,
 
-    user: {
+    restaurantId:
+      user.restaurantId
 
-      id:
-        user._id,
+  });
 
-      name:
-        user.name,
+return {
 
-      email:
-        user.email,
+  token,
 
-      role:
-        user.role,
+  user: {
 
-      restaurantId:
-        user.restaurantId
+    id:
+      user._id,
 
-    }
+    name:
+      user.name,
 
-  };
+    email:
+      user.email,
 
+    role:
+      user.role,
+
+    restaurantId:
+      user.restaurantId
+
+  }
+
+}
 };
 
 // ==============================
@@ -171,7 +190,7 @@ async (
   }
 
   const hashedPassword =
-    await bcrypt.hash(
+    await hashPassword(
 
       ownerData.password,
 

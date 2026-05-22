@@ -1,5 +1,3 @@
-const bcrypt =
-  require('bcryptjs');
 
 const User =
   require('../models/User');
@@ -13,13 +11,23 @@ const Order =
 const Restaurant =
   require('../models/Restaurant');
 
-const {
+  const {
 
-  createToken
-
-} = require(
-  '../utils/jwt'
-);
+    generateToken
+  
+  } = require(
+    '../modules/auth/services/token.service'
+  );
+  
+  const {
+  
+    hashPassword,
+  
+    comparePassword
+  
+  } = require(
+    '../modules/auth/services/password.service'
+  );
 
 // ==============================
 // REGISTER OWNER
@@ -48,12 +56,9 @@ async (
   }
 
   const hashedPassword =
-    await bcrypt.hash(
+    await hashPassword(
 
       ownerData.password,
-
-      10
-
     );
 
   const user =
@@ -128,7 +133,7 @@ async (
   }
 
   const isMatch =
-    await bcrypt.compare(
+    await comparePassword(
 
       password,
 
@@ -145,13 +150,8 @@ async (
   }
 
   const token =
-    createToken(user);
 
-  return {
-
-    token,
-
-    user: {
+    generateToken({
 
       id:
         user._id,
@@ -167,67 +167,10 @@ async (
 
       restaurantId:
         user.restaurantId
-
-    }
+      });
 
   };
 
-};
-
-// ==============================
-// GET OWNER MENU
-// ==============================
-exports.getOwnerMenu =
-async (
-
-  restaurantId
-
-) => {
-
-  return await MenuItem.find({
-
-    restaurantId
-
-  });
-
-};
-
-// ==============================
-// ADD MENU ITEM
-// ==============================
-exports.addOwnerMenuItem =
-async (
-
-  body,
-
-  restaurantId
-
-) => {
-
-  return await MenuItem.create({
-
-    ...body,
-
-    restaurantId
-
-  });
-
-};
-
-// ==============================
-// DELETE MENU ITEM
-// ==============================
-exports.deleteOwnerMenuItem =
-async (
-
-  itemId
-
-) => {
-
-  return await MenuItem
-    .findByIdAndDelete(itemId);
-
-};
 
 // ==============================
 // GET OWNER ORDERS

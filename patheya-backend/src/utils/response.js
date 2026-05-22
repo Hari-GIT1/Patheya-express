@@ -1,42 +1,81 @@
 exports.successResponse = (
 
-    res,
-  
-    data,
-  
-    message = 'Success'
-  
-  ) => {
-  
-    return res.status(200).json({
-  
-      success: true,
-  
-      message,
-  
-      data
-  
-    });
-  
+  res,
+
+  data = null,
+
+  message = 'Success',
+
+  statusCode = 200,
+
+  pagination = null
+
+) => {
+
+  const response = {
+
+    success: true,
+
+    message,
+
+    data
+
   };
-  
-  
-  exports.errorResponse = (
-  
-    res,
-  
-    message = 'Error',
-  
-    status = 500
-  
-  ) => {
-  
-    return res.status(status).json({
-  
-      success: false,
-  
-      message
-  
-    });
-  
+
+  // ==========================
+  // PAGINATION
+  // ==========================
+
+  if (pagination) {
+
+    response.pagination =
+      pagination;
+
+  }
+
+  return res
+    .status(statusCode)
+    .json(response);
+
+};
+
+// ==============================
+// ERROR RESPONSE
+// ==============================
+
+exports.errorResponse = (
+
+  res,
+
+  message = 'Error',
+
+  statusCode = 500,
+
+  errors = null
+
+) => {
+
+  const response = {
+
+    success: false,
+
+    message
+
   };
+
+  // ==========================
+  // VALIDATION ERRORS
+  // ==========================
+
+  if (errors) {
+
+    response.errors =
+      errors;
+
+  }
+
+  return res
+    .status(statusCode)
+    .json(response);
+
+};

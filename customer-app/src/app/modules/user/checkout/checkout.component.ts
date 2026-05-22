@@ -124,168 +124,252 @@ implements OnInit {
   // ==============================
   // PAYMENT
   // ==============================
-  payNow(): void {
+// ==============================
+// PAYMENT
+// ==============================
+payNow(): void {
 
-    const token = localStorage.getItem(
+  const token =
+    localStorage.getItem(
       'token'
     );
-  
-    const user = JSON.parse(
-  
-      localStorage.getItem(
-        'user'
-      ) || '{}'
-  
-    );
-  
-    // 🔐 LOGIN CHECK
-    if (!token) {
-  
-      this.router.navigate(
-  
-        ['/auth/login'],
-  
-        {
-  
-          queryParams: {
-  
-            redirect: '/checkout'
-  
-          }
-  
-        }
-  
-      );
-  
-      return;
-  
-    }
-  
-    // 📍 ADDRESS CHECK
-    if (
-  
-      this.orderType ===
-      'delivery'
-  
-      &&
-  
-      !this.address.trim()
-  
-    ) {
-  
-      alert(
-        'Please enter address'
-      );
-  
-      return;
-  
-    }
-  
-    this.loading = true;
-  
-    // ==============================
-    // CREATE RAZORPAY ORDER
-    // ==============================
-    this.http.post(
-  
-      `${this.paymentBaseUrl}/create-order`,
-  
-      {
-  
-        amount:
-          this.grandTotal
-  
-      }
-  
-    ).subscribe({
-  
-      next: (order: any) => {
 
-        const razorpayOrder =
-      
-          order.data || order;
-      
-        const options = {
-      
-          key:
-            environment
-              .razorpayKey,
-      
-          amount:
-            razorpayOrder.amount,
-      
-          currency:
-            razorpayOrder.currency,
-      
-          name:
-            'Patheya Express',
-      
-          description:
-            'Food Order Payment',
-      
-          order_id:
-            razorpayOrder.id,
-      
-          handler:
-            (response: any) => {
-      
-              this.verifyPayment(
-                response
-              );
-      
-            },
-      
-          prefill: {
-      
-            name:
-              user.name || '',
-      
-            email:
-              user.email || ''
-      
-          },
-      
-          theme: {
-      
-            color:
-              '#f43f5e'
-      
-          }
-      
-        };
-      
-        const razorpay =
-      
-          new (window as any)
-            .Razorpay(options);
-      
-        razorpay.open();
-      
-        this.loading = false;
-      
-      },
-  
-      error: (err: any) => {
-  
-        console.log(err);
-  
-        this.loading = false;
-  
-        alert(
-          'Payment initialization failed'
-        );
-  
+  const user = JSON.parse(
+
+    localStorage.getItem(
+      'user'
+    ) || '{}'
+
+  );
+
+  // ==========================
+  // LOGIN CHECK
+  // ==========================
+
+  if (!token) {
+
+    this.router.navigate(
+
+      ['/auth/login'],
+
+      {
+
+        queryParams: {
+
+          redirect: '/checkout'
+
+        }
+
       }
-  
-    });
-  
+
+    );
+
+    return;
+
   }
+
+  // ==========================
+  // ADDRESS CHECK
+  // ==========================
+
+  if (
+
+    this.orderType ===
+    'delivery'
+
+    &&
+
+    !this.address.trim()
+
+  ) {
+
+    alert(
+      'Please enter address'
+    );
+
+    return;
+
+  }
+
+  this.loading = true;
+
+  // ==========================
+  // CREATE ORDER FIRST
+  // ==========================
+
+  const orderPayload = {
+
+    restaurantId:
+
+      this.cartItems[0]
+        ?.restaurantId,
+
+    items:
+      this.cartItems,
+
+    total:
+      this.grandTotal,
+
+    orderType:
+      this.orderType,
+
+    address:
+      this.address,
+
+    paymentMethod:
+      'razorpay'
+
+  };
+
+  this.orderService
+    .placeOrder(orderPayload)
+
+    .subscribe({
+
+      next: (orderRes: any) => {
+
+        const createdOrder =
+
+          orderRes.data;
+
+        const orderId =
+
+          createdOrder._id;
+
+        // ======================
+        // CREATE PAYMENT ORDER
+        // ======================
+
+        this.http.post(
+
+          `${this.paymentBaseUrl}/create-payment-order/${orderId}`,
+
+          {},
+
+          {
+
+            headers: {
+
+              Authorization:
+                `Bearer ${token}`
+
+            }
+
+          }
+
+        )
+
+        .subscribe({
+
+          next: (paymentRes: any) => {
+
+            const razorpayOrder =
+
+              paymentRes.data ||
+              paymentRes;
+
+            const options = {
+
+              key:
+                environment
+                  .razorpayKey,
+
+              amount:
+                razorpayOrder.amount,
+
+              currency:
+                razorpayOrder.currency,
+
+              name:
+                'Patheya Express',
+
+              description:
+                'Food Order Payment',
+
+              order_id:
+                razorpayOrder.id,
+
+              handler:
+                (response: any) => {
+
+                  this.verifyPayment(
+
+                    response,
+
+                    orderId
+
+                  );
+
+                },
+
+              prefill: {
+
+                name:
+                  user.name || '',
+
+                email:
+                  user.email || ''
+
+              },
+
+              theme: {
+
+                color:
+                  '#f43f5e'
+
+              }
+
+            };
+
+            const razorpay =
+
+              new (window as any)
+                .Razorpay(options);
+
+            razorpay.open();
+
+            this.loading = false;
+
+          },
+
+          error: (err: any) => {
+
+            console.log(err);
+
+            this.loading = false;
+
+            alert(
+              'Payment initialization failed'
+            );
+
+          }
+
+        });
+
+      },
+
+      error: (err) => {
+
+        console.log(err);
+
+        this.loading = false;
+
+        alert(
+          'Order creation failed'
+        );
+
+      }
+
+    });
+
+}
 
   // ==============================
   // VERIFY PAYMENT
   // ==============================
   verifyPayment(
-    paymentData: any
+    paymentData: any,
+    orderId: string
   ): void {
 
     this.http.post(
@@ -304,7 +388,13 @@ implements OnInit {
 
         ) {
 
-          this.placeOrder();
+          this.router.navigate([
+
+            '/track-order',
+          
+            orderId
+          
+          ]);
 
         }
 
@@ -321,71 +411,6 @@ implements OnInit {
       }
 
     });
-
-  }
-
-  // ==============================
-  // PLACE ORDER
-  // ==============================
-  placeOrder(): void {
-
-    const order = {
-
-      restaurantId:
-
-        this.cartItems[0]
-          ?.restaurantId,
-
-      items:
-        this.cartItems,
-
-      total:
-        this.grandTotal,
-
-      orderType:
-        this.orderType,
-
-      address:
-        this.address,
-
-      paymentMethod:
-        'razorpay',
-
-      status:
-        'Placed'
-
-    };
-
-    this.orderService
-      .placeOrder(order)
-      .subscribe({
-
-        next: (res: any) => {
-
-          this.cartService
-            .clearCart();
-
-          this.router.navigate([
-
-            '/track-order',
-
-            res.data._id
-
-          ]);
-
-        },
-
-        error: (err) => {
-
-          console.log(err);
-
-          alert(
-            'Order failed'
-          );
-
-        }
-
-      });
 
   }
 

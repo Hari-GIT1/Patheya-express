@@ -1,22 +1,69 @@
 require('dotenv-flow').config();
 
+// ==============================
 // VALIDATE ENV
+// ==============================
+
 require('./config/validateEnv');
+require(
+  './modules/order/subscribers/order.subscriber'
+);
+require(
+  './modules/queue/workers/order.worker'
+);
+require(
+  './modules/order/events/order.listeners'
+);
 
-const http = require('http');
-const socketIO = require('socket.io');
+// ==============================
+// CORE
+// ==============================
 
-const app = require('./app');
+const http =
+  require('http');
 
-const connectDB = require('./config/db');
+const socketIO =
+  require('socket.io');
 
-const config = require('./config');
+// ==============================
+// APP
+// ==============================
+
+const app =
+  require('./app');
+
+const connectDB =
+  require('./config/db');
+
+const config =
+  require('./config');
+
+// ==============================
+// MODELS
+// ==============================
+
+const Order =
+  require('./models/Order');
+
+// ==============================
+// SOCKET SERVICE
+// ==============================
+const notificationService =
+  require(
+    './core/notifications/notification.service'
+  );
+
+const SocketService =
+  require(
+    './modules/socket/services/socket.service'
+  );
 
 // ==============================
 // PORT
 // ==============================
 
-const PORT = config.port || 3000;
+const PORT =
+  config.port || 3000;
 
 // ==============================
 // CONNECT DATABASE
@@ -25,10 +72,11 @@ const PORT = config.port || 3000;
 connectDB();
 
 // ==============================
-// CREATE HTTP SERVER
+// CREATE SERVER
 // ==============================
 
-const server = http.createServer(app);
+const server =
+  http.createServer(app);
 
 // ==============================
 // ALLOWED SOCKET ORIGINS
@@ -40,6 +88,7 @@ const allowedOrigins = [
   'http://localhost:4200',
   'http://localhost:4201',
   'http://localhost:4202',
+  'http://localhost:4203',
 
   // PRODUCTION
   'https://app.patheyaexpress.in',
@@ -53,6 +102,7 @@ const allowedOrigins = [
   // RENDER
   'https://patheya-express.onrender.com',
   'https://patheya-express-uat.onrender.com'
+
 ];
 
 // ==============================
@@ -63,30 +113,56 @@ const io = socketIO(server, {
 
   cors: {
 
-    origin: function(origin, callback) {
+    origin:
+      function(origin, callback) {
 
-      if (!origin) {
-        return callback(null, true);
-      }
+        if (!origin) {
 
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
+          return callback(
+            null,
+            true
+          );
 
-      console.log('SOCKET BLOCKED:', origin);
+        }
 
-      return callback(
-        new Error(`Socket CORS Blocked: ${origin}`)
-      );
+        if (
 
-    },
+          allowedOrigins.includes(
+            origin
+          )
+
+        ) {
+
+          return callback(
+            null,
+            true
+          );
+
+        }
+
+        console.log(
+          'SOCKET BLOCKED:',
+          origin
+        );
+
+        return callback(
+
+          new Error(
+            `Socket CORS Blocked: ${origin}`
+          )
+
+        );
+
+      },
 
     methods: [
+
       'GET',
       'POST',
       'PUT',
       'PATCH',
       'DELETE'
+
     ],
 
     credentials: true
@@ -95,85 +171,250 @@ const io = socketIO(server, {
 
 });
 
-// MAKE IO AVAILABLE
+// ==============================
+// SOCKET SERVICE INSTANCE
+// ==============================
+
+const socketService =
+  new SocketService(io);
+  notificationService.setSocket(io);
+
+// ==============================
+// MAKE AVAILABLE GLOBALLY
+// ==============================
+
 app.set('io', io);
+
+app.set(
+  'socketService',
+  socketService
+);
 
 // ==============================
 // SOCKET CONNECTIONS
 // ==============================
 
-io.on('connection', (socket) => {
+io.on(
 
-  console.log('SOCKET CONNECTED:', socket.id);
+  'connection',
 
-  // ==========================
-  // JOIN RESTAURANT ROOM
-  // ==========================
+  (socket) => {
 
-  socket.on(
-    'joinRestaurantRoom',
-    (restaurantId) => {
+    console.log(
+      'SOCKET CONNECTED:',
+      socket.id
+    );
 
-      socket.join(restaurantId);
+    // ==========================
+    // JOIN RESTAURANT ROOM
+    // ==========================
 
-      console.log(
-        'JOINED RESTAURANT:',
-        restaurantId
-      );
+    socket.on(
 
-    }
-  );
+      'joinRestaurantRoom',
 
-  // ==========================
-  // JOIN ORDER ROOM
-  // ==========================
+      (restaurantId) => {
 
-  socket.on(
-    'joinOrderRoom',
-    (orderId) => {
+        socket.join(
+          restaurantId
+        );
 
-      socket.join(orderId);
+        console.log(
 
-      console.log(
-        'JOINED ORDER:',
-        orderId
-      );
+          'JOINED RESTAURANT:',
 
-    }
-  );
+          restaurantId
 
-  // ==========================
-  // JOIN ADMIN ROOM
-  // ==========================
+        );
 
-  socket.on(
-    'joinAdminRoom',
-    () => {
+      }
 
-      socket.join('admins');
+    );
 
-      console.log('ADMIN JOINED');
+    // ==========================
+    // JOIN ORDER ROOM
+    // ==========================
 
-    }
-  );
+    socket.on(
 
-  // ==========================
-  // DISCONNECT
-  // ==========================
+      'joinOrderRoom',
 
-  socket.on(
-    'disconnect',
-    () => {
+      (orderId) => {
 
-      console.log(
-        'SOCKET DISCONNECTED:',
-        socket.id
-      );
+        socket.join(
+          orderId
+        );
 
-    }
-  );
+        console.log(
 
-});
+          'JOINED ORDER:',
+
+          orderId
+
+        );
+
+      }
+
+    );
+
+    // ==========================
+    // JOIN ADMIN ROOM
+    // ==========================
+
+    socket.on(
+
+      'joinAdminRoom',
+
+      () => {
+
+        socket.join(
+          'admins'
+        );
+
+        console.log(
+          'ADMIN JOINED'
+        );
+
+      }
+
+    );
+
+    // ==========================
+    // JOIN DELIVERY ROOM
+    // ==========================
+
+    socket.on(
+
+      'joinDeliveryRoom',
+
+      (deliveryPartnerId) => {
+
+        socket.join(
+          deliveryPartnerId
+        );
+
+        console.log(
+
+          'DELIVERY JOINED:',
+
+          deliveryPartnerId
+
+        );
+
+      }
+
+    );
+
+    // ==========================
+    // DELIVERY LOCATION UPDATE
+    // ==========================
+
+    socket.on(
+
+      'deliveryLocationUpdate',
+
+      async (data) => {
+
+        console.log(
+
+          'DELIVERY LOCATION UPDATE:',
+
+          data
+
+        );
+
+        try {
+
+          // ====================
+          // UPDATE DB
+          // ====================
+
+          await Order.findByIdAndUpdate(
+
+            data.orderId,
+
+            {
+
+              liveLocation: {
+
+                latitude:
+                  data.latitude,
+
+                longitude:
+                  data.longitude,
+
+                updatedAt:
+                  new Date()
+
+              }
+
+            }
+
+          );
+
+          // ====================
+          // EMIT TO CUSTOMER
+          // ====================
+
+          socketService
+            .emitToRoom(
+
+              data.orderId,
+
+              'deliveryLocationUpdated',
+
+              {
+
+                orderId:
+                  data.orderId,
+
+                latitude:
+                  data.latitude,
+
+                longitude:
+                  data.longitude
+
+              }
+
+            );
+
+        }
+
+        catch (error) {
+
+          console.log(error);
+
+        }
+
+      }
+
+    );
+
+    // ==========================
+    // DISCONNECT
+    // ==========================
+
+    socket.on(
+
+      'disconnect',
+
+      () => {
+
+        console.log(
+
+          'SOCKET DISCONNECTED:',
+
+          socket.id
+
+        );
+
+      }
+
+    );
+
+  }
+
+);
 
 // ==============================
 // START SERVER
@@ -188,7 +429,9 @@ server.listen(
   () => {
 
     console.log(
+
       `🚀 Server running on port ${PORT}`
+
     );
 
   }

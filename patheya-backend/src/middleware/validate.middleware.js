@@ -1,37 +1,51 @@
 const {
 
-    validationResult
-  
-  } = require(
-    'express-validator'
+  validationResult
+
+} = require(
+
+  'express-validator'
+
+);
+
+const ApiError =
+  require(
+    '../core/errors/ApiError'
   );
-  
-  module.exports = (
-  
-    req,
-  
-    res,
-  
-    next
-  
-  ) => {
-  
-    const errors =
-      validationResult(req);
-  
-    if (!errors.isEmpty()) {
-  
-      return res.status(400).json({
-  
-        success: false,
-  
-        errors:
-          errors.array()
-  
-      });
-  
-    }
-  
-    next();
-  
-  };
+
+module.exports = (
+
+  req,
+
+  res,
+
+  next
+
+) => {
+
+  const errors =
+    validationResult(req);
+
+  // ==========================
+  // VALIDATION FAILED
+  // ==========================
+
+  if (!errors.isEmpty()) {
+
+    return next(
+
+      new ApiError(
+
+        400,
+
+        errors.array()[0].msg
+
+      )
+
+    );
+
+  }
+
+  next();
+
+};

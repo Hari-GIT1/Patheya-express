@@ -1,0 +1,177 @@
+.orders-page {
+
+    padding-bottom: 40px;
+  
+  }
+  
+  .page-header {
+  
+    display: flex;
+  
+    justify-content: space-between;
+  
+    align-items: center;
+  
+    margin-bottom: 24px;
+  
+  }
+  
+  .live-chip {
+  
+    background: #dcfce7;
+  
+    color: #16a34a;
+  
+    padding: 10px 16px;
+  
+    border-radius: 999px;
+  
+    font-weight: 700;
+  
+  }
+  
+  .order-card {
+  
+    background: white;
+  
+    border-radius: 24px;
+  
+    padding: 22px;
+  
+    margin-bottom: 20px;
+  
+    box-shadow:
+      0 6px 24px rgba(
+        0,
+        0,
+        0,
+        0.06
+      );
+  
+  }
+  
+  .earning-chip {
+  
+    background: #16a34a;
+  
+    color: white;
+  
+    padding: 8px 14px;
+  
+    border-radius: 999px;
+  
+    font-weight: 700;
+  
+  }
+  
+  .info-box {
+  
+    display: flex;
+  
+    justify-content: space-between;
+  
+    background: #f3f4f6;
+  
+    padding: 14px;
+  
+    border-radius: 16px;
+  
+    margin-bottom: 16px;
+  
+    font-size: 14px;
+  
+  }
+  
+  .items-preview {
+  
+    display: flex;
+  
+    flex-wrap: wrap;
+  
+    gap: 8px;
+  
+    margin-bottom: 16px;
+  
+  }
+  
+  .items-preview span {
+  
+    background: #f3f4f6;
+  
+    padding: 8px 12px;
+  
+    border-radius: 999px;
+  
+    font-size: 13px;
+  
+  }
+  
+  .timer-row {
+  
+    display: flex;
+  
+    align-items: center;
+  
+    gap: 8px;
+  
+    color: #f59e0b;
+  
+    font-weight: 600;
+  
+    margin-bottom: 18px;
+  
+  }
+  
+  .accept-btn {
+  
+    height: 52px;
+  
+    border-radius: 16px;
+  
+    background: #16a34a;
+  
+    border: none;
+  
+    color: white;
+  
+    font-weight: 700;
+  
+    transition: 0.3s;
+  
+  }
+  
+  .accept-btn:hover {
+  
+    background: #15803d;
+  
+  }
+  
+  .empty-box {
+  
+    background: white;
+  
+    border-radius: 24px;
+  
+    padding: 60px 24px;
+  
+    text-align: center;
+  
+    box-shadow:
+      0 4px 20px rgba(
+        0,
+        0,
+        0,
+        0.05
+      );
+  
+  }
+  
+  .empty-box i {
+  
+    font-size: 48px;
+  
+    color: #9ca3af;
+  
+    margin-bottom: 20px;
+  
+  }

@@ -1,40 +1,43 @@
-const Order = require('../../../models/Order');
+const queryService =
+  require(
+    '../../../services/query.service'
+  );
 
-const getOrders = async (query) => {
-  const filter = {};
+// ==============================
+// GET ORDERS
+// ==============================
 
-  if (query.status) {
-    filter.status = query.status;
-  }
+exports.getOrders =
+async (query) => {
 
-  if (query.paymentStatus) {
-    filter.paymentStatus =
-      query.paymentStatus;
-  }
+  return await queryService
+    .getOrders({
 
-  return await Order.find(filter)
-    .populate('userId', 'name email')
-    .populate('restaurantId', 'name')
-    .sort({ createdAt: -1 });
+      ...query,
+
+      populate: 'true'
+
+    });
+
 };
 
-const getLiveOrders = async () => {
-  return await Order.find({
-    status: {
-      $in: [
-        'placed',
-        'accepted',
-        'preparing',
-        'out_for_delivery',
-      ],
-    },
-  })
-    .populate('userId', 'name')
-    .populate('restaurantId', 'name')
-    .sort({ createdAt: -1 });
-};
+// ==============================
+// LIVE ORDERS
+// ==============================
 
-module.exports = {
-  getOrders,
-  getLiveOrders,
+exports.getLiveOrders =
+async () => {
+
+  return await queryService
+    .getOrders({
+
+      statusIn:
+        'placed,accepted,preparing,out_for_delivery',
+
+      populate: 'true',
+
+      limit: 50
+
+    });
+
 };

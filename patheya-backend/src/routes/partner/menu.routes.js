@@ -8,10 +8,10 @@ const upload =
   );
 
 const auth =
-  require('../../middleware/auth.middleware');
+require('../../modules/auth/middleware/auth.middleware')
 
 const allowRoles =
-  require('../../middleware/role.middleware');
+require('../../modules/auth/middleware/role.middleware')
 
 const {
 
@@ -27,7 +27,7 @@ const {
 
   updateAvailability
 
-} = require('../../controllers/partner/menu.controller');
+} = require('../../modules/menu/controllers/menu.management.controller');
 
 
 // ==============================

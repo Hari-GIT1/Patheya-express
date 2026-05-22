@@ -114,6 +114,36 @@ const orderSchema =
     assignedAt: Date,
 
     // ==========================
+// LIVE DELIVERY LOCATION
+// ==========================
+
+liveLocation: {
+
+  latitude: {
+
+    type: Number,
+
+    default: 0
+
+  },
+
+  longitude: {
+
+    type: Number,
+
+    default: 0
+
+  },
+
+  updatedAt: {
+
+    type: Date
+
+  }
+
+},
+
+    // ==========================
     // ITEMS
     // ==========================
 
@@ -289,11 +319,39 @@ const orderSchema =
 
     timestamps: true
 
-  });
+  },
+{
+  paymentEvents: [
+
+    {
+  
+      type: String,
+  
+      status: String,
+  
+      paymentId: String,
+  
+      createdAt: {
+  
+        type: Date,
+  
+        default: Date.now
+  
+      }
+  
+    }
+  
+  ]
+}
+
+);
 
 // ==============================
 // INDEXES
 // ==============================
+orderSchema.index({
+  'paymentDetails.razorpayOrderId': 1
+});
 
 orderSchema.index({
   restaurantId: 1,

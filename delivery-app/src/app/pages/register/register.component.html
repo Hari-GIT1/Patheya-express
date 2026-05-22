@@ -1,0 +1,280 @@
+<div class="auth-page">
+
+    <div class="container">
+  
+      <div class="row justify-content-center align-items-center min-vh-100">
+  
+        <div class="col-lg-5 col-md-7">
+  
+          <div class="auth-card">
+  
+            <!-- HEADER -->
+            <div class="text-center mb-4">
+  
+              <div class="brand-logo">
+  
+                🛵
+  
+              </div>
+  
+              <h2 class="fw-bold mt-3">
+  
+                Rider Registration
+  
+              </h2>
+  
+              <p class="text-muted">
+  
+                Join Patheya Delivery
+  
+              </p>
+  
+            </div>
+  
+            <!-- FORM -->
+            <form>
+  
+              <!-- NAME -->
+              <div class="mb-3">
+  
+                <label class="form-label">
+  
+                  Full Name
+  
+                </label>
+  
+                <input
+  
+                  type="text"
+  
+                  class="form-control custom-input"
+  
+                  [(ngModel)]="formData.name"
+  
+                  name="name"
+  
+                  placeholder="Enter full name"
+  
+                >
+  
+              </div>
+  
+              <!-- PHONE -->
+              <div class="mb-3">
+  
+                <label class="form-label">
+  
+                  Mobile Number
+  
+                </label>
+  
+                <input
+  
+                  type="text"
+  
+                  class="form-control custom-input"
+  
+                  [(ngModel)]="formData.phone"
+  
+                  name="phone"
+  
+                  placeholder="Enter mobile number"
+  
+                >
+  
+              </div>
+  
+              <!-- EMAIL -->
+              <div class="mb-3">
+  
+                <label class="form-label">
+  
+                  Email Address
+  
+                </label>
+  
+                <input
+  
+                  type="email"
+  
+                  class="form-control custom-input"
+  
+                  [(ngModel)]="formData.email"
+  
+                  name="email"
+  
+                  placeholder="Enter email"
+  
+                >
+  
+              </div>
+  
+              <!-- PASSWORD -->
+              <div class="mb-3">
+  
+                <label class="form-label">
+  
+                  Password
+  
+                </label>
+  
+                <input
+  
+                  type="password"
+  
+                  class="form-control custom-input"
+  
+                  [(ngModel)]="formData.password"
+  
+                  name="password"
+  
+                  placeholder="Create password"
+  
+                >
+  
+              </div>
+  
+              <!-- VEHICLE TYPE -->
+              <div class="mb-3">
+  
+                <label class="form-label">
+  
+                  Vehicle Type
+  
+                </label>
+  
+                <select
+  
+                  class="form-select custom-input"
+  
+                  [(ngModel)]="formData.vehicleType"
+  
+                  name="vehicleType"
+  
+                >
+  
+                  <option value="bike">
+  
+                    Bike
+  
+                  </option>
+  
+                  <option value="scooter">
+  
+                    Scooter
+  
+                  </option>
+  
+                  <option value="cycle">
+  
+                    Cycle
+  
+                  </option>
+  
+                </select>
+  
+              </div>
+  
+              <!-- VEHICLE NUMBER -->
+              <div class="mb-4">
+  
+                <label class="form-label">
+  
+                  Vehicle Number
+  
+                </label>
+  
+                <input
+  
+                  type="text"
+  
+                  class="form-control custom-input"
+  
+                  [(ngModel)]="formData.vehicleNumber"
+  
+                  name="vehicleNumber"
+  
+                  placeholder="KA01AB1234"
+  
+                >
+  
+              </div>
+  
+              <!-- SUCCESS -->
+              <div
+                *ngIf="success"
+                class="alert alert-success"
+              >
+  
+                {{ success }}
+  
+              </div>
+  
+              <!-- ERROR -->
+              <div
+                *ngIf="error"
+                class="alert alert-danger"
+              >
+  
+                {{ error }}
+  
+              </div>
+  
+              <!-- BUTTON -->
+              <button
+  
+                type="button"
+  
+                class="btn login-btn w-100"
+  
+                [disabled]="loading"
+  
+                (click)="register()"
+  
+              >
+  
+                <span *ngIf="!loading">
+  
+                  Register
+  
+                </span>
+  
+                <span *ngIf="loading">
+  
+                  Please wait...
+  
+                </span>
+  
+              </button>
+  
+            </form>
+  
+            <!-- LOGIN -->
+            <div class="text-center mt-4">
+  
+              <p class="mb-0">
+  
+                Already Registered?
+  
+                <a
+                  routerLink="/login"
+                  class="register-link"
+                >
+  
+                  Login Here
+  
+                </a>
+  
+              </p>
+  
+            </div>
+  
+          </div>
+
+        </div>
+  
+      </div>
+  
+    </div>
+  
+  </div>
