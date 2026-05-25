@@ -1,0 +1,45 @@
+.restaurant-grid {
+
+    display: grid;
+  
+    grid-template-columns:
+      repeat(auto-fit, minmax(320px, 1fr));
+  
+    gap: 24px;
+  
+  }
+  
+  .restaurant-card {
+  
+    background: white;
+  
+    border-radius: 22px;
+  
+    padding: 24px;
+  
+    box-shadow:
+      0 4px 18px rgba(0,0,0,0.05);
+  
+    display: flex;
+  
+    justify-content: space-between;
+  
+    align-items: center;
+  
+  }
+  
+  button {
+  
+    border: none;
+  
+    background: #2563eb;
+  
+    color: white;
+  
+    padding: 12px 18px;
+  
+    border-radius: 10px;
+  
+    cursor: pointer;
+  
+  }

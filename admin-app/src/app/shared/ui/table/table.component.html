@@ -1,0 +1,104 @@
+<div class="table-wrapper">
+
+    <!-- LOADING -->
+  
+    <div
+      *ngIf="loading"
+      class="loading-state"
+    >
+      Loading...
+    </div>
+  
+    <!-- EMPTY -->
+  
+    <div
+      *ngIf="!loading && !data.length"
+      class="empty-state"
+    >
+      No data found
+    </div>
+  
+    <!-- TABLE -->
+  
+    <table
+      *ngIf="!loading && data.length"
+    >
+  
+      <thead>
+  
+        <tr>
+  
+          <th
+            *ngFor="
+              let column of columns
+            "
+          >
+            {{ column.label }}
+          </th>
+  
+        </tr>
+  
+      </thead>
+  
+      <tbody>
+  
+        <tr
+          *ngFor="let row of data"
+        >
+  
+          <td
+            *ngFor="
+              let column of columns
+            "
+          >
+  
+            {{ row[column.key] }}
+  
+          </td>
+  
+        </tr>
+  
+      </tbody>
+  
+    </table>
+  
+    <!-- PAGINATION -->
+  
+    <div
+      class="pagination"
+      *ngIf="total > limit"
+    >
+  
+      <button
+  
+        [disabled]="page === 1"
+  
+        (click)="changePage(
+          page - 1
+        )"
+      >
+        Previous
+      </button>
+  
+      <span>
+  
+        Page {{ page }}
+  
+      </span>
+  
+      <button
+  
+        [disabled]="
+          page * limit >= total
+        "
+  
+        (click)="changePage(
+          page + 1
+        )"
+      >
+        Next
+      </button>
+  
+    </div>
+  
+  </div>

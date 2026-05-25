@@ -1,0 +1,38 @@
+<div class="orders-page">
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Orders</h1>
+
+      <p>
+        Manage platform orders
+      </p>
+
+    </div>
+
+  </div>
+
+  <app-table
+
+    [columns]="columns"
+
+    [data]="data"
+
+    [loading]="loading"
+
+    [page]="page"
+
+    [limit]="limit"
+
+    [total]="total"
+
+    (pageChange)="
+      onPageChange($event)
+    "
+
+  >
+  </app-table>
+
+</div>

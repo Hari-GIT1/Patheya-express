@@ -5,203 +5,114 @@ import {
   Routes
 } from '@angular/router';
 
-import { LoginComponent }
-from './pages/login/login.component';
-
-import { DashboardComponent }
-from './pages/dashboard/dashboard.component';
-
-import { OrdersComponent }
-from './pages/orders/orders.component';
-
-import { FinanceComponent }
-from './pages/finance/finance.component';
-
-import { SupportComponent }
-from './pages/support/support.component';
-
-import { MarketingComponent }
-from './pages/marketing/marketing.component';
-
-import { AdminManagementComponent }
-from './pages/admin-management/admin-management.component';
-
-import { AdminRegisterComponent }
-from './pages/admin-register/admin-register.component';
+import { authGuard }
+from './core/guards/auth.guard';
 
 import { AdminLayoutComponent }
 from './layouts/admin-layout/admin-layout.component';
 
-import { AuthGuard }
-from './core/guards/auth.guard';
-
-import { RoleGuard }
-from './core/guards/role.guard';
-import { PendingRestaurantsComponent } from './pages/pending-restaurants/pending-restaurants.component';
-
 const routes: Routes = [
 
   // =========================
-  // AUTH ROUTES
+  // AUTH
   // =========================
 
   {
-    path: 'login',
 
-    component: LoginComponent
+    path: '',
+
+    loadChildren: () =>
+      import('./modules/auth/auth.module')
+        .then(m => m.AuthModule)
+
   },
 
-  {
-    path: 'register',
-
-    component: AdminRegisterComponent
-  },
-
   // =========================
-  // PROTECTED ADMIN ROUTES
+  // PROTECTED ADMIN
   // =========================
 
-  
   {
+
     path: '',
 
     component: AdminLayoutComponent,
 
-    canActivate: [
-      AuthGuard
-    ],
+    canActivate: [authGuard],
 
     children: [
 
       {
+
         path: 'dashboard',
 
-        component: DashboardComponent
+        loadChildren: () =>
+          import('./modules/dashboard/dashboard.module')
+            .then(m => m.DashboardModule)
+
       },
 
       {
+
         path: 'orders',
 
-        component: OrdersComponent
-      },
-      {
-        path: 'pending-restaurants',
-      
-        component: PendingRestaurantsComponent,
-      
-        canActivate: [
-          AuthGuard,
-          RoleGuard
-        ],
-      
-        data: {
-          roles: [
-            'super_admin',
-            'operations_admin'
-          ]
-        }
-      },
-      // =========================
-      // ADMIN MANAGEMENT
-      // =========================
+        loadChildren: () =>
+          import('./modules/orders/orders.module')
+            .then(m => m.OrdersModule)
 
-      {
-        path: 'admin-management',
-
-        component:
-          AdminManagementComponent,
-
-        canActivate: [
-          AuthGuard,
-          RoleGuard
-        ],
-
-        data: {
-          roles: [
-            'super_admin'
-          ]
-        }
       },
 
-      // =========================
-      // FINANCE
-      // =========================
+      {
+
+        path: 'restaurants',
+
+        loadChildren: () =>
+          import('./modules/restaurants/restaurants.module')
+            .then(m => m.RestaurantsModule)
+
+      },
 
       {
+
+        path: 'users',
+
+        loadChildren: () =>
+          import('./modules/users/users.module')
+            .then(m => m.UsersModule)
+
+      },
+
+      {
+
         path: 'finance',
 
-        component: FinanceComponent,
+        loadChildren: () =>
+          import('./modules/finance/finance.module')
+            .then(m => m.FinanceModule)
 
-        canActivate: [
-          AuthGuard,
-          RoleGuard
-        ],
-
-        data: {
-          roles: [
-            'super_admin',
-            'finance_admin'
-          ]
-        }
       },
 
-      // =========================
-      // SUPPORT
-      // =========================
-
       {
-        path: 'support',
 
-        component: SupportComponent,
-
-        canActivate: [
-          AuthGuard,
-          RoleGuard
-        ],
-
-        data: {
-          roles: [
-            'super_admin',
-            'support_admin'
-          ]
-        }
-      },
-
-      // =========================
-      // MARKETING
-      // =========================
-
-      {
         path: 'marketing',
 
-        component: MarketingComponent,
+        loadChildren: () =>
+          import('./modules/marketing/marketing.module')
+            .then(m => m.MarketingModule)
 
-        canActivate: [
-          AuthGuard,
-          RoleGuard
-        ],
+      },
 
-        data: {
-          roles: [
-            'super_admin',
-            'marketing_admin'
-          ]
-        }
+      {
+
+        path: 'support',
+
+        loadChildren: () =>
+          import('./modules/support/support.module')
+            .then(m => m.SupportModule)
+
       }
 
     ]
-  },
 
-  // =========================
-  // DEFAULT REDIRECT
-  // =========================
-
-  {
-    path: '',
-
-    redirectTo: 'dashboard',
-
-    pathMatch: 'full'
   },
 
   // =========================
@@ -209,9 +120,11 @@ const routes: Routes = [
   // =========================
 
   {
+
     path: '**',
 
-    redirectTo: 'login'
+    redirectTo: 'dashboard'
+
   }
 
 ];
@@ -227,5 +140,4 @@ const routes: Routes = [
   ]
 
 })
-
 export class AppRoutingModule {}

@@ -356,3 +356,32 @@ asyncHandler(async (
   );
 
 });
+
+exports.getRestaurantById =
+asyncHandler(async (
+
+  req,
+
+  res
+
+) => {
+
+  const restaurant =
+    await adminService
+      .getRestaurantById(
+
+        req.params.id
+
+      );
+
+  successResponse(
+
+    res,
+
+    restaurant,
+
+    'Restaurant fetched'
+
+  );
+
+});

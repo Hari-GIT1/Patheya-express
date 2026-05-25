@@ -1,0 +1,22 @@
+<div class="dashboard-card">
+
+    <div class="card-header">
+  
+      <h3>Revenue Analytics</h3>
+  
+    </div>
+  
+    <canvas
+  
+      *ngIf="chartData"
+  
+      baseChart
+  
+      [data]="chartData"
+  
+      [type]="'line'"
+  
+    >
+    </canvas>
+  
+  </div>

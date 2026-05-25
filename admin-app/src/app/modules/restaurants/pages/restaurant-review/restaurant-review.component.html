@@ -1,0 +1,154 @@
+<div
+  *ngIf="restaurant"
+  class="review-page"
+>
+
+  <!-- HEADER -->
+
+  <div class="review-header">
+
+    <div>
+
+      <h1>
+
+        {{ restaurant.name }}
+
+      </h1>
+
+      <p>
+
+        Review restaurant application
+
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- DETAILS -->
+
+  <div class="review-grid">
+
+    <!-- BASIC -->
+
+    <div class="review-card">
+
+      <h3>
+        Restaurant Details
+      </h3>
+
+      <div class="info-item">
+
+        <label>Name</label>
+
+        <p>
+          {{ restaurant.name }}
+        </p>
+
+      </div>
+
+      <div class="info-item">
+
+        <label>City</label>
+
+        <p>
+          {{ restaurant.city }}
+        </p>
+
+      </div>
+
+      <div class="info-item">
+
+        <label>Status</label>
+
+        <p>
+          {{ restaurant.status }}
+        </p>
+
+      </div>
+
+    </div>
+
+    <!-- OWNER -->
+
+    <div class="review-card">
+
+      <h3>
+        Owner Details
+      </h3>
+
+      <div class="info-item">
+
+        <label>Owner Name</label>
+
+        <p>
+
+          {{
+            restaurant.owner?.name
+          }}
+
+        </p>
+
+      </div>
+
+      <div class="info-item">
+
+        <label>Email</label>
+
+        <p>
+
+          {{
+            restaurant.owner?.email
+          }}
+
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ACTIONS -->
+
+  <div class="actions">
+
+    <button
+
+      class="approve-btn"
+
+      [disabled]="actionLoading"
+
+      (click)="
+        updateStatus(
+          'approved'
+        )
+      "
+
+    >
+
+      Approve
+
+    </button>
+
+    <button
+
+      class="reject-btn"
+
+      [disabled]="actionLoading"
+
+      (click)="
+        updateStatus(
+          'rejected'
+        )
+      "
+
+    >
+
+      Reject
+
+    </button>
+
+  </div>
+
+</div>

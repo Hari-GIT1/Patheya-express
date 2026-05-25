@@ -208,6 +208,25 @@ router.get(
   adminController.getPendingRestaurants
 
 );
+router.get(
+
+  '/restaurants/:id',
+
+  auth,
+
+  allowRoles(
+
+  ADMIN_ROLES.ADMIN,
+
+  ADMIN_ROLES.OPERATIONS_ADMIN,
+
+  ADMIN_ROLES.SUPER_ADMIN
+
+),
+
+  adminController.getRestaurantById
+
+);
 
 router.patch(
 

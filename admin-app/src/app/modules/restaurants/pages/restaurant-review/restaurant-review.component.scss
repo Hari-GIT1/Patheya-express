@@ -1,0 +1,111 @@
+.review-page {
+
+    display: flex;
+  
+    flex-direction: column;
+  
+    gap: 24px;
+  
+  }
+  
+  .review-header h1 {
+  
+    margin: 0;
+  
+    font-size: 34px;
+  
+  }
+  
+  .review-header p {
+  
+    margin-top: 6px;
+  
+    color: #6b7280;
+  
+  }
+  
+  .review-grid {
+  
+    display: grid;
+  
+    grid-template-columns:
+      repeat(auto-fit, minmax(320px, 1fr));
+  
+    gap: 24px;
+  
+  }
+  
+  .review-card {
+  
+    background: white;
+  
+    border-radius: 22px;
+  
+    padding: 24px;
+  
+    box-shadow:
+      0 4px 18px rgba(0,0,0,0.05);
+  
+  }
+  
+  .info-item {
+  
+    margin-top: 18px;
+  
+  }
+  
+  label {
+  
+    display: block;
+  
+    font-size: 13px;
+  
+    color: #6b7280;
+  
+    margin-bottom: 6px;
+  
+  }
+  
+  p {
+  
+    margin: 0;
+  
+    font-size: 16px;
+  
+  }
+  
+  .actions {
+  
+    display: flex;
+  
+    gap: 16px;
+  
+  }
+  
+  button {
+  
+    border: none;
+  
+    padding: 14px 22px;
+  
+    border-radius: 10px;
+  
+    cursor: pointer;
+  
+    color: white;
+  
+    font-weight: 600;
+  
+  }
+  
+  .approve-btn {
+  
+    background: #16a34a;
+  
+  }
+  
+  .reject-btn {
+  
+    background: #dc2626;
+  
+  }

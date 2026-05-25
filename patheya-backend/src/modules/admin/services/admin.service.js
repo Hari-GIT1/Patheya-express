@@ -45,6 +45,10 @@ const {
 } = require(
   '../../auth/services/password.service'
 );
+const cacheService =
+  require(
+    '../../../core/cache/cache.service'
+  );
 
 // =====================================================
 // LOGIN ADMIN
@@ -490,6 +494,9 @@ async (
   }
 
   await restaurant.save();
+  await cacheService.delByPattern(
+    'restaurants:*'
+  );
 
   return restaurant;
 
@@ -587,5 +594,33 @@ async (userId) => {
   await user.save();
 
   return user;
+
+};
+exports.getRestaurantById =
+async (
+
+  restaurantId
+
+) => {
+
+  const restaurant =
+    await Restaurant
+      .findById(
+        restaurantId
+      );
+
+  if (!restaurant) {
+
+    throw new ApiError(
+
+      404,
+
+      'Restaurant not found'
+
+    );
+
+  }
+
+  return restaurant;
 
 };

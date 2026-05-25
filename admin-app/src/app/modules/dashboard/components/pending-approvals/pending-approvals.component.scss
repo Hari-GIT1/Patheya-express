@@ -1,0 +1,67 @@
+.dashboard-card {
+
+    background: white;
+  
+    border-radius: 22px;
+  
+    padding: 24px;
+  
+    box-shadow:
+      0 4px 18px rgba(0,0,0,0.05);
+  
+  }
+  
+  .restaurant-item {
+  
+    display: flex;
+  
+    justify-content: space-between;
+  
+    align-items: center;
+  
+    padding: 14px 0;
+  
+    border-bottom:
+      1px solid #eee;
+  
+  }
+  
+  h4 {
+  
+    margin: 0;
+  
+  }
+  
+  p {
+  
+    margin-top: 4px;
+  
+    color: #6b7280;
+  
+  }
+  
+  button {
+  
+    border: none;
+  
+    background: #2563eb;
+  
+    color: white;
+  
+    padding: 10px 14px;
+  
+    border-radius: 8px;
+  
+    cursor: pointer;
+  
+  }
+  
+  .empty-state {
+  
+    padding: 24px 0;
+  
+    text-align: center;
+  
+    color: #777;
+  
+  }

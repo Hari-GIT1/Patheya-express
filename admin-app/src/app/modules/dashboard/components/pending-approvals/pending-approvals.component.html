@@ -1,0 +1,59 @@
+<div class="dashboard-card">
+
+    <div class="card-header">
+  
+      <h3>Pending Approvals</h3>
+  
+    </div>
+  
+    <div
+      *ngFor="
+        let restaurant of restaurants
+      "
+      class="restaurant-item"
+    >
+  
+      <div>
+  
+        <h4>
+  
+          {{ restaurant.name }}
+  
+        </h4>
+  
+        <p>
+  
+          {{ restaurant.city }}
+  
+        </p>
+  
+      </div>
+  
+      <button
+
+      [routerLink]="[
+        '/restaurants',
+        restaurant._id
+      ]"
+    
+    >
+    
+      Review
+    
+    </button>
+  
+    </div>
+  
+    <div
+      *ngIf="
+        !loading &&
+        !restaurants.length
+      "
+      class="empty-state"
+    >
+  
+      No pending approvals
+  
+    </div>
+  
+  </div>

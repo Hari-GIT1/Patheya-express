@@ -1,38 +1,36 @@
 import { Injectable }
 from '@angular/core';
 
-import { HttpClient }
-from '@angular/common/http';
+import { Observable }
+from 'rxjs';
 
-import { environment }
-from 'src/environments/environment';
+import { ApiService }
+from './api.service';
+
+import {
+
+  API_ENDPOINTS
+
+} from '../constants/api-endpoints';
 
 @Injectable({
   providedIn: 'root'
 })
-
 export class DashboardService {
 
-  private apiUrl =
-    `${environment.apiBaseUrl}/admin/dashboard`;
-
   constructor(
-    private http: HttpClient
+    private api: ApiService
   ) {}
 
-  getDashboardStats() {
+  getDashboardStats():
+  Observable<any> {
 
-    return this.http.get(
-      this.apiUrl
+    return this.api.get(
+
+      API_ENDPOINTS.DASHBOARD.STATS
+
     );
 
-  }
-  getLiveOrders() {
-
-    return this.http.get(
-      `${environment.apiBaseUrl}/admin/orders/live`
-    );
-  
   }
 
 }

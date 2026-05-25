@@ -51,28 +51,12 @@ async (queryParams = {}) => {
 
   const filters = {
 
-    isOpen: true,
-
-    $or: [
-
-      {
-
-        approvalStatus:
-          'approved'
-
-      },
-
-      {
-
-        approvalStatus:
-          { $exists: false }
-
-      }
-
-    ]
-
+    approvalStatus:
+      'approved',
+  
+    isOpen: true
+  
   };
-
   // ==========================
   // SEARCH
   // ==========================

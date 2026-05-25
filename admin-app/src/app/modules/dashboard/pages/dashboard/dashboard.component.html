@@ -1,0 +1,69 @@
+<div class="dashboard-page">
+
+    <!-- HEADER -->
+  
+    <div class="page-header">
+  
+      <div>
+  
+        <h1>Dashboard</h1>
+  
+        <p>
+  
+          Welcome back to
+          Patheya Admin
+  
+        </p>
+  
+      </div>
+  
+    </div>
+  
+    <!-- KPI -->
+  
+    <div class="stats-grid">
+  
+      <app-stat-card
+  
+        *ngFor="let stat of stats"
+  
+        [title]="stat.title"
+  
+        [value]="stat.value"
+  
+      >
+      </app-stat-card>
+  
+    </div>
+  
+    <!-- GRID -->
+  
+    <div class="dashboard-grid">
+  
+      <!-- LEFT -->
+  
+      <div class="left-section">
+  
+        <app-revenue-overview>
+        </app-revenue-overview>
+  
+        <app-live-orders>
+        </app-live-orders>
+  
+      </div>
+  
+      <!-- RIGHT -->
+  
+      <div class="right-section">
+  
+        <app-pending-approvals>
+        </app-pending-approvals>
+  
+        <app-activity-timeline>
+        </app-activity-timeline>
+  
+      </div>
+  
+    </div>
+  
+  </div>
