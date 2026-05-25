@@ -1,25 +1,47 @@
-const Redis =
-  require('ioredis');
+const Redis = require('ioredis');
 
-const connection =
-  new Redis({
+const redis = new Redis({
 
-    host:
+  host: process.env.REDIS_HOST || '127.0.0.1',
 
-      process.env.REDIS_HOST ||
+  port: process.env.REDIS_PORT || 6379,
 
-      '127.0.0.1',
+  maxRetriesPerRequest: null,
 
-    port:
+  retryStrategy(times) {
 
-      process.env.REDIS_PORT ||
+    return Math.min(
+      times * 50,
+      2000
+    );
 
-      6379,
+  }
 
-    maxRetriesPerRequest:
-      null
+});
 
-  });
+redis.on('connect', () => {
 
-module.exports =
-  connection;
+  console.log(
+    '✅ Redis Connected'
+  );
+
+});
+
+redis.on('error', (err) => {
+
+  console.error(
+    '❌ Redis Error:',
+    err.message
+  );
+
+});
+
+redis.on('reconnecting', () => {
+
+  console.log(
+    '🔄 Redis Reconnecting...'
+  );
+
+});
+
+module.exports = redis;

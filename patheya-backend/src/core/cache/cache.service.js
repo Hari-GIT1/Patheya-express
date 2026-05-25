@@ -3,73 +3,73 @@ const redis =
 
 class CacheService {
 
-  // ==========================
-  // GET
-  // ==========================
-
   async get(key) {
 
-    const data =
-      await redis.get(key);
+    try {
 
-    return data
+      const data =
+        await redis.get(key);
 
-      ? JSON.parse(data)
+      return data
+        ? JSON.parse(data)
+        : null;
 
-      : null;
+    } catch (error) {
+
+      console.error(
+        'Cache GET Error:',
+        error.message
+      );
+
+      return null;
+
+    }
 
   }
-
-  // ==========================
-  // SET
-  // ==========================
 
   async set(
-
     key,
-
     value,
-
     ttl = 3600
-
   ) {
 
-    await redis.set(
+    try {
 
-      key,
+      await redis.set(
 
-      JSON.stringify(value),
+        key,
 
-      'EX',
+        JSON.stringify(value),
 
-      ttl
+        'EX',
 
-    );
+        ttl
+
+      );
+
+    } catch (error) {
+
+      console.error(
+        'Cache SET Error:',
+        error.message
+      );
+
+    }
 
   }
-
-  // ==========================
-  // DELETE
-  // ==========================
 
   async del(key) {
 
-    await redis.del(key);
+    try {
 
-  }
+      await redis.del(key);
 
-  // ==========================
-  // DELETE BY PATTERN
-  // ==========================
+    } catch (error) {
 
-  async delByPattern(pattern) {
-
-    const keys =
-      await redis.keys(pattern);
-
-    if (keys.length > 0) {
-
-      await redis.del(...keys);
+      console.error(
+        'Cache DELETE Error:',
+        error.message
+      );
 
     }
 
