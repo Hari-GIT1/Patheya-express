@@ -5,9 +5,7 @@ const {
     Worker
   
   } = require('bullmq');
-  
-  const redis =
-    require('../../config/redis');
+
   
   // ==============================
   // QUEUE CONNECTION
@@ -101,15 +99,50 @@ const {
   
     ) {
   
+      const worker =
       new Worker(
-  
+    
         queueName,
-  
+    
         processor,
-  
+    
         { connection }
-  
+    
       );
+    
+    worker.on(
+    
+      'completed',
+    
+      (job) => {
+    
+        console.log(
+    
+          `JOB COMPLETED: ${job.id}`
+    
+        );
+    
+      }
+    
+    );
+    
+    worker.on(
+    
+      'failed',
+    
+      (job, err) => {
+    
+        console.log(
+    
+          `JOB FAILED: ${job?.id}`,
+    
+          err.message
+    
+        );
+    
+      }
+    
+    );
   
       console.log(
   

@@ -4,14 +4,19 @@ const express =
 const router =
   express.Router();
 
+const auth =
+  require(
+    '../../../core/middleware/auth.middleware'
+  );
+
+const allowRoles =
+  require(
+    '../../../core/middleware/role.middleware'
+  );
+
 const orderController =
   require(
     '../controllers/order.controller'
-  );
-
-const authMiddleware =
-  require(
-  '../../auth/middleware/auth.middleware'
   );
 
 // ==============================
@@ -22,9 +27,12 @@ router.get(
 
   '/available',
 
-  authMiddleware,
+  auth,
 
-  orderController.getAvailableOrders
+  allowRoles('delivery'),
+
+  orderController
+    .getAvailableOrders
 
 );
 
@@ -36,9 +44,12 @@ router.get(
 
   '/my-orders',
 
-  authMiddleware,
+  auth,
 
-  orderController.getMyOrders
+  allowRoles('delivery'),
+
+  orderController
+    .getMyOrders
 
 );
 
@@ -50,9 +61,12 @@ router.patch(
 
   '/:id/accept',
 
-  authMiddleware,
+  auth,
 
-  orderController.acceptDelivery
+  allowRoles('delivery'),
+
+  orderController
+    .acceptDelivery
 
 );
 
@@ -64,9 +78,12 @@ router.patch(
 
   '/:id/delivered',
 
-  authMiddleware,
+  auth,
 
-  orderController.markDelivered
+  allowRoles('delivery'),
+
+  orderController
+    .markDelivered
 
 );
 

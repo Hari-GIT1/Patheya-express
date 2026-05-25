@@ -4,9 +4,19 @@ import {
 
   OnInit,
 
-  OnDestroy
+  OnDestroy,
+
+  NgZone
 
 } from '@angular/core';
+
+import {
+
+  Subject,
+
+  takeUntil
+
+} from 'rxjs';
 
 import {
 
@@ -25,7 +35,6 @@ import {
   SocketService
 
 } from 'src/app/core/services/socket.service';
-import { NgZone } from '@angular/core';
 
 @Component({
 
@@ -42,6 +51,21 @@ implements OnInit, OnDestroy {
 
   orders: any[] = [];
 
+  loading = false;
+
+  currentPage = 1;
+
+  limit = 10;
+
+  selectedStatus = '';
+
+  search = '';
+
+  totalOrders = 0;
+
+  private destroy$ =
+    new Subject<void>();
+
   constructor(
 
     private orderService:
@@ -52,20 +76,16 @@ implements OnInit, OnDestroy {
 
     private socketService:
       SocketService,
-    private ngZone: NgZone
+
+    private ngZone:
+      NgZone
 
   ) {}
 
   ngOnInit(): void {
 
-    // ==============================
-    // LOAD EXISTING ORDERS
-    // ==============================
     this.getOrders();
 
-    // ==============================
-    // JOIN RESTAURANT ROOM
-    // ==============================
     const user =
       this.authService.getUser();
 
@@ -81,31 +101,49 @@ implements OnInit, OnDestroy {
     }
 
     // ==============================
-    // REALTIME NEW ORDER
+    // NEW ORDER SOCKET
     // ==============================
     this.socketService
+
       .onNewOrder()
+
+      .pipe(
+        takeUntil(
+          this.destroy$
+        )
+      )
+
       .subscribe((order: any) => {
 
-        console.log(
-          'NEW ORDER:',
-          order
-        );
         this.ngZone.run(() => {
 
-          this.orders.unshift(
-            order
-          );
-    
+          if (
+            this.currentPage === 1
+          ) {
+
+            this.orders.unshift(
+              order
+            );
+
+          }
+
         });
 
       });
 
     // ==============================
-    // REALTIME STATUS UPDATE
+    // STATUS UPDATE SOCKET
     // ==============================
     this.socketService
+
       .onOrderStatusUpdate()
+
+      .pipe(
+        takeUntil(
+          this.destroy$
+        )
+      )
+
       .subscribe((updated: any) => {
 
         const index =
@@ -124,7 +162,7 @@ implements OnInit, OnDestroy {
 
             this.orders[index] =
               updated;
-        
+
           });
 
         }
@@ -133,28 +171,31 @@ implements OnInit, OnDestroy {
 
   }
 
-  ngOnDestroy(): void {
-
-    this.socketService
-      .removeListener(
-        'newOrder'
-      );
-
-    this.socketService
-      .removeListener(
-        'orderStatusUpdated'
-      );
-
-  }
-
   // ==============================
   // GET ORDERS
   // ==============================
-
   getOrders(): void {
 
+    this.loading = true;
+
     this.orderService
-      .getOrders()
+
+      .getOrders({
+
+        page:
+          this.currentPage,
+
+        limit:
+          this.limit,
+
+        status:
+          this.selectedStatus,
+
+        search:
+          this.search
+
+      })
+
       .subscribe({
 
         next: (res: any) => {
@@ -162,11 +203,20 @@ implements OnInit, OnDestroy {
           this.orders =
             res.data;
 
+          this.totalOrders =
+            res.total || 0;
+
+          this.loading =
+            false;
+
         },
 
         error: (err) => {
 
           console.log(err);
+
+          this.loading =
+            false;
 
         }
 
@@ -186,6 +236,7 @@ implements OnInit, OnDestroy {
   ): void {
 
     this.orderService
+
       .updateStatus(
 
         id,
@@ -193,6 +244,7 @@ implements OnInit, OnDestroy {
         status
 
       )
+
       .subscribe({
 
         next: (res: any) => {
@@ -228,21 +280,74 @@ implements OnInit, OnDestroy {
       });
 
   }
+// ==============================
+// FILTER ORDERS BY STATUS
+// ==============================
+getOrdersByStatus(
+  status: string
+): any[] {
+
+  return this.orders.filter(
+
+    order =>
+
+      order.status
+        ?.toLowerCase() ===
+      status.toLowerCase()
+
+  );
+
+}
 
   // ==============================
-  // FILTER ORDERS
+  // STATUS FILTER
   // ==============================
-  getOrdersByStatus(
+  onStatusChange(
     status: string
-  ) {
+  ): void {
 
-    return this.orders.filter(
+    this.selectedStatus =
+      status;
 
-      order =>
+    this.currentPage = 1;
 
-        order.status === status
+    this.getOrders();
 
-    );
+  }
+
+  // ==============================
+  // SEARCH
+  // ==============================
+  onSearch(): void {
+
+    this.currentPage = 1;
+
+    this.getOrders();
+
+  }
+
+  // ==============================
+  // PAGINATION
+  // ==============================
+  nextPage(): void {
+
+    this.currentPage++;
+
+    this.getOrders();
+
+  }
+
+  prevPage(): void {
+
+    if (
+      this.currentPage > 1
+    ) {
+
+      this.currentPage--;
+
+      this.getOrders();
+
+    }
 
   }
 
@@ -267,6 +372,24 @@ implements OnInit, OnDestroy {
       (now - created) / 60000
 
     );
+
+  }
+
+  ngOnDestroy(): void {
+
+    this.destroy$.next();
+
+    this.destroy$.complete();
+
+    this.socketService
+      .removeListener(
+        'newOrder'
+      );
+
+    this.socketService
+      .removeListener(
+        'orderStatusUpdated'
+      );
 
   }
 

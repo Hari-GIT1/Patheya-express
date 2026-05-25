@@ -1,5 +1,5 @@
 const Order =
-  require('../../../models/Order');
+  require('../../order/models/Order');
 
 const razorpayService =
   require(
@@ -55,7 +55,7 @@ async (
 
   if (
 
-    order.userId.toString() !==
+    order.userId?.toString() !==
     userId.toString()
 
   ) {

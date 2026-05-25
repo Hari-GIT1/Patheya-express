@@ -1,5 +1,7 @@
 const Restaurant =
-  require('../../../models/Restaurant');
+  require(
+    '../../restaurant/models/Restaurant'
+  );
 
 const APIFeatures =
   require(
@@ -16,7 +18,7 @@ const cacheService =
 // ==============================
 
 exports.getRestaurants =
-async (queryParams) => {
+async (queryParams = {}) => {
 
   // ==========================
   // CACHE KEY
@@ -29,7 +31,7 @@ async (queryParams) => {
     )}`;
 
   // ==========================
-  // CHECK CACHE
+  // CACHE
   // ==========================
 
   const cachedData =
@@ -44,18 +46,62 @@ async (queryParams) => {
   }
 
   // ==========================
+  // FILTERS
+  // ==========================
+
+  const filters = {
+
+    isOpen: true,
+
+    $or: [
+
+      {
+
+        approvalStatus:
+          'approved'
+
+      },
+
+      {
+
+        approvalStatus:
+          { $exists: false }
+
+      }
+
+    ]
+
+  };
+
+  // ==========================
+  // SEARCH
+  // ==========================
+
+  if (
+
+    queryParams.search
+
+  ) {
+
+    filters.name = {
+
+      $regex:
+        queryParams.search,
+
+      $options: 'i'
+
+    };
+
+  }
+
+  // ==========================
   // BASE QUERY
   // ==========================
 
   const features =
     new APIFeatures(
 
-      Restaurant.find({
-
-        approvalStatus:
-          'approved'
-
-      }),
+      Restaurant.find(filters),
 
       queryParams
 
@@ -77,7 +123,7 @@ async (queryParams) => {
     await features.query;
 
   // ==========================
-  // STORE CACHE
+  // CACHE STORE
   // ==========================
 
   await cacheService.set(

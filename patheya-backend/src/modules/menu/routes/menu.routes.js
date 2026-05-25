@@ -6,17 +6,17 @@ const router =
 
 const upload =
   require(
-    '../../../middleware/upload.middleware'
+    '../../../core/middleware/upload.middleware'
   );
 
 const auth =
   require(
-    '../../auth/middleware/auth.middleware'
+    '../../../core/middleware/auth.middleware'
   );
 
 const allowRoles =
   require(
-    '../../auth/middleware/role.middleware'
+    '../../../core/middleware/role.middleware'
   );
 
 const menuController =
@@ -45,6 +45,22 @@ router.get(
   '/:restaurantId',
 
   menuController.getRestaurantMenu
+
+);
+
+// ==============================
+// GET PARTNER MENU
+// ==============================
+
+router.get(
+
+  '/partner/menu',
+
+  auth,
+
+  allowRoles('owner'),
+
+  menuController.getPartnerMenu
 
 );
 

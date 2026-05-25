@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 
 const User = require('../models/User');
 const Restaurant = require('../models/Restaurant');
-const Order = require('../models/Order');
+const Order = require('./modules/order/models/Order');
 
 const connectDB = async () => {
   await mongoose.connect(process.env.MONGO_URI);

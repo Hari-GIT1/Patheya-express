@@ -1,9 +1,16 @@
 const MenuItem =
-  require('../../../models/MenuItem');
+  require(
+    '../../menu/models/MenuItem'
+  );
 
 const APIFeatures =
   require(
     '../../../core/query/apiFeatures'
+  );
+
+const ApiError =
+  require(
+    '../../../core/errors/ApiError'
   );
 
 const cacheService =
@@ -16,10 +23,9 @@ const cacheService =
 // ==============================
 
 exports.getMenuItems =
-async (queryParams) => {
+async (queryParams = {}) => {
 
   const cacheKey =
-
     `menu:${JSON.stringify(
       queryParams
     )}`;
@@ -40,12 +46,13 @@ async (queryParams) => {
   }
 
   // ==========================
-  // BASE FILTER
+  // FILTERS
   // ==========================
 
   const filters = {};
 
   // RESTAURANT
+
   if (
 
     queryParams.restaurantId
@@ -58,6 +65,7 @@ async (queryParams) => {
   }
 
   // CATEGORY
+
   if (
 
     queryParams.category
@@ -69,28 +77,19 @@ async (queryParams) => {
 
   }
 
-  // VEG
-  if (
-
-    queryParams.isVeg
-
-  ) {
-
-    filters.isVeg =
-
-      queryParams.isVeg ===
-      'true';
-
-  }
-
   // AVAILABILITY
+
   if (
 
-    queryParams.isAvailable
+    queryParams.isAvailable !==
+    undefined
 
   ) {
 
     filters.isAvailable =
+
+      queryParams.isAvailable ===
+      true ||
 
       queryParams.isAvailable ===
       'true';
@@ -98,23 +97,27 @@ async (queryParams) => {
   }
 
   // SEARCH
+
   if (
 
     queryParams.search
 
   ) {
 
-    filters.$text = {
+    filters.name = {
 
-      $search:
-        queryParams.search
+      $regex:
+        queryParams.search,
+
+      $options:
+        'i'
 
     };
 
   }
 
   // ==========================
-  // FEATURES
+  // QUERY FEATURES
   // ==========================
 
   const features =
@@ -132,11 +135,15 @@ async (queryParams) => {
 
     .paginate();
 
+  // ==========================
+  // EXECUTE
+  // ==========================
+
   const menuItems =
     await features.query;
 
   // ==========================
-  // CACHE
+  // CACHE STORE
   // ==========================
 
   await cacheService.set(
@@ -177,7 +184,10 @@ async (
         user.restaurantId,
 
       image:
-        file?.path || ''
+        file?.path || '',
+
+      isAvailable:
+        true
 
     });
 
@@ -185,8 +195,18 @@ async (
   // CLEAR CACHE
   // ==========================
 
-  await cacheService
-    .delByPattern('menu:*');
+  if (
+
+    cacheService.delByPattern
+
+  ) {
+
+    await cacheService
+      .delByPattern(
+        'menu:*'
+      );
+
+  }
 
   return item;
 
@@ -215,19 +235,23 @@ async (
     );
 
   // ==========================
-  // ITEM NOT FOUND
+  // NOT FOUND
   // ==========================
 
   if (!existingItem) {
 
-    throw new Error(
+    throw new ApiError(
+
+      404,
+
       'Menu item not found'
+
     );
 
   }
 
   // ==========================
-  // OWNERSHIP VALIDATION
+  // OWNERSHIP CHECK
   // ==========================
 
   if (
@@ -243,8 +267,12 @@ async (
 
   ) {
 
-    throw new Error(
-      'Unauthorized menu access'
+    throw new ApiError(
+
+      403,
+
+      'Unauthorized'
+
     );
 
   }
@@ -260,7 +288,6 @@ async (
           ...body,
 
           image:
-
             file?.path ||
 
             existingItem.image
@@ -279,8 +306,18 @@ async (
   // CLEAR CACHE
   // ==========================
 
-  await cacheService
-    .delByPattern('menu:*');
+  if (
+
+    cacheService.delByPattern
+
+  ) {
+
+    await cacheService
+      .delByPattern(
+        'menu:*'
+      );
+
+  }
 
   return updatedItem;
 
@@ -305,19 +342,23 @@ async (
     );
 
   // ==========================
-  // ITEM NOT FOUND
+  // NOT FOUND
   // ==========================
 
   if (!item) {
 
-    throw new Error(
+    throw new ApiError(
+
+      404,
+
       'Menu item not found'
+
     );
 
   }
 
   // ==========================
-  // OWNERSHIP VALIDATION
+  // OWNERSHIP CHECK
   // ==========================
 
   if (
@@ -332,8 +373,12 @@ async (
 
   ) {
 
-    throw new Error(
-      'Unauthorized menu delete'
+    throw new ApiError(
+
+      403,
+
+      'Unauthorized'
+
     );
 
   }
@@ -347,8 +392,18 @@ async (
   // CLEAR CACHE
   // ==========================
 
-  await cacheService
-    .delByPattern('menu:*');
+  if (
+
+    cacheService.delByPattern
+
+  ) {
+
+    await cacheService
+      .delByPattern(
+        'menu:*'
+      );
+
+  }
 
 };
 
@@ -373,19 +428,23 @@ async (
     );
 
   // ==========================
-  // ITEM NOT FOUND
+  // NOT FOUND
   // ==========================
 
   if (!existingItem) {
 
-    throw new Error(
+    throw new ApiError(
+
+      404,
+
       'Menu item not found'
+
     );
 
   }
 
   // ==========================
-  // OWNERSHIP VALIDATION
+  // OWNERSHIP CHECK
   // ==========================
 
   if (
@@ -401,8 +460,12 @@ async (
 
   ) {
 
-    throw new Error(
-      'Unauthorized menu update'
+    throw new ApiError(
+
+      403,
+
+      'Unauthorized'
+
     );
 
   }
@@ -431,8 +494,18 @@ async (
   // CLEAR CACHE
   // ==========================
 
-  await cacheService
-    .delByPattern('menu:*');
+  if (
+
+    cacheService.delByPattern
+
+  ) {
+
+    await cacheService
+      .delByPattern(
+        'menu:*'
+      );
+
+  }
 
   return item;
 

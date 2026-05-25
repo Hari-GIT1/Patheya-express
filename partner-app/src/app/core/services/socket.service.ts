@@ -1,13 +1,26 @@
-import { Injectable } from '@angular/core';
+import {
+  Injectable
+} from '@angular/core';
 
-import { io, Socket }
-  from 'socket.io-client';
+import {
 
-import { Observable }
-  from 'rxjs';
+  io,
 
-import { environment }
-  from 'src/environments/environment';
+  Socket
+
+} from 'socket.io-client';
+
+import {
+
+  Observable
+
+} from 'rxjs';
+
+import {
+
+  environment
+
+} from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -15,37 +28,59 @@ import { environment }
 
 export class SocketService {
 
-  private socket: Socket;
+  private socket!: Socket;
 
   constructor() {
 
-    // REMOVE /api
-    const socketUrl =
-      environment.apiUrl.replace(
-        '/api',
-        ''
-      );
+    this.connect();
 
-      this.socket = io(socketUrl, {
+  }
+
+  // ==============================
+  // CONNECT SOCKET
+  // ==============================
+  connect(): void {
+
+    this.socket = io(
+
+      environment.socketUrl,
+
+      {
+
+        auth: {
+
+          token:
+            localStorage.getItem(
+              'token'
+            )
+
+        },
 
         transports: ['websocket'],
-      
+
         autoConnect: true
-      
-      });
 
-    // CONNECTED
-    this.socket.on('connect', () => {
+      }
 
-      console.log(
+    );
 
-        'SOCKET CONNECTED:',
+    this.socket.on(
 
-        this.socket.id
+      'connect',
 
-      );
+      () => {
 
-    });
+        console.log(
+
+          'SOCKET CONNECTED:',
+
+          this.socket.id
+
+        );
+
+      }
+
+    );
 
   }
 
@@ -55,11 +90,6 @@ export class SocketService {
   joinRestaurantRoom(
     restaurantId: string
   ): void {
-
-    console.log(
-      'JOIN ROOM:',
-      restaurantId
-    );
 
     this.socket.emit(
 
@@ -89,127 +119,51 @@ export class SocketService {
   }
 
   // ==============================
-  // NEW ORDER LISTENER
+  // NEW ORDER
   // ==============================
   onNewOrder():
   Observable<any> {
-  
+
     return new Observable(
       (subscriber) => {
-  
-        const handler =
-          (data: any) => {
-  
-            console.log(
-              'NEW ORDER SOCKET:',
-              data
-            );
-  
-            subscriber.next(data);
-  
-          };
-  
+
         this.socket.on(
+
           'newOrder',
-          handler
-        );
-  
-        return () => {
-  
-          this.socket.off(
-            'newOrder',
-            handler
-          );
-  
-        };
-  
-      }
-    );
-  
-  }
-
-  // ==============================
-  // ORDER STATUS LISTENER
-  // ==============================
-  onOrderStatusUpdate():
-  Observable<any> {
-  
-    return new Observable(
-      (subscriber) => {
-  
-        const handler =
-          (data: any) => {
-  
-            console.log(
-              'STATUS UPDATED:',
-              data
-            );
-  
-            subscriber.next(data);
-  
-          };
-  
-        this.socket.on(
-          'orderStatusUpdated',
-          handler
-        );
-  
-        return () => {
-  
-          this.socket.off(
-            'orderStatusUpdated',
-            handler
-          );
-  
-        };
-  
-      }
-    );
-  
-  }
-
-  // ==============================
-  // EMIT EVENT
-  // ==============================
-  emit(
-    eventName: string,
-    data: any
-  ): void {
-
-    this.socket.emit(
-      eventName,
-      data
-    );
-
-  }
-
-  // ==============================
-  // GENERIC LISTENER
-  // ==============================
-  listen(
-    eventName: string
-  ): Observable<any> {
-
-    return new Observable(
-      (subscriber) => {
-
-        this.socket.on(
-
-          eventName,
 
           (data) => {
 
-            console.log(
-
-              'SOCKET EVENT:',
-
-              eventName,
-
+            subscriber.next(
               data
-
             );
 
-            subscriber.next(data);
+          }
+
+        );
+
+      }
+    );
+
+  }
+
+  // ==============================
+  // STATUS UPDATE
+  // ==============================
+  onOrderStatusUpdate():
+  Observable<any> {
+
+    return new Observable(
+      (subscriber) => {
+
+        this.socket.on(
+
+          'orderStatusUpdated',
+
+          (data) => {
+
+            subscriber.next(
+              data
+            );
 
           }
 
@@ -227,7 +181,9 @@ export class SocketService {
     eventName: string
   ): void {
 
-    this.socket.off(eventName);
+    this.socket.off(
+      eventName
+    );
 
   }
 

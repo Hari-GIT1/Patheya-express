@@ -1,6 +1,6 @@
 const asyncHandler =
   require(
-    '../../../utils/asyncHandler'
+    '../../../core/utils/asyncHandler'
   );
 
 const {
@@ -10,7 +10,7 @@ const {
   errorResponse
 
 } = require(
-  '../../../utils/response'
+  '../../../core/responses/response'
 );
 
 const authService =

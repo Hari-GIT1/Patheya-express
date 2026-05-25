@@ -14,6 +14,9 @@ require(
 require(
   './modules/order/events/order.listeners'
 );
+require(
+  './modules/payment/events/payment.listeners'
+);
 
 // ==============================
 // CORE
@@ -43,7 +46,7 @@ const config =
 // ==============================
 
 const Order =
-  require('./models/Order');
+  require('./modules/order/models/Order');
 
 // ==============================
 // SOCKET SERVICE

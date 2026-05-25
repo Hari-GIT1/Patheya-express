@@ -12,15 +12,31 @@ import {
 
   HttpEvent,
 
-  HttpInterceptor
+  HttpInterceptor,
+
+  HttpErrorResponse
 
 } from '@angular/common/http';
 
 import {
 
-  Observable
+  Observable,
+
+  throwError
 
 } from 'rxjs';
+
+import {
+
+  catchError
+
+} from 'rxjs/operators';
+
+import {
+
+  Router
+
+} from '@angular/router';
 
 import {
 
@@ -36,7 +52,10 @@ implements HttpInterceptor {
   constructor(
 
     private authService:
-      AuthService
+      AuthService,
+
+    private router:
+      Router
 
   ) {}
 
@@ -53,7 +72,7 @@ implements HttpInterceptor {
         .getToken();
 
     // ==============================
-    // ADD JWT TOKEN
+    // ADD TOKEN
     // ==============================
     if (token) {
 
@@ -70,7 +89,39 @@ implements HttpInterceptor {
 
     }
 
-    return next.handle(req);
+    return next.handle(req).pipe(
+
+      catchError(
+
+        (
+          error:
+          HttpErrorResponse
+        ) => {
+
+          // ==============================
+          // AUTO LOGOUT
+          // ==============================
+          if (
+            error.status === 401
+          ) {
+
+            this.authService.logout();
+
+            this.router.navigate([
+              '/login'
+            ]);
+
+          }
+
+          return throwError(
+            () => error
+          );
+
+        }
+
+      )
+
+    );
 
   }
 

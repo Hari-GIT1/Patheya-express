@@ -1,14 +1,12 @@
 const asyncHandler =
   require(
-    '../../../utils/asyncHandler'
+    '../../../core/utils/asyncHandler'
   );
 
 const {
-
   successResponse
-
 } = require(
-  '../../../utils/response'
+  '../../../core/responses/response'
 );
 
 const menuService =
@@ -17,7 +15,7 @@ const menuService =
   );
 
 // ==============================
-// GET MENU ITEMS
+// GET ALL MENU ITEMS
 // ==============================
 
 exports.getMenuItems =
@@ -32,9 +30,7 @@ asyncHandler(async (
   const menuItems =
     await menuService
       .getMenuItems(
-
         req.query
-
       );
 
   successResponse(
@@ -98,7 +94,7 @@ asyncHandler(async (
 
 ) => {
 
-  const menu =
+  const menuItems =
     await menuService
       .getMenuItems({
 
@@ -111,7 +107,7 @@ asyncHandler(async (
 
     res,
 
-    menu,
+    menuItems,
 
     'Partner menu fetched'
 

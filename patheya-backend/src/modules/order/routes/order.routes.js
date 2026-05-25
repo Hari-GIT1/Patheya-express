@@ -1,78 +1,75 @@
-const express = require('express');
+const express =
+  require('express');
 
-const router = express.Router();
+const router =
+  express.Router();
 
 const auth =
-  require( '../../auth/middleware/auth.middleware');
+  require(
+    '../../../core/middleware/auth.middleware'
+  );
 
 const allowRoles =
-  require('../../../middleware/role.middleware');
+  require(
+    '../../../core/middleware/role.middleware'
+  );
 
 const {
 
-    placeOrderValidation
-  
-  } = require(
-    '../../../validations/order.validation'
-  );
+  placeOrderValidation
+
+} = require(
+  '../validations/order.validation'
+);
+
 const validate =
   require(
-    '../../../middleware/validate.middleware'
+    '../../../core/middleware/validate.middleware'
   );
 
-const {
-
-  placeOrder,
-
-  getOrders,
-
-  getPartnerOrders,
-
-  getUserOrders,
-
-  getOrderById,
-
-  updateOrderStatus
-
-} = require('../controllers/order.controller');
-
-
-
+const orderController =
+  require(
+    '../controllers/order.controller'
+  );
 
 // ==============================
 // PLACE ORDER
-// CUSTOMER ONLY
 // ==============================
+
 router.post(
 
   '/',
 
   auth,
 
+  allowRoles('customer'),
+
   placeOrderValidation,
 
   validate,
 
-  placeOrder
+  orderController.placeOrder
+
 );
 
 // ==============================
-// UNIVERSAL ORDERS QUERY
+// GET ALL ORDERS
 // ==============================
+
 router.get(
 
   '/',
 
   auth,
 
-  getOrders
+  orderController.getOrders
 
 );
 
 // ==============================
 // PARTNER ORDERS
-// OWNER ONLY
 // ==============================
+
 router.get(
 
   '/partner',
@@ -81,15 +78,14 @@ router.get(
 
   allowRoles('owner'),
 
-  getPartnerOrders
+  orderController.getPartnerOrders
 
 );
 
+// ==============================
+// USER ORDERS
+// ==============================
 
-// ==============================
-// CUSTOMER ORDERS
-// CUSTOMER ONLY
-// ==============================
 router.get(
 
   '/user/:userId',
@@ -98,43 +94,28 @@ router.get(
 
   allowRoles('customer'),
 
-  getUserOrders
+  orderController.getUserOrders
 
 );
 
-
-// ==============================
-// RESTAURANT ORDERS
-// PUBLIC
-// ==============================
-// router.get(
-
-//   '/restaurant/:restaurantId',
-
-//   getRestaurantOrders
-
-// );
-
-
 // ==============================
 // GET SINGLE ORDER
-// AUTHENTICATED USERS
 // ==============================
+
 router.get(
 
   '/:id',
 
   auth,
 
-  getOrderById
+  orderController.getOrderById
 
 );
 
+// ==============================
+// UPDATE STATUS
+// ==============================
 
-// ==============================
-// PATCH STATUS
-// OWNER ONLY
-// ==============================
 router.patch(
 
   '/:id/status',
@@ -143,25 +124,9 @@ router.patch(
 
   allowRoles('owner'),
 
-  updateOrderStatus
+  orderController.updateOrderStatus
 
 );
 
-
-// ==============================
-// KEEP PUT ROUTE
-// OWNER ONLY
-// ==============================
-router.put(
-
-  '/:id/status',
-
-  auth,
-
-  allowRoles('owner'),
-
-  updateOrderStatus
-
-);
-
-module.exports = router;
+module.exports =
+  router;

@@ -1,16 +1,14 @@
-import { Injectable } from '@angular/core';
-
 import {
-  HttpClient
-} from '@angular/common/http';
+  Injectable
+} from '@angular/core';
 
 import {
   Observable
 } from 'rxjs';
 
 import {
-  environment
-} from 'src/environments/environment';
+  ApiService
+} from './api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,22 +16,22 @@ import {
 
 export class MenuService {
 
-  apiUrl =
-    environment.apiUrl;
-
   constructor(
-    private http: HttpClient
+    private api: ApiService
   ) {}
 
   // ==============================
   // GET PARTNER MENU
   // ==============================
-  getMenu():
-  Observable<any> {
+  getMenu(
+    queryParams?: any
+  ): Observable<any> {
 
-    return this.http.get(
+    return this.api.get(
 
-      `${this.apiUrl}/menu`
+      '/menu',
+
+      queryParams
 
     );
 
@@ -43,12 +41,18 @@ export class MenuService {
   // GET RESTAURANT MENU
   // ==============================
   getRestaurantMenu(
-    restaurantId: string
+
+    restaurantId: string,
+
+    queryParams?: any
+
   ): Observable<any> {
 
-    return this.http.get(
+    return this.api.get(
 
-      `${this.apiUrl}/menu/${restaurantId}`
+      `menu/${restaurantId}`,
+
+      queryParams
 
     );
 
@@ -61,9 +65,9 @@ export class MenuService {
     data: any
   ): Observable<any> {
 
-    return this.http.post(
+    return this.api.post(
 
-      `${this.apiUrl}/menu`,
+      '/menu',
 
       data
 
@@ -82,9 +86,9 @@ export class MenuService {
 
   ): Observable<any> {
 
-    return this.http.put(
+    return this.api.put(
 
-      `${this.apiUrl}/menu/${id}`,
+      `/menu/${id}`,
 
       data
 
@@ -99,9 +103,9 @@ export class MenuService {
     id: string
   ): Observable<any> {
 
-    return this.http.delete(
+    return this.api.delete(
 
-      `${this.apiUrl}/menu/${id}`
+      `/menu/${id}`
 
     );
 
@@ -118,9 +122,9 @@ export class MenuService {
 
   ): Observable<any> {
 
-    return this.http.patch(
+    return this.api.patch(
 
-      `${this.apiUrl}/menu/${id}/availability`,
+      `/menu/${id}/availability`,
 
       { isAvailable }
 

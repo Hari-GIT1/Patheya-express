@@ -2,7 +2,7 @@ const crypto =
   require('crypto');
 
 const Order =
-  require('../../../models/Order');
+  require('../../order/models/Order');
 
 // ==============================
 // RAZORPAY WEBHOOK
@@ -53,7 +53,13 @@ async (
 
         )
 
-        .update(rawBody)
+        .update(
+
+          rawBody.toString(),
+        
+          'utf8'
+        
+        )
 
         .digest('hex');
 

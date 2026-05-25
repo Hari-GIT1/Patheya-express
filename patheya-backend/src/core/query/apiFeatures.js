@@ -54,6 +54,50 @@ class APIFeatures {
 
   }
 
+// ==========================
+// SEARCH
+// ==========================
+
+search(fields = []) {
+
+  if (
+
+    this.queryString.search &&
+
+    fields.length > 0
+
+  ) {
+
+    const keyword =
+      this.queryString.search;
+
+    const searchQuery = {
+
+      $or: fields.map(field => ({
+
+        [field]: {
+
+          $regex: keyword,
+
+          $options: 'i'
+
+        }
+
+      }))
+
+    };
+
+    this.query =
+      this.query.find(
+        searchQuery
+      );
+
+  }
+
+  return this;
+
+}
+
   // ==========================
   // SORT
   // ==========================

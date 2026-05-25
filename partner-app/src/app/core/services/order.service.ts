@@ -1,16 +1,14 @@
-import { Injectable } from '@angular/core';
-
 import {
-  HttpClient
-} from '@angular/common/http';
+  Injectable
+} from '@angular/core';
 
 import {
   Observable
 } from 'rxjs';
 
 import {
-  environment
-} from 'src/environments/environment';
+  ApiService
+} from './api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,22 +16,22 @@ import {
 
 export class OrderService {
 
-  apiUrl =
-    environment.apiUrl;
-
   constructor(
-    private http: HttpClient
+    private api: ApiService
   ) {}
 
   // ==============================
   // GET PARTNER ORDERS
   // ==============================
-  getOrders():
-  Observable<any> {
+  getOrders(
+    queryParams?: any
+  ): Observable<any> {
 
-    return this.http.get(
+    return this.api.get(
 
-      `${this.apiUrl}/orders/partner`
+      '/orders/partner',
+
+      queryParams
 
     );
 
@@ -50,9 +48,9 @@ export class OrderService {
 
   ): Observable<any> {
 
-    return this.http.patch(
+    return this.api.patch(
 
-      `${this.apiUrl}/orders/${id}/status`,
+      `/orders/${id}/status`,
 
       { status }
 
@@ -67,9 +65,9 @@ export class OrderService {
     data: any
   ): Observable<any> {
 
-    return this.http.post(
+    return this.api.post(
 
-      `${this.apiUrl}/orders`,
+      '/orders',
 
       data
 
@@ -81,12 +79,18 @@ export class OrderService {
   // USER ORDERS
   // ==============================
   getUserOrders(
-    userId: string
+
+    userId: string,
+
+    queryParams?: any
+
   ): Observable<any> {
 
-    return this.http.get(
+    return this.api.get(
 
-      `${this.apiUrl}/orders/user/${userId}`
+      `/orders/user/${userId}`,
+
+      queryParams
 
     );
 
@@ -99,9 +103,9 @@ export class OrderService {
     orderId: string
   ): Observable<any> {
 
-    return this.http.get(
+    return this.api.get(
 
-      `${this.apiUrl}/orders/${orderId}`
+      `/orders/${orderId}`
 
     );
 

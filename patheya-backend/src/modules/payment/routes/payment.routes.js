@@ -6,34 +6,36 @@ const router =
 
 const auth =
   require(
-    '../../auth/middleware/auth.middleware'
+    '../../../core/middleware/auth.middleware'
   );
 
 const allowRoles =
   require(
-    '../../auth/middleware/role.middleware'
+    '../../../core/middleware/role.middleware'
   );
 
 const paymentController =
   require(
     '../controllers/payment.controller'
   );
+
 const paymentWebhook =
   require(
     '../webhooks/payment.webhook'
   );
+
 // ==============================
-// RAZORPAY WEBHOOK
+// WEBHOOK
 // ==============================
 
 router.post(
 
-    '/webhook',
-  
-    paymentWebhook
-      .handleWebhook
-  
-  );
+  '/webhook',
+
+  paymentWebhook
+    .handleWebhook
+
+);
 
 // ==============================
 // CREATE PAYMENT ORDER

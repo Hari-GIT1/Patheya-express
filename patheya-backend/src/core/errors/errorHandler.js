@@ -8,8 +8,8 @@ const {
   
   } = require(
   
-    '../../utils/response'
-  
+    '../responses/response'
+
   );
   
   module.exports = (

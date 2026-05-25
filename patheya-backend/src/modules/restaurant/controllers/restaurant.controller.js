@@ -1,6 +1,6 @@
 const asyncHandler =
   require(
-    '../../../utils/asyncHandler'
+    '../../../core/utils/asyncHandler'
   );
 
 const {
@@ -8,7 +8,7 @@ const {
   successResponse
 
 } = require(
-  '../../../utils/response'
+  '../../../core/responses/response'
 );
 
 const restaurantService =

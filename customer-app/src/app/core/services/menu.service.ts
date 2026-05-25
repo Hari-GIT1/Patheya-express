@@ -59,7 +59,7 @@ export class MenuService {
 
     return this.api.post(
 
-      'menu',
+      '/menu',
 
       data
 
@@ -80,7 +80,7 @@ export class MenuService {
 
     return this.api.put(
 
-      `menu/${id}`,
+      `/menu/${id}`,
 
       data
 
@@ -99,7 +99,7 @@ export class MenuService {
 
     return this.api.delete(
 
-      `menu/${id}`
+      `/menu/${id}`
 
     );
 
@@ -118,7 +118,7 @@ export class MenuService {
 
     return this.api.patch(
 
-      `menu/${id}/availability`,
+      `/menu/${id}/availability`,
 
       { isAvailable }
 

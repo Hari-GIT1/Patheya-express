@@ -1,5 +1,5 @@
 const Order =
-  require('../../../models/Order');
+  require('../../order/models/Order');
 
 const orderService =
   require(
@@ -8,7 +8,7 @@ const orderService =
 
 const asyncHandler =
   require(
-    '../../../utils/asyncHandler'
+    '../../../core/utils/asyncHandler'
   );
 
 const {
@@ -18,7 +18,7 @@ const {
   errorResponse
 
 } = require(
-  '../../../utils/response'
+  '../../../core/responses/response'
 );
 
 const eventBus =

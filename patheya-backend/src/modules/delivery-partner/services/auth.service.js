@@ -1,157 +1,253 @@
+const Order =
+  require('../../order/models/Order');
 
-const DeliveryPartner =
+const ApiError =
   require(
-    '../models/DeliveryPartner'
+    '../../../core/errors/ApiError'
   );
 
 // ==============================
-// GENERATE TOKEN
+// AVAILABLE ORDERS
 // ==============================
 
-const {
+exports.getAvailableOrders =
+async () => {
 
-  generateToken
+  return await Order.find({
 
-} = require(
-  '../../auth/services/token.service'
-);
+    status: 'ready',
 
-const {
+    deliveryPartnerId: null
 
-  hashPassword,
+  })
 
-  comparePassword
+  .populate(
 
-} = require(
-  '../../auth/services/password.service'
-);
+    'restaurantId',
 
-// ==============================
-// REGISTER
-// ==============================
+    'name'
 
-exports.register =
-async (data) => {
+  )
 
-  const existingUser =
-    await DeliveryPartner.findOne({
+  .sort({
 
-      phone: data.phone
+    createdAt: -1
 
-    });
-
-  if (existingUser) {
-
-    throw new Error(
-      'Phone already registered'
-    );
-
-  }
-
-  const hashedPassword =
-    await hashPassword(
-
-      data.password,
-
-      10
-
-    );
-
-  const deliveryPartner =
-    await DeliveryPartner.create({
-
-      name: data.name,
-
-      phone: data.phone,
-
-      email: data.email,
-
-      password:
-        hashedPassword,
-
-      vehicleType:
-        data.vehicleType,
-
-      vehicleNumber:
-        data.vehicleNumber
-
-    });
-
-  return {
-
-    token:
-    generateToken({
-
-      id:
-        deliveryPartner._id,
-    
-      role:
-        'delivery'
-    
-    })
-
-  };
+  });
 
 };
 
 // ==============================
-// LOGIN
+// MY ORDERS
 // ==============================
 
-exports.login =
+exports.getMyOrders =
+async (deliveryPartnerId) => {
+
+  return await Order.find({
+
+    deliveryPartnerId,
+
+    status: {
+
+      $ne: 'delivered'
+
+    }
+
+  })
+
+  .populate(
+
+    'restaurantId',
+
+    'name'
+
+  )
+
+  .sort({
+
+    createdAt: -1
+
+  });
+
+};
+
+// ==============================
+// ACCEPT DELIVERY
+// ==============================
+
+exports.acceptDelivery =
 async (
 
-  phone,
+  orderId,
 
-  password
+  deliveryPartnerId
 
 ) => {
 
-  const deliveryPartner =
-    await DeliveryPartner.findOne({
+  const order =
+    await Order.findById(
+      orderId
+    );
 
-      phone
+  if (!order) {
 
-    });
+    throw new ApiError(
 
-  if (!deliveryPartner) {
+      404,
 
-    throw new Error(
-      'Invalid credentials'
+      'Order not found'
+
     );
 
   }
 
-  const isMatch =
-    await comparePassword(
+  if (
 
-      password,
+    order.status !==
+    'ready'
 
-      deliveryPartner.password
+  ) {
 
-    );
+    throw new ApiError(
 
-  if (!isMatch) {
+      400,
 
-    throw new Error(
-      'Invalid credentials'
+      'Order is not ready'
+
     );
 
   }
 
-  return {
+  if (
 
-    token:
-    generateToken({
+    order.deliveryPartnerId
 
-      id:
-        deliveryPartner._id,
-    
-      role:
-        'delivery'
-    
-    })
+  ) {
 
-  };
+    throw new ApiError(
+
+      400,
+
+      'Order already assigned'
+
+    );
+
+  }
+
+  order.deliveryPartnerId =
+    deliveryPartnerId;
+
+  order.status =
+    'out_for_delivery';
+
+  order.outForDeliveryAt =
+    new Date();
+
+  order.statusTimeline.push({
+
+    status:
+      'out_for_delivery',
+
+    changedAt:
+      new Date()
+
+  });
+
+  await order.save();
+
+  return order;
+
+};
+
+// ==============================
+// MARK DELIVERED
+// ==============================
+
+exports.markDelivered =
+async (
+
+  orderId,
+
+  deliveryPartnerId
+
+) => {
+
+  const order =
+    await Order.findById(
+      orderId
+    );
+
+  if (!order) {
+
+    throw new ApiError(
+
+      404,
+
+      'Order not found'
+
+    );
+
+  }
+
+  if (
+
+    order
+      .deliveryPartnerId
+      ?.toString()
+
+    !==
+
+    deliveryPartnerId
+      .toString()
+
+  ) {
+
+    throw new ApiError(
+
+      403,
+
+      'Unauthorized access'
+
+    );
+
+  }
+
+  if (
+
+    order.status !==
+    'out_for_delivery'
+
+  ) {
+
+    throw new ApiError(
+
+      400,
+
+      'Invalid order state'
+
+    );
+
+  }
+
+  order.status =
+    'delivered';
+
+  order.deliveredAt =
+    new Date();
+
+  order.statusTimeline.push({
+
+    status:
+      'delivered',
+
+    changedAt:
+      new Date()
+
+  });
+
+  await order.save();
+
+  return order;
 
 };

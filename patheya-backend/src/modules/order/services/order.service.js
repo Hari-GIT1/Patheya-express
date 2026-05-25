@@ -1,5 +1,5 @@
 const Order =
-  require('../../../models/Order');
+  require('../../order/models/Order');
 
 const BaseService =
   require(

@@ -259,36 +259,28 @@ app.use((req, res, next) => {
 // ROUTES
 // ==============================
 const authRoutes =
-  require('./routes/auth/auth.routes');
+  require('./modules/auth/routes/auth.routes');
 
 const orderRoutes =
   require('./modules/order/routes/order.routes');
 
 const restaurantRoutes =
-  require('./routes/customer/restaurant.routes');
+  require('./modules/restaurant/routes/restaurant.routes');
 
 const paymentRoutes =
   require('./modules/payment/routes/payment.routes');
 
 const ownerRoutes =
-  require('./routes/partner/owner.routes');
+  require('./modules/owner/routes/owner.routes');
 
 const discountRoutes =
-  require('./routes/customer/discount.routes');
+  require('./modules/discount/routes/discount.routes');
 
-const adminAuthRoutes =
-  require('./modules/admin/routes/adminAuthRoutes');
+const adminRoutes =
+  require(
+    './modules/admin/routes/admin.routes'
+  );
 
-const adminDashboardRoutes =
-  require('./modules/admin/routes/adminDashboardRoutes');
-
-const adminRestaurantRoutes =
-  require('./modules/admin/routes/adminRestaurantRoutes');
-
-const adminUserRoutes =
-  require('./modules/admin/routes/adminUserRoutes');
-const adminOrderRoutes =
-  require('./modules/admin/routes/adminOrderRoutes');
 const deliveryAuthRoutes =
   require(
     './modules/delivery-partner/routes/auth.routes'
@@ -303,7 +295,7 @@ const menuRoutes =
   );
   const healthRoutes =
   require(
-    './routes/system/health.routes'
+    './modules/health/routes/health.routes'
   );
 
 // ==============================
@@ -344,24 +336,11 @@ app.use(
   discountRoutes
 );
 app.use(
-  '/api/admin/auth',
- adminAuthRoutes
-);
-app.use(
-  '/api/admin/dashboard',
-  adminDashboardRoutes
-);
-app.use(
-  '/api/admin/restaurants',
-  adminRestaurantRoutes
-);
-app.use(
-  '/api/admin/users',
-  adminUserRoutes
-);
-app.use(
-  '/api/admin/orders',
-  adminOrderRoutes
+
+  '/api/admin',
+
+  adminRoutes
+
 );
 app.use(
   '/api/delivery',

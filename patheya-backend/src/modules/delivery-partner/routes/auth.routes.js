@@ -11,7 +11,12 @@ const authController =
 
 const authMiddleware =
   require(
-  '../../auth/middleware/auth.middleware'
+  '../../../core/middleware/auth.middleware'
+  );
+
+  const allowRoles =
+  require(
+    '../../../core/middleware/role.middleware'
   );
 
 // ==============================
@@ -53,12 +58,13 @@ router.post(
 // ==============================
 // PROFILE
 // ==============================
-
 router.get(
 
   '/profile',
 
   authMiddleware,
+
+  allowRoles('delivery'),
 
   (req, res) => {
 
